@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from api.models import Category, Country, Actor, User, UserProfile, Film, FilmEpisode, RateFilm, RateFilmEpisode, Comment, CommentFilm, CommentFilmEpisode, History, Tracking, PlayList, PlayListEpisode, gender_type, age_restrictions
 from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta: 
@@ -25,19 +26,19 @@ class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
-        def create(self, validated_data):
-            user = User.objects.create_user(validated_data['username'], None, UserSerializer)
-            return user
+        extra_kwargs = {"password": {'write_only': True}}
+    def create(self, validated_data):
+        user = User.objects.create_user(validated_data['username'], None ,make_password(validated_data['password']))
+        return user
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username')
+        fields = ('id', 'username', 'password')
 
 class LoginUserSerializer(serializers.Serializer):
     username = serializers.CharField()
-    password = serializers.CharField()
+    password = serializers.CharField(style= { 'input_type': 'password'})
 
     def validate(self, data):
         user = authenticate(**data)
