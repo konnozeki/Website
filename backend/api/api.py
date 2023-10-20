@@ -16,7 +16,6 @@ class RegistrationAPI(generics.GenericAPIView):
         })
     
 
-from .serializers import CreateUserSerializer, UserSerializer, LoginUserSerializer
 
 class LoginAPI(generics.GenericAPIView):
     serializer_class = LoginUserSerializer
@@ -25,13 +24,10 @@ class LoginAPI(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
-        if user is not None:
-            return Response({
-                "user": UserSerializer(user, context=self.get_serializer_context()).data,
-                "token": AuthToken.objects.create(user)[1]
-            })
-        else:
-            return Response({"error": "Invalid credentials"})
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "token": AuthToken.objects.create(user)[1]
+        })
     
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated, ]
