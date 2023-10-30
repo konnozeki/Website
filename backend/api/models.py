@@ -7,11 +7,15 @@ gender_type = [{"M" , "Male"}, {"F" , "Female"}, {"O" , "Other"}]
 
 
 class Category(models.Model):
+    def __str__(self):
+        return self.name # this 'name' field must be exist in your model. 
     name = models.CharField(max_length=50, null=False, unique=True)
     description = models.TextField()
     slug = models.SlugField()
 
-class Country(models.Model): 
+class Country(models.Model):
+    def __str__(self):
+        return self.country_name # this 'name' field must be exist in your model. 
     country_name = models.CharField(max_length=250, null=False, blank=False)
     country_flag = models.URLField(null=False)
 
@@ -19,10 +23,16 @@ class Country(models.Model):
 
 
 class Actor(models.Model):
+    def __str__(self):
+        return self.name # this 'name' field must be exist in your model. 
+    class Gender(models.TextChoices):
+        MALE = "M"
+        FEMALE = "F"
+        OTHER = "O"
     name = models.CharField(max_length=50, blank=False, null=False, unique=True)
     description = models.TextField()
     slug = models.SlugField()
-    gender = models.CharField(max_length=6, choices=gender_type, null=False, blank=False, default="Other")
+    gender = models.CharField(max_length=1, choices=Gender.choices, default="O")
     country = models.ForeignKey(Country, null=False, blank=False, on_delete=models.CASCADE)
     avatar = models.ImageField()
 
