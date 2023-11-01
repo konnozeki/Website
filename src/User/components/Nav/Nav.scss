@@ -1,0 +1,73 @@
+
+.navbar-logo {
+  color: red;
+  margin-top: 5px;
+  font-size: 25px;
+}
+
+.custom-tab {
+  font-size: 15px;
+  font-weight: 500;
+  position: relative;
+  // color:white;
+}  
+
+.custom-tab::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.NavBar {
+  // background-color: black;
+  margin-bottom: 0;
+}
+.signIn {
+  margin-top: 10px;
+  background-color: red;
+  color: white;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.user-icon {
+  margin-top: 10px;
+  height: 30px;
+  width: 30px;
+  border: 2px solid black;
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+.user-icon:hover {
+  transform: scale(1.1);
+}
+
+.user-choices {
+  background-color: rgb(208, 196, 196);
+  padding: 4px;
+  border-radius: 10px;
+  position: absolute;
+  width:130px;
+
+}
+.user-tab{
+  flex-direction: column;
+}
+.choice {
+  width:100%;
+  color: black;
+  padding: 3px;
+  cursor: pointer;
+  border-radius: 10px;
+
+}
+.choice:hover {
+  background-color: #f0f4ff;
+}
+ul {
+  list-style-type: none;
+}
