@@ -5,22 +5,20 @@
   font-size: 25px;
 }
 
-.custom-tab {
+.ant-tabs-ink-bar {
+  height: 5px;
+  background: red !important;
+}
+.ant-tabs-tab {
   font-size: 15px;
   font-weight: 500;
   position: relative;
-  // color:white;
-}  
-
-.custom-tab::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
 }
+.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: red;
+  text-shadow: 0 0 0.25px currentcolor;
+}
+
 .NavBar {
   // background-color: black;
   margin-bottom: 0;
