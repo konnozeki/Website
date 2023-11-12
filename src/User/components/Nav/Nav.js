@@ -1,4 +1,4 @@
-import {React, useRef, useState} from 'react'
+import {React, useEffect, useRef, useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Row, Col, Tabs, Button } from 'antd';
 import userIcon from "./UserIcon.png"
@@ -21,6 +21,11 @@ const Menus=[
     {key:"Login", name:"Log out", url:"/Login"}
 ]
 
+const MenusAdmin=[
+    {key:"Admin/Profile", name:"Profile", url:"/Admin/Profile"},
+    {key:"Admin", name:"Manage", url:'/Admin'},
+    {key:"Login", name:"Log out", url:"/Login"}
+]
 function Nav() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('Home');
@@ -28,11 +33,6 @@ function Nav() {
     const handleTabChange = (url) => {
         setActiveTab(url);
         navigate(`/${url}`);
-    };
-
-    const loginNavigate = useNavigate();
-    const handleLogin = () => {
-        loginNavigate(`/Login`);
     };
 
     const [openUserChoice, setOpenUserChoice] = useState(false);
@@ -47,10 +47,20 @@ function Nav() {
         }
     })
     
-    const [checkLogin, setCheckLogin] = useState(false);
-    const handleCheckLogin = () => {
-        setCheckLogin(true);
+    const handleCheckLogin = (name) => {
+        if(name === "Log out") {
+            window.localStorage.removeItem("isLogedin")
+            window.localStorage.removeItem("isAdmin")
+            window.localStorage.removeItem("isUser")
+            handleLogin();
+        }
     }
+    const login = window.localStorage.getItem("isLogedin");
+    const admin = window.localStorage.getItem("isAdmin");
+    const loginNavigate = useNavigate();
+    const handleLogin = () => {
+        loginNavigate(`/Login`);
+    };
     const userNavigate = useNavigate();
     const [userActivateChoice, setUserActivateChoice] = useState(null);
     const handleUserActivateChoice = (url) => {
@@ -59,72 +69,73 @@ function Nav() {
     }
     
     return (
-        <>
-        <div>
-            <Row justify="space-around" className="NavBar">
-                <a href="/Home">
-                    <h1 className="navbar-logo">NETFLEX</h1>
-                </a>
-                <Col span={16}>
-                <Tabs activeKey={activeTab} onChange={handleTabChange}>
-                    {tabs.map((tab) => (
-                        <TabPane
-                        tab={<span className='custom-tab'>{tab.title}</span>}
-                        key={tab.key}
-                        label={tab.label}
-                        >
-                        </TabPane>
-                    ))}
-                </Tabs>  
-                </Col>
-                {/* Check login. If login, display name user, else display Sign In button */}
-                {/* Check Admin or User. If is Admin, url is "Admin" and UI is Admin's UI(avatar icon will be different) */}
-                {/* If is User, display User's UI */}
-                {checkLogin ? 
-                    <Col span={2}>
-                    <div>
-                        <img 
-                            ref={imgRef}
-                            onClick={handleUserChoice}
-                            src={userIcon} 
-                            alt="user"
-                            className="user-icon" />
-                        {openUserChoice && <div className='user-choices' ref={menuRef}>
-                            <ul>
-                                {
-                                    // Menus.map((menu) => (
-                                    //     <a href={menu.url}>
-                                    //         <li key={menu.name} className="choice" onClick={handleUserChoice}>
-                                    //             {menu.name}
-                                    //         </li>
-                                    //     </a> 
-                                    // ))
-                                    <Tabs tabPosition='left' activeKey={userActivateChoice} onChange={handleUserActivateChoice}>
-                                        {Menus.map((menu) => (
-                                            <TabPane 
-                                            tab={<span className='choice' onClick={handleUserChoice}>{menu.name}</span>}
-                                            key={menu.key}
-                                            >
-                                            </TabPane>
-                                        ))}
-                                    </Tabs> 
-                                }
-                            </ul>
-                        </div>}
-                    </div>
-                    
-                    </Col>    
-                    :
-                    <Col span={2}>
-                    <Button className="signIn" onClick={() => {handleLogin(); handleCheckLogin();}} >Sign In</Button>
-                </Col>}
+        <>{window.localStorage.getItem("isLogedin") ? 
+            <div>
+                <Row justify="space-around" className="NavBar">
+                    <a href="/Home">
+                        <h1 className="navbar-logo">NETFLEX</h1>
+                    </a>
+                    <Col span={16}>
+                    <Tabs activeKey={activeTab} onChange={handleTabChange} items={tabs}>
+                    </Tabs>  
+                    </Col>
+                    {/* Check login. If login, display name user, else display Sign In button */}
+                    {/* Check Admin or User. If is Admin, url is "Admin" and UI is Admin's UI(avatar icon will be different) */}
+                    {/* If is User, display User's UI */}
+                    {/* {checkLogin ?  */}
+                    {  
+                        <Col span={2}>
+                            <div>
+                                <img 
+                                    ref={imgRef}
+                                    onClick={handleUserChoice}
+                                    src={userIcon} 
+                                    alt="user"
+                                    className="user-icon" />
+                                {openUserChoice && <div className='user-choices' ref={menuRef}>
+                                    <ul>
+                                        {
+
+                                            <Tabs tabPosition='left' activeKey={userActivateChoice} onChange={handleUserActivateChoice}>
+                                                
+                                                {/*Muon doi sang Admin thi thay Menus -> MenusAdmin */}
+                                                { (login && admin) ?  MenusAdmin.map((menu) => (
+                                                    <TabPane 
+                                                    tab={<span className='choice' onClick={() => {handleCheckLogin(menu.name); handleUserActivateChoice()}}>{menu.name}</span>}
+                                                    key={menu.key}
+                                                    >
+                                                    </TabPane>
+                                                )) :
+                                                Menus.map((menu) => (
+                                                    <TabPane 
+                                                    tab={<span className='choice' onClick={() => {handleCheckLogin(menu.name); handleUserActivateChoice()}}>{menu.name}</span>}
+                                                    key={menu.key}
+                                                    >
+                                                    </TabPane>
+                                                ))
+                                                }
+                                            </Tabs>
+                                            
+                                        }
+                                    </ul>
+                                </div>}
+                            </div>
+                        
+                        </Col>    
+                        // :
+                        // <Col span={2}>
+                        //     <Button className="signIn" onClick={() => {handleLogin(); handleCheckLogin();}} >Sign In</Button>
+                        // </Col> 
+                    }
+                
+                </Row>
             
-            </Row>
-            
-        </div>
+            </div>
+        : <></>} 
+        
                 
         </>
     )
 }
 
-export default Nav
+export default Nav;
