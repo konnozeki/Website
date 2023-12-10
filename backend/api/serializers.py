@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password
 class CategorySerializer(serializers.ModelSerializer):
     class Meta: 
         model = Category
+        read_only_fields=['name', 'slug']
         fields = ['id', 'name', 'description', 'slug']
     
 
@@ -52,12 +53,12 @@ class LoginUserSerializer(serializers.Serializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = [ 'id', 'user', 'birth', 'gender', 'avatar', 'favourite_category', 'favourite_actor']
+        fields = ['id', 'user', 'birth', 'gender', 'avatar', 'favourite_category', 'favourite_actor']
 
 class FilmSerializer(serializers.ModelSerializer):
     class Meta:
         model = Film
-        fields = ['id','name', 'slug', 'description', 'actors', 'category', 'avatar', 'age_restriction', 'release_date']
+        fields = ['name', 'slug', 'description', 'actors', 'category', 'avatar', 'age_restriction', 'release_date']
 
 
 class FilmEpisodeSerializer(serializers.ModelSerializer):
@@ -73,12 +74,14 @@ class RateFilmSerializer(serializers.ModelSerializer):
 class RateFilmEpisodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = RateFilmEpisode
-        fields = ['id','user', 'film_episode', 'rate']
+        fields = ['rate']
+        read_only_fields = ['user', 'film_episode']
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['id','user', 'parent_comment', 'content', 'time']
+        fields = ['id', 'user', 'parent_comment', 'content', 'time']
+        read_only_fields = ['id', 'user', 'time']
 
 class CommentFilmSerializer(serializers.ModelSerializer):
     class Meta: 

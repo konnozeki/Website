@@ -54,7 +54,7 @@ class Film(models.Model):
     description = models.TextField()
     actors = models.ManyToManyField(Actor)
     category = models.ManyToManyField(Category)
-    avatar = models.ImageField()
+    avatar = models.ImageField(null=True, blank=True)
     age_restriction = models.IntegerField(null=False, choices=age_restrictions)
     release_date = models.DateField(null=False)
 
@@ -85,7 +85,7 @@ class RateFilmEpisode(models.Model):
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    parent_comment = models.ForeignKey(Film, null=True, on_delete=models.CASCADE)
+    parent_comment = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
     content = models.TextField(null=False)
     time = models.DateTimeField(null=False)
 
