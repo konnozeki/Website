@@ -1,6 +1,33 @@
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
+  display: block;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#id_work_days {
+  height: 44px;
+  border: none;
+  overflow: hidden;
+}
+
+#id_work_days::-moz-focus-inner {
+  border: 0;
+}
+
+#id_work_days:focus {
+  outline: none;
+}
+
+#id_work_days option {
+  width: 60px;
+  font-size: 1.2em;
+  padding: 10px 0;
+  text-align: center;
+  margin-right: 20px;
+  display: inline-block;
+  cursor: pointer;
+  border: rgb(204, 204, 0) solid 1px;
+  border-radius: 5px;
+  color: rgb(204, 204, 0);
+}

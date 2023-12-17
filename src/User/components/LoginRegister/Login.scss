@@ -27,8 +27,9 @@
 }
 
 .login form .ant-form-item-required {
-    padding-top: 10px;
+    // padding-top: 10 px;
     font-size: 16px; /* Set the font size to 20 pixels (adjust as needed) */
+    margin-top: 0px;
     color: white;
   }
 /* Additional styles for form elements (optional) */
@@ -64,6 +65,7 @@
 
 .ant-typography a {
     color: white;
+    text-decoration: underline;
 }
 .sign-up-now {
     font-size: 16px;

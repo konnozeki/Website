@@ -1,0 +1,24 @@
+.movie-detail-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(52, 51, 51);
+}
+
+.image-movie {
+    margin: 90px 10% 100px 200px
+}
+
+.detail-movie {
+    width: 500px
+}
+
+.detail {
+    margin-bottom: 20px;
+}
+
+.detail-infor {
+    background-color: grey;
+    color: white;
+    border: 2px solid white;
+}

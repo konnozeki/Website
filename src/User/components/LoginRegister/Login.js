@@ -114,7 +114,7 @@ function Login() {
             <Text>
               <p className='forgot-password' onClick={handleForgotPassword}>Forgot Password?</p>
             </Text>
-            <Text style={{paddingLeft: "10%"}}>
+            <Text style={{paddingLeft: "10%", color:"white"}}>
               New member? <a href="/Register" className='sign-up-now' onClick={handleRegister}>Sign up now</a>
           </Text>
           </Form.Item>

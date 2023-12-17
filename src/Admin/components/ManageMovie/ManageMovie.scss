@@ -1,0 +1,87 @@
+.manage-movie-container {
+    display: flex;
+    // flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    // }
+}
+
+.manage-search {
+    width: 40%;
+}
+
+.ant-input-search-large .ant-input-search-button {
+    height: 45px;
+}
+
+.movie-list {
+    display: flex;
+    // justify-content: center;
+    // align-items: center;
+    flex-wrap: wrap;
+    margin-top: 60px;
+    margin-left: 50px;
+    padding-left: 70px;
+    padding-right: 70px;
+}
+
+.movie-image {
+    border-radius: 10px;
+    border: 1x solid black;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+// .movie-image:hover {
+//     transform: scale(1.01);
+// }
+
+.ant-image-mask {
+    margin-right: 10px;
+    border-radius: 10px;
+}
+
+.ant-pagination .ant-pagination-item a {
+    color: white;
+}
+
+.anticon {
+    color: white;
+}
+
+
+/* YourComponent.css */
+.movie-container {
+    position: relative;
+    margin-right: 10px;
+    margin-top: 10px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.content {
+    position: absolute;
+    top: 80%;
+    left: 48%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+    color: white;
+    width: 230px;
+    height: 97px;
+}
+
+.movie-container:hover {
+    transform: scale(1.01);
+}
+
+.movie-container:hover .content {
+    color: white;
+    display: block;
+    width: 230px;
+    height: 97px;
+    background-color: transparent
+}

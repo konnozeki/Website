@@ -121,7 +121,7 @@ function Register() {
         </Form.Item>
         
         <Form.Item>
-          <Text style={{paddingLeft: "10%"}}>
+          <Text style={{paddingLeft: "10%", color:"white"}}>
             Have account? <a href="/Login" className='sign-in-now'>Sign in now</a>
           </Text>
         </Form.Item>
