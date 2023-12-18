@@ -7,19 +7,14 @@ import SearchBar from "./SearchBar";
 import Card from "../Home/Card";
  
 function Search() {
-    const filter = "TV"
-    const clickMovieHandler = () => {
-      
+    const [filter, setFilter] = useState("movie");
+    const clickName = () => {
+        setFilter("name")
     }
-    const clickOrderHandle = () => {
-
+    const clickFilter = () => {
+        setFilter("filter")
     }
-    const clickPeopleHandler = () => {
-        //in ra ket qua
-    }
-    const clickTVHandler = () => {
-        //in ra ket qua
-    }
+   
     const [ketQua, setKetQua] = useState('');
 
     const childToParent = (childdata) => {//loi
@@ -41,15 +36,15 @@ function Search() {
                       <form className="d-flex">
 
                           <select name="che-do-tim" id="id_che-do" multiple>
-                              <option onClick={clickMovieHandler}>Movie</option>
-                              <option onClick={clickTVHandler}>TV</option>
-                              <option onClick={clickPeopleHandler}>People</option>
+                             
+                              <option onClick={clickFilter}>Filter</option>
+                              <option onClick={clickName}>Name</option>
                           </select>
                       </form></div>
               
               <div className="row-1">
                   
-                      <SearchBar childToParent={childToParent} />
+                      <SearchBar childToParent={childToParent} filter={filter} />
                       <div className="kq">
                           {ketQua.length === 0 ? (
                               <p>No results found.</p>

@@ -4,7 +4,7 @@ import Multiselect from 'multiselect-react-dropdown';
 import { Button, Form, Input, Typography } from 'antd';
 import "./Search.scss"
 
-const SearchBar = ({ childToParent }) => {
+const SearchBar = ({ childToParent,filter}) => {
 
 
     const [theLoai, setTheLoai] = useState([]);
@@ -15,13 +15,13 @@ const SearchBar = ({ childToParent }) => {
 
 
     const onSelectOptions = (selectedList, selectedItem) => {
-        setTuKhoa([...tuKhoa, selectedItem]);
-        //setTuKhoa([selectedList]);
+   
+       
+        setTuKhoa(selectedList);
         console.log("da chon", {tuKhoa});
     };
     const onRemoveOptions = (selectedList, removedItem) => {
-        setTuKhoa(tuKhoa.slice(tuKhoa.indexOf(removedItem)));
-        
+        setTuKhoa(selectedList);
         console.log("da chon", { tuKhoa });
     };
  
@@ -44,6 +44,7 @@ const SearchBar = ({ childToParent }) => {
              //   getcountryname.push(resData[i].nicename);
            // }
             setTheLoai(getTenTheLoai);
+            
         }
         getTheLoai();
         
@@ -89,31 +90,51 @@ const SearchBar = ({ childToParent }) => {
 
             <div className="row">
                 <div className="col-sm-12">
-                    
 
+                
                 <form className="row g-3" method='post' onSubmit={(event) => { console.log(event) }}>
+                    {filter !== "name" && (<div className="col-md-5">
 
-                        <div className="col-md-5">
-                            
 
-                            <div className="text-dark">
-                                <Multiselect
+                        <div className="text-dark">
+                            <Multiselect
                                 isObject={false}
                                 options={theLoai}
-                                
-                                
+
+
                                 onRemove={onRemoveOptions}
-                                
+
                                 onSelect={onSelectOptions}
-                                selectedValues={tuKhoa}
+                                
                                 
                                 showCheckbox
-                                
-                                                     
-                               / >
 
-                            </div>
+
+                            />
+
+                        </div>
                     </div>
+                   
+                    )}  
+                    {filter === "name" && (<div className="col-md-">
+                        <Form.Item
+                            
+                            name="key"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your keyword!',
+                                },
+                            ]}
+                        >
+                            <Input type="keyword"
+                                value={tuKhoa}
+                                 />
+                        </Form.Item>
+                    </div>
+
+                    )}
+                        
                     <Button className='button-search' onClick={() => {
                        
                         

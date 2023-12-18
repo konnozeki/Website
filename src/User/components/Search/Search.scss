@@ -39,12 +39,12 @@
 }
 .d-flex {
     padding-top: 10%;
-    padding-bottom: 2%;
+    
     margin: 0 auto;
     display: block;
 }
 .d-flex-container {
-    padding-bottom: 2%;
+    
 
     
 }
@@ -53,9 +53,11 @@
     max-height: 80%;
     padding-top: 50px;
     padding-right: 5%;
-    
+  border-top-color:red;
+
     padding-left: 5%;
 }
+
 .kq {
     padding-top: 100px;
     padding-right: 5%;
@@ -145,4 +147,12 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+.col-md-6 {
+    height: 100px;
+}
+.ant-input {
+    font-size: 50px;
+    font-family: "Poppins", sans-serif;
 }
