@@ -17,7 +17,9 @@ function Home() {
     const renderListOfUserNames = (names) => {
         return names.map(name => (
             <div className="phim-theo-the-loai">
+                <div className="ten-the-loai">
                 <Category Category_Name={name.Category_Name} />
+                </div>
                 <List Category_Name={name.Category_Name} />
             </div>))
     }

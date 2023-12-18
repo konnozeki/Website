@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom"
 import { Button, Form, Input, Typography } from 'antd'
-import "./Card.scss"
+import "./BannerCard.scss"
 
-const Card = ({in4phim }) => {
+const BannerCard = ({in4phim }) => {
     const filmClickNavigate = useNavigate();
     const handleFilmClick = () => {
         filmClickNavigate('/' + {});
     }
     return (
-        <div className="card">
-            <div className="thumbnail-box" onClick={handleFilmClick}>
+        <div className="banner-card">
+            <div className="banner-thumbnail-box" onClick={handleFilmClick}>
                 <div>
                     <span>
-                        <img className='card-image' src={in4phim.Avatar} alt={in4phim.Name}></img>
+                        <img className='banner-card-image' src={in4phim.Avatar} alt={in4phim.Name}></img>
                     </span>
                 </div>
                     
@@ -28,4 +28,4 @@ const Card = ({in4phim }) => {
 
 
 
-export default Card
+export default BannerCard
