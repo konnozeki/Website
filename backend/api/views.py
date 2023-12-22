@@ -89,7 +89,7 @@ class UpdateDeleteCategoryView(generics.RetrieveUpdateDestroyAPIView):
         )
 
     def delete(self, request, *args, **kwargs):
-        category = get_object_or_404(Category, id=kwargs.get("pk"))
+        category = get_object_or_404(Category, slug=kwargs.get("category_slug"))
         category.delete()
         return JsonResponse(
             {"message": "Delete Category successful!"}, status=status.HTTP_200_OK
@@ -202,20 +202,17 @@ class UpdateDeleteActorView(generics.RetrieveUpdateDestroyAPIView):
         )
 
 
-# Class này tạo ra các Actor.
-class ListActorView(generics.ListAPIView):
-    serializer_class = ActorSerializer
-
-    def get_queryset(self):
-        return Actor.objects.all()
-
-
 class ActorInfoView(generics.RetrieveAPIView):
     serializer_class = ActorSerializer
 
     def get(self, request, *args, **kwargs):
-        actor = get_object_or_404(Actor, id=kwargs.get("pk"))
-        return JsonResponse({"actor": ActorSerializer(actor, context=self.get_serializer_context()).data})
+        actor_slug = self.kwargs["actor_slug"]
+        actor = get_object_or_404(Actor, slug=actor_slug)
+        films_with_actor = actor.film_set.all()
+        return JsonResponse({
+            "actor": ActorSerializer(actor, context=self.get_serializer_context()).data,
+            "films": FilmSerializer(films_with_actor, context=self.get_serializer_context(), many=True).data
+        })
 
 
 # Class này là class đăng ký
