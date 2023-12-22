@@ -1,49 +1,79 @@
+from collections.abc import Iterable
+from typing import Any
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+import os
+
 # Create your models here.
 
 
-gender_type = [{"M" , "Male"}, {"F" , "Female"}, {"O" , "Other"}]
+gender_type = [{"M", "Male"}, {"F", "Female"}, {"O", "Other"}]
 
 
 class Category(models.Model):
     def __str__(self):
-        return self.name # this 'name' field must be exist in your model. 
+        return self.name  # this 'name' field must be exist in your model.
+
     name = models.CharField(max_length=50, null=False, unique=True)
     description = models.TextField()
     slug = models.SlugField()
 
+
 class Country(models.Model):
     def __str__(self):
-        return self.country_name # this 'name' field must be exist in your model. 
+        return self.country_name  # this 'name' field must be exist in your model.
+
     country_name = models.CharField(max_length=250, null=False, blank=False)
     country_flag = models.URLField(null=False)
 
 
+def actor_avatar_path(instance, filename):
+    extension = filename.split(".")[-1]
+    path = "actors/{}.{}".format(instance.slug, extension)
+
+    if os.path.exists(os.path.join(settings.MEDIA_ROOT, path)):
+        os.remove(os.path.join(settings.MEDIA_ROOT, path))
+    return path
 
 
 class Actor(models.Model):
     def __str__(self):
-        return self.name # this 'name' field must be exist in your model. 
+        return self.name  # this 'name' field must be exist in your model.
+
     class Gender(models.TextChoices):
         MALE = "M"
         FEMALE = "F"
         OTHER = "O"
+
     name = models.CharField(max_length=50, blank=False, null=False, unique=True)
     description = models.TextField()
-    slug = models.SlugField()
+    slug = models.SlugField(null=True)
     gender = models.CharField(max_length=1, choices=Gender.choices, default="O")
-    country = models.ForeignKey(Country, null=False, blank=False, on_delete=models.CASCADE)
-    avatar = models.ImageField()
+    country = models.ForeignKey(
+        Country, null=False, blank=False, on_delete=models.CASCADE
+    )
+    avatar = models.ImageField(upload_to=actor_avatar_path)
+
+    def delete(self, *args, **kwargs):
+        path = self.avatar.path
+        super().delete(*args, **kwargs)
+        os.remove(path)
 
 
 class UserProfile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False, primary_key=True)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=False, null=False, primary_key=True
+    )
     birth = models.DateField(null=False, blank=False)
-    gender = models.CharField(max_length=6, choices=gender_type, null=False, blank=False, default="Other")
+    gender = models.CharField(
+        max_length=6, choices=gender_type, null=False, blank=False, default="Other"
+    )
     avatar = models.ImageField()
     favourite_category = models.ManyToManyField(Category)
     favourite_actor = models.ManyToManyField(Actor)
+
 
 age_restrictions = [(0, 0), (14, 14), (16, 16), (18, 18)]
 
@@ -69,10 +99,8 @@ class FilmEpisode(models.Model):
     description = models.TextField()
 
 
-
-
 class RateFilm(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     film = models.ForeignKey(Film, on_delete=models.CASCADE)
     rate = models.IntegerField(default=0, null=False)
 
@@ -85,7 +113,9 @@ class RateFilmEpisode(models.Model):
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    parent_comment = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
+    parent_comment = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.CASCADE
+    )
     content = models.TextField(null=False)
     time = models.DateTimeField(null=False)
 
@@ -122,9 +152,3 @@ class PlayListEpisode(models.Model):
     play_list = models.ForeignKey(PlayList, on_delete=models.CASCADE)
     film_episode = models.ForeignKey(FilmEpisode, on_delete=models.CASCADE)
     index = models.IntegerField(null=False)
-
-
-
-
-            
-
