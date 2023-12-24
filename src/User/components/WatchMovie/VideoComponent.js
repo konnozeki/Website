@@ -18,10 +18,10 @@ const VideoComponent = ({ EpisodeList, isVideoVisible, setVideoVisible }) => {
       <div>
           <h1 style={{ display: "block" }}>Xem phim</h1>
         </div>
-      <div style={{display: "block"}}>
+      <div style={{display: "block", height: "70vh"}}>
         <iframe
           width={"100%"}
-          height={"500vh"}
+          height={"100%"}
           src={Link}
           title="YouTube video player"
           frameBorder="0"

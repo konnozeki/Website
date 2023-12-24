@@ -9,27 +9,20 @@ import CommentComponent from "./CommentComponent";
 import FavoriteButton from "./FavoriteButton";
 import TrailerButton from "./TrailerButton";
 import VideoComponent from "./VideoComponent";
-
+import CommentDropdown from "./CommentDropdown";
 import {
   Rate,
   Divider,
   Space,
   Tag,
   Button,
-  Image,
-  Carousel,
-  Typography,
-  Anchor,
-  Modal,
-  notification,
-  message,
+  Input,
+  Avatar,
 } from "antd";
 import {
   CaretRightOutlined,
-  HeartOutlined,
-  HeartFilled,
-  LineOutlined,
 } from "@ant-design/icons";
+import { Comment } from "@ant-design/compatible";
 import "./Watch.scss";
 
 import posterimage from "./img.jpg";
@@ -52,12 +45,12 @@ const Watch = () => {
       "https://www.youtube.com/embed/t06RUxPbp_c?si=Jl5SOTapUl3ywXbN",
     Poster: posterimage,
     Actors: [
-      { name: "Tobey Maguire", image: image1 },
-      { name: "Willem Dafoe", image: image2 },
-      { name: "Kirsten Dunst", image: image3 },
-      { name: "James Franco", image: image4 },
-      { name: "Cliff Robertson", image: image5 },
-      { name: "Rosemary Harris", image: image6 },
+      { name: "Tobey Maguire", image: image1, link: "./Actor" },
+      { name: "Willem Dafoe", image: image2, link: "./Actor" },
+      { name: "Kirsten Dunst", image: image3, link: "./Actor" },
+      { name: "James Franco", image: image4, link: "./Actor" },
+      { name: "Cliff Robertson", image: image5, link: "./Actor" },
+      { name: "Rosemary Harris", image: image6, link: "./Actor" },
       // Thêm các diễn viên khác theo cùng mẫu
     ],
     Episode_List: [
@@ -79,6 +72,79 @@ const Watch = () => {
       },
     ],
   };
+
+  //dữ liệu comment
+  const commentFilm = {
+    comments: [
+      {
+        id: 1,
+        user: {
+          name: "NguyenVanA",
+          avatar: "",
+        },
+        parent_comment: null,
+        content: "Bộ phim hay quá!",
+        time: "2023-12-24T12:30:45Z",
+        likes: 10,
+      },
+      {
+        id: 2,
+        user: {
+          name: "TranThiB",
+          avatar: "",
+        },
+        parent_comment: 1,
+        content: "Đúng là rất hay, tôi đã xem 2 lần rồi!",
+        time: "2023-12-24T13:15:20Z",
+        likes: 5,
+      },
+      {
+        id: 3,
+        user: {
+          name: "LeVanC",
+          avatar: "",
+        },
+        parent_comment: 1,
+        content: "Mình thấy nó không hợp khẩu vị mình lắm",
+        time: "2023-12-24T14:05:10Z",
+        likes: 2,
+      },
+      {
+        id: 4,
+        user: {
+          name: "NguyenVanD",
+          avatar: "",
+        },
+        parent_comment: null,
+        content: "Lần thứ 3 sẽ còn thú vị hơn đó!",
+        time: "2023-12-24T15:00:55Z",
+        likes: 8,
+      },
+      {
+        id: 5,
+        user: {
+          name: "NguyenVanD",
+          avatar: "",
+        },
+        parent_comment: 4,
+        content: "Lần thứ 3 sẽ còn thú vị hơn đó!",
+        time: "2023-12-24T15:00:55Z",
+        likes: 3,
+      },
+      {
+        id: 6,
+        user: {
+          name: "NguyenVanD",
+          avatar: "",
+        },
+        parent_comment: 4,
+        content: "Lần thứ 3 sẽ còn thú vị hơn đó!",
+        time: "2023-12-24T15:00:55Z",
+        likes: 1,
+      },
+    ],
+  };
+
   const [isVideoVisible, setIsVideoVisible] = useState(false);
   //của nút watch movie
   const myRef = useRef(null);
@@ -90,15 +156,53 @@ const Watch = () => {
       node.scrollIntoView({ behavior: "smooth" });
     }
   };
-  
 
   const [rating, setRating] = useState(movie.Ratings);
 
   const handleRateChange = (value) => {
     // Xử lý sự kiện khi người dùng thay đổi đánh giá
-    console.log('New rating:', value);
+    console.log("New rating:", value);
     setRating(value);
   };
+
+  //của nút addcomment
+  const [replyToID, setReplyToID] = useState(null);
+  const [comments, setComments] = useState(commentFilm.comments);
+  const [commentValue, setCommentValue] = useState("");
+  const handleAddCommentButtonClick = (CommentContent) => {
+    if (CommentContent !== "") {
+      newComment.content = CommentContent;
+      newComment.id = comments.length + 1;
+      newComment.parent_comment = replyToID;
+      if (replyToID === null) {
+        setComments([newComment, ...comments]);
+        setReplyToID(null);
+      } else {
+        setComments([...comments, newComment]);
+      }
+      setCommentValue("");
+      setReplyToID(null);
+      console.log(CommentContent);
+    }
+  };
+  const newComment = {
+    id: null,
+    user: {
+      name: "YourName",
+      avatar: "YourAvatarUrl",
+    },
+    parent_comment: null,
+    content: null,
+    time: "fghfghgfh",
+    likes: 0,
+  };
+
+  //của comment dropdown
+  const [selectedEpisode, setSelectedEpisode] = useState(null);
+  const handleSetSelectedEpisode = (episode) => {
+    setSelectedEpisode(episode);
+  };
+
   return (
     <div>
       <div className="info-container">
@@ -108,8 +212,12 @@ const Watch = () => {
         <div className="movie-info">
           <h1>{movie.Title}</h1>
           <div>
-            <Rate allowHalf defaultValue={movie.Ratings} onChange={handleRateChange}/>
-            <span style={{ marginLeft: '10px' }}>{movie.Ratings}</span>
+            <Rate
+              allowHalf
+              defaultValue={movie.Ratings}
+              onChange={handleRateChange}
+            />
+            <span style={{ marginLeft: "10px" }}>{movie.Ratings}</span>
           </div>
           {movie.Genre.map((Genre, index) => (
             <Tag key={index} color="red">
@@ -143,7 +251,6 @@ const Watch = () => {
       <br />
       <br />
       <div className="watch-container" ref={myRef}>
-        
         <VideoComponent
           EpisodeList={movie.Episode_List}
           isVideoVisible={isVideoVisible}
@@ -160,13 +267,38 @@ const Watch = () => {
       <br />
 
       <div className="CommentSection">
-        <h1>USER COMMENTS</h1>
-        <CommentComponent>
-          <CommentComponent></CommentComponent>
-          <CommentComponent></CommentComponent>
-          <CommentComponent></CommentComponent>
-          <CommentComponent></CommentComponent>
-        </CommentComponent>
+        <h1 style={{ display: "block" }}>USER COMMENTS</h1>
+
+        <CommentDropdown movie={movie} />
+      
+        <Comment
+          avatar={<Avatar src="" />}
+          content={
+            <Input.TextArea
+              value={commentValue}
+              onChange={(e) => setCommentValue(e.target.value)}
+              style={{ width: "100%" }}
+              rows={4}
+            />
+          }
+        />
+        <Button
+          onClick={() => handleAddCommentButtonClick(commentValue)}
+          loading={0}
+          style={{ marginLeft: "44px" }}
+        >
+          Add Comment
+        </Button>
+        <br />
+        <br />
+
+        <CommentComponent
+          key={comments.id}
+          comments={comments}
+          setReplyToID={setReplyToID}
+          handleAddCommentButtonClick={handleAddCommentButtonClick}
+        />
+        
       </div>
     </div>
   );

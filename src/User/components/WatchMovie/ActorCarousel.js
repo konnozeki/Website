@@ -1,11 +1,12 @@
 import React from 'react';
 import { Carousel, Image } from 'antd';
 
+
 const ActorCarousel = ({ actors }) => {
   return (
-    <Carousel arrows autoplay style={{ height: "10%", width: "40vw" }} slidesToShow={4}>
+    <Carousel autoplay style={{ height: "10%", width: "40vw" }} slidesToShow={4} >
       {actors.map((actor, index) => (
-        <div
+        <a
           key={index}
           style={{
             height: "20%",
@@ -14,6 +15,8 @@ const ActorCarousel = ({ actors }) => {
             alignItems: "center",
             overflow: "hidden",
           }}
+          href={actor.link} target="_blank" rel="noopener noreferrer"
+
         >
           <Image
             src={actor.image}
@@ -24,8 +27,11 @@ const ActorCarousel = ({ actors }) => {
               alignItems:"center"
             }}
           />
-          <span>{actor.name}</span>
-        </div>
+          <span
+          style={{
+            color: "black", // Đặt màu chữ là đen
+          }}>{actor.name}</span>
+        </a>
       ))}
     </Carousel>
   );

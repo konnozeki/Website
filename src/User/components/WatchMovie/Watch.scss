@@ -1,9 +1,4 @@
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+
 
 
 .info-container {
@@ -11,6 +6,7 @@
   padding: 20px;
   margin-left: 10%;
   margin-right: 10%;
+  
 }
 
 .movie-poster-container {
@@ -44,9 +40,9 @@
   display: inline-block;
 }
 .CommentSection {
-  display: flex;
   padding: 20px;
   margin-left: 10%;
   margin-right: 10%;
-  display: inline-block;
+  display: block;
+  width: "100%";
 }
