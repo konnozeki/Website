@@ -1,0 +1,20 @@
+.banner-card {
+    display: inline-block;
+    width: 350px;
+    height: 500px;
+    position: relative;
+    .thumbnail-box {
+        cursor: pointer; /* Set cursor to pointer on hover */
+    }
+}
+
+.banner-card-image {
+    height: 500px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.banner-thumbnail-box {
+    display: block;
+    height: 400px;
+}

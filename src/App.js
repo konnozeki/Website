@@ -1,5 +1,7 @@
 
 import Home from "./User/components/Home/Home";
+import List from "./User/components/Home/List";
+import Card from "./User/components/Home/Card";
 import Movies from "./User/components/Movies/Movies"
 import TVSeries from "./User/components/TVSeries/TVSeries";
 import Watch from "./User/components/WatchMovie/Watch"
