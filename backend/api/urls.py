@@ -24,23 +24,21 @@ urlpatterns = [
     ),
     path("actor/", ListActorView.as_view(), name="list-actor"),
     path("actor/<slug:actor_slug>/", ActorInfoView.as_view(), name="actor-info"),
+    # Test xong.
+    path("admin/category/", ListCreateCategoryView.as_view()),
+    path("admin/category/<slug:category_slug>/", UpdateDeleteCategoryView.as_view()),
+    path("category/", ListCategoryView.as_view()),
+    path("category/<slug:category_slug>/", CategoryInfoView.as_view(), name="category-info"),
+
+    
     # Test xong GET và DELETE
     path("admin/user_list/", ListUserView.as_view()),
     path("admin/user_list/<int:pk>/", UpdateDeleteUserAdminView.as_view()),
     path("user/<int:pk>/", UpdateDeleteUserView.as_view()),
     # Test xong.
-    path("admin/category/", ListCreateCategoryView.as_view()),
-    path("admin/category/<slug:category_slug>/", UpdateDeleteCategoryView.as_view()),
-    path("category/", ListCategoryView.as_view()),
-    # Test xong.
     path("film/", ListFilmView.as_view()),
     path("admin/film/", ListCreateFilmView.as_view()),
     path("admin/film/<slug:film_slug>/", UpdateDeleteFilmView.as_view()),
-    path(
-        "actors/<slug:actor_slug>/film/",
-        ListFilmWithActorView.as_view(),
-        name="list-films-with-actor",
-    ),
     # Test xong.
     path(
         "film/<slug:film_slug>/episodes/",

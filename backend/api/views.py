@@ -31,16 +31,6 @@ class ListUserGenericView(generics.ListAPIView):
         return JsonResponse(user_serializer.data, safe=False)
 
 
-class ListCategoryView(generics.ListAPIView):
-    model = Category
-    serializer_class = CategorySerializer
-
-    def get(self, request, *args, **kwargs):
-        categories = Category.objects.all()
-        categories_serializer = CategorySerializer(categories, many=True)
-        return JsonResponse(categories_serializer.data, safe=False)
-
-
 class ListCreateCategoryView(generics.ListCreateAPIView):
     model = Category
     serializer_class = CategorySerializer
@@ -96,6 +86,29 @@ class UpdateDeleteCategoryView(generics.RetrieveUpdateDestroyAPIView):
         )
 
 
+class ListCategoryView(generics.ListAPIView):
+    model = Category
+    serializer_class = CategorySerializer
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        categories_serializer = CategorySerializer(categories, many=True)
+        return JsonResponse(categories_serializer.data, safe=False)
+
+
+class CategoryInfoView(generics.RetrieveAPIView):
+    serializer_class = ActorSerializer
+
+    def get(self, request, *args, **kwargs):
+        category_slug = self.kwargs["category_slug"]
+        category = get_object_or_404(Category, slug=category_slug)
+        films_with_category = category.film_set.all()
+        return JsonResponse({
+            "category": CategorySerializer(category, context=self.get_serializer_context()).data,
+            "films": FilmSerializer(films_with_category, context=self.get_serializer_context(), many=True).data
+        })
+
+
 # class này đưa ra các đất nước và quốc kỳ.
 class ListCountryView(generics.ListAPIView):
     model = Country
@@ -133,18 +146,6 @@ class ListActorInFilmView(generics.ListAPIView):
             return Response(
                 {"message": "Film not found"}, status=status.HTTP_404_NOT_FOUND
             )
-
-
-# Class này đưa ra các bộ phim mà diễn viên này đã đóng
-class ListFilmWithActorView(generics.ListAPIView):
-    serializer_class = FilmSerializer
-
-    def get_queryset(self):
-        actor_slug = self.kwargs["actor_slug"]
-        actor = Actor.objects.get(slug=actor_slug)
-        films_with_actor = actor.film_set.all()
-        return films_with_actor
-
 
 # Class này tạo ra các Actor.
 class ListCreateActorView(generics.ListCreateAPIView):
