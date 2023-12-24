@@ -1,7 +1,5 @@
 
 import Home from "./User/components/Home/Home";
-import List from "./User/components/Home/List";
-import Card from "./User/components/Home/Card";
 import Movies from "./User/components/Movies/Movies"
 import TVSeries from "./User/components/TVSeries/TVSeries";
 import Watch from "./User/components/WatchMovie/Watch"
@@ -34,13 +32,13 @@ function App() {
           <Route path="/Login" exact element={<Login />}></Route>
           <Route path="/Register" exact element={<Register />}></Route>
           <Route path="/ForgotPassword" exact element={<ForgotPassWord />}></Route>
-          <Route exact element={<Login />}></Route>
 
         </Routes>
 
         <div>
           <Nav></Nav>
           <Routes>
+
             <Route path='/Home' exact element={<Home />}></Route>
             <Route path='/Watch' exact element={<Watch />}></Route>
             <Route path='/Movies' exact element={<Movies />}></Route>

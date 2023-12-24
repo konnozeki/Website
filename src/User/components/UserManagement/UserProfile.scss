@@ -1,12 +1,13 @@
 .Profile-container {
     background-color: black;
     display: flex;
-    height: 100vh;
+    // height: 100vh;
 }
 
 .Profile {
     color: white;
     background-color: rgb(95, 90, 90);
+    margin-bottom: 10%;
     margin-top: 5%;
     margin-left: 26%;
     padding: 20px;
@@ -16,7 +17,7 @@
     // align-items: center;
     // justify-content: center;
     width: 700px;
-    height: 600px;
+    height: 100%;
     border: 2px solid black;
     /* Add a 2px solid border with a light gray color */
     border-radius: 20px;
@@ -35,11 +36,11 @@
 .information {
     background-color: rgb(197, 182, 182);
     margin-left: 40px;
-    width: 570px;
+    width: auto;
     border-radius: 20px;
     padding-left: 20px;
     padding-top: 10px;
-    margin-top: 20px;
+    margin-top: 20%;
 }
 
 .ant-descriptions-item-label {
