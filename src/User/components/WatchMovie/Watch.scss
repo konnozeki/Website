@@ -1,6 +1,48 @@
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
+
+
+
+.info-container {
+  display: flex;
+  padding: 20px;
+  margin-left: 10%;
+  margin-right: 10%;
+  
+}
+
+.movie-poster-container {
+  flex: 0 0 40%;
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  object-fit: cover;
+}
+.movie-poster {
+  object-fit: cover;
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 2%;
+}
+.movie-info {
+  flex: 0 0 60%;
+}
+
+.watch-container {
+  display: 'block';
+  padding: 20px;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+.suggestions {
+  display: flex;
+  padding: 20px;
+  margin-left: 10%;
+  margin-right: 10%;
+  display: inline-block;
+}
+.CommentSection {
+  padding: 20px;
+  margin-left: 10%;
+  margin-right: 10%;
+  display: block;
+  width: "100%";
+}
