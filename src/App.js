@@ -15,6 +15,7 @@ import AddEspisode from "./Admin/components/AddEspisode/AddEspisode";
 import ManageMovie from "./Admin/components/ManageMovie/ManageMovie";
 import ManageUser from "./Admin/components/ManageUser/ManageUser";
 import AdminProfile from "./Admin/components/AdminProfile/AdminProfile";
+import Actor from "./User/components/Actor/Actor";
 import {BrowserRouter, Routes, Route} from "react-router-dom"
 import Nav from "./User/components/Nav/Nav";
 import "./App.scss"
@@ -38,6 +39,7 @@ function App() {
               <Route path='/Movies' exact element={<Movies />}></Route>
               <Route path='/TvSeries' exact element={<TVSeries />}></Route>
               <Route path='/Search' exact element={<Search />}></Route>   
+              <Route path="/Actor" exact element={<Actor />}></Route>
               <Route path="/User/Profile" exact element={<UserProfile />}></Route>
               <Route path="/User/Favourite" exact element={<UserFavourite />}></Route>
               <Route path="/Admin" exact element={<AdminHome />}></Route>
