@@ -45,12 +45,12 @@ const Watch = () => {
       "https://www.youtube.com/embed/t06RUxPbp_c?si=Jl5SOTapUl3ywXbN",
     Poster: posterimage,
     Actors: [
-      { name: "Tobey Maguire", image: image1, link: "./Actor" },
-      { name: "Willem Dafoe", image: image2, link: "./Actor" },
-      { name: "Kirsten Dunst", image: image3, link: "./Actor" },
-      { name: "James Franco", image: image4, link: "./Actor" },
-      { name: "Cliff Robertson", image: image5, link: "./Actor" },
-      { name: "Rosemary Harris", image: image6, link: "./Actor" },
+      { name: "Tobey Maguire", image: image1, link: "/Actor/fos" },
+      { name: "Willem Dafoe", image: image2, link: "/Actor/fos" },
+      { name: "Kirsten Dunst", image: image3, link: "/Actor/fos" },
+      { name: "James Franco", image: image4, link: "/Actor/fos" },
+      { name: "Cliff Robertson", image: image5, link: "/Actor/fos" },
+      { name: "Rosemary Harris", image: image6, link: "/Actor/fos" },
       // Thêm các diễn viên khác theo cùng mẫu
     ],
     Episode_List: [

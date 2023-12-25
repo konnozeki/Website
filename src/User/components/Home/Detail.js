@@ -13,7 +13,7 @@ const Detail = ({ in4phim }) => {
     return (
         <div className="detail">
             
-            <h1 className="detail-row-0">Day la ten phim ten phim ten ten ten ten ten ten ten ten ten ten ten ten ten ten ten  </h1>
+            <h1 className="detail-row-0">{in4phim.Name}</h1>
             <div class="focus-info-tag">
                 <span class="score-info-number">9.5</span>   
                 <div class="broken-line"></div>

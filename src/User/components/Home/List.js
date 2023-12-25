@@ -17,11 +17,11 @@ const List = ({ Category_Name }) => {
         { id: 5, Avatar: "	https://i.pinimg.com/564x/53/18/94/53189487f23a8de96411f6deb0e647cc.jpg", Name: "Gundala Gundala Gundala " },
     ];
     const renderListOfPhim = (phims) => {
-        return phims.map(boPhim => (
-            
-                <Card in4phim={boPhim} />
-            ))
-    }
+        // Take only the first 8 elements
+        const slicedPhims = phims.slice(0, 8);
+    
+        return slicedPhims.map((boPhim) => <Card in4phim={boPhim} />);
+      };
     return (
         <div className="list">
             <div className="card_container">

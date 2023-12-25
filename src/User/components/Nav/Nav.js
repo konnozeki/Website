@@ -10,7 +10,6 @@ const {TabPane} = Tabs;
 const tabs = [
     { key: 'Home', title: 'Home', label:"Home",},
     { key: 'Movies', title: 'Movies', label:"Movies"},
-    { key: 'TVSeries', title: 'TVSeries', label:"TVSeries"},
     { key: 'Search', title: 'Search', label:"Search"},
 
 ];

@@ -6,7 +6,9 @@ import "./BannerCard.scss"
 const BannerCard = ({in4phim }) => {
     const filmClickNavigate = useNavigate();
     const handleFilmClick = () => {
-        filmClickNavigate('/' + {});
+        const filmId = in4phim.id;
+        // Navigate to the new page with a full reload
+        window.location.href = `/Watch/${filmId}slug`;
     }
     return (
         <div className="banner-card">
