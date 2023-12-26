@@ -1,8 +1,16 @@
 .List-container {
-  display: block;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  max-height: 80%;
   overflow: scroll;
+  padding-top: 50px;
 
+}
+
+.phim-theo-the-loai {
+
+  padding-top: 2.5%;
+
+  padding-left: 7.5%;
+  padding-right: 7.5%;
+  display: block;
+  position: center;
 }

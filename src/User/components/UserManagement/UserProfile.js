@@ -14,16 +14,21 @@ const items = [
   },
   {
     key: '2',
+    label: 'Role',
+    children: 'User',
+  },
+  {
+    key: '3',
     label: 'Email',
     children: 'Vuong12345@gmail.com',
   },
   {
-    key: '3',
+    key: '4',
     label: 'Username',
     children: 'Vuong',
   },
   {
-    key: '4',
+    key: '5',
     label: 'DOB',
     children: '2003/1/1',
   },
@@ -60,8 +65,13 @@ function UserProfile() {
         <div className='Profile'>
 
           <div className='title'><img src={userIcon} className='user-avatar' alt=''></img>
-            <Button className='edit-profile' onClick={showModalProfile}> Edit Profile</Button>
           </div>
+
+          <Descriptions className="information" column={1}
+            contentStyle={{ fontSize: 20, marginTop: 20, marginRight: 20 }}
+            labelStyle={{ fontSize: 20, marginTop: 20 }} title="" items={items} />
+
+          <Button className='change-password' onClick={showModalProfile}> Edit Profile</Button>
           <Modal title="Edit Profile" open={isModalProfileOpen} onOk={handleOk} onCancel={handleCancel} style={{ marginTop: 100, marginLeft: "28%" }}>
             <Form
               name="basic"
@@ -126,9 +136,7 @@ function UserProfile() {
               </Form.Item>
             </Form>
           </Modal>
-          <Descriptions className="information" column={1}
-            contentStyle={{ fontSize: 20, marginTop: 20, marginRight: 20 }}
-            labelStyle={{ fontSize: 20, marginTop: 20 }} title="" items={items} />
+
 
           <Button className='change-password' onClick={showModalChangePW}>Change Password</Button>
           <Modal title="Change Password" open={isModalChangePWOpen} onOk={handleOkChangePW} onCancel={handleCancelChangePW} style={{ marginTop: 80, marginLeft: "28%" }}>
@@ -156,7 +164,6 @@ function UserProfile() {
                   },
                 ]}>
                 <Input.Password
-                  placeholder="input password"
                   style={{ marginLeft: 20 }}
                   iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                 />
@@ -170,7 +177,6 @@ function UserProfile() {
                   },
                 ]}>
                 <Input.Password
-                  placeholder="input password"
                   style={{ marginLeft: 20 }}
                   iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                 />

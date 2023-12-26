@@ -2,8 +2,8 @@
 //Có thể xóa người dùng
 // UserList.js
 import { DeleteFilled, SearchOutlined } from '@ant-design/icons';
-import React, { useRef } from 'react';
-import { Button, Input, Space, Table, message, Popconfirm, ConfigProvider } from 'antd';
+import React, { useRef, useState } from 'react';
+import { Button, Input, Space, Table, message, Popconfirm, ConfigProvider, Select } from 'antd';
 import "./ManageUser.scss"
 
 const onConfirm = (e) => {
@@ -18,15 +18,35 @@ const generateData = (count) => {
       name: `Student ${i}`,
       sex: Math.random() < 0.5 ? "Male" : "Female",
       birth: "20/10/2023",
-      address: "123 Cau giay"
+      role: Math.random() < 0.5 ? "Admin" : "User"
     });
   }
 
   return data;
 };
 
-const data = generateData(21);
 const ManageUser = () => {
+  const [data, setData] = useState(generateData(21));
+
+  const handleRoleChange = (value, record) => {
+    // Find the index of the updated record in the data array
+    const dataIndex = data.findIndex(item => item.key === record.key);
+
+    // Create a new copy of the data array
+    const newData = [...data];
+
+    // Update the role of the corresponding record
+    newData[dataIndex] = {
+      ...newData[dataIndex],
+      role: value,
+    };
+
+    // Update the state with the modified data
+    setData(newData);
+
+    // Log the updated record
+    console.log('Updated Record:', newData[dataIndex]);
+  };
   const searchInput = useRef(null);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -112,7 +132,7 @@ const ManageUser = () => {
       dataIndex: 'sex',
       key: 'sex',
       width: '20%',
-      sorter: (a, b) => a.sex.localCompare(b.sex)
+      sorter: (a, b) => a.sex.localeCompare(b.sex)
     },
     {
       title: 'Birthday',
@@ -122,12 +142,32 @@ const ManageUser = () => {
 
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-      ...getColumnSearchProps('address'),
-      sorter: (a, b) => a.address.length - b.address.length,
-      sortDirections: ['descend', 'ascend'],
+      title: 'Role',
+      dataIndex: 'role',
+      key: 'role',
+      width: "10%",
+      render: (text, record) => (
+        <Select
+          defaultValue={record.role}
+          style={{
+            width: 120,
+          }}
+          onChange={(value) => handleRoleChange(value, record)}
+          bordered={false}
+          options={[
+            {
+              value: 'Admin',
+              label: 'Admin',
+            },
+            {
+              value: 'User',
+              label: 'User',
+            },
+
+          ]}
+        />
+      ),
+      sorter: (a, b) => a.role.localeCompare(b.role)
     },
     {
       title: "Delete",

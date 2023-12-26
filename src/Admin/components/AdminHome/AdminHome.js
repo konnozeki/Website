@@ -1,5 +1,5 @@
 //Hiển thị các chức năng cho Admin
-import React, { useRef } from 'react';
+import React from 'react';
 import { Row, Col } from 'antd';
 import "./AdminHome.scss"
 
@@ -19,11 +19,6 @@ const AdminHome = () => {
             </div>
           </Col>
           <Col span={6}>
-            <div className='feature' onClick={() => window.location.href = "./Admin/AddEspisode"}>
-              <a href="Admin/AddEspisode" style={{ color: "white" }}>Add Espisode</a>
-            </div>
-          </Col>
-          <Col span={6}>
             <div className='feature' onClick={() => window.location.href = "./Admin/ManageMovie"}>
               <a href="Admin/ManageMovie" style={{ color: "white" }}>Manage Movie</a>
             </div>
@@ -38,13 +33,7 @@ const AdminHome = () => {
               <a href="Admin/ManageUser" style={{ color: "white" }}>Manage User</a>
             </div>
           </Col>
-          <Col span={6}>
-            <div className='feature' onClick={() => window.location.href = "./Admin/DeleteMovie"}>
-              <a href="Admin/DeleteMovie" style={{ color: "white" }}>Delete Movie</a>
-            </div>
-          </Col> <Col span={6}>
-            <div className='feature'>Feature 6</div>
-          </Col>
+
         </Row>
       </div>
     </div>

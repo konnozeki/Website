@@ -1,33 +1,155 @@
 .container {
-  display: block;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-#id_work_days {
-  height: 44px;
-  border: none;
-  overflow: hidden;
+#id_che-do {
+    height: 30px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+    border: none;
+    overflow: hidden;
 }
 
-#id_work_days::-moz-focus-inner {
-  border: 0;
+#id_che-do::-moz-focus-inner {
+    border: 0;
 }
 
-#id_work_days:focus {
-  outline: none;
+#id_che-do:focus {
+    outline: none;
 }
 
-#id_work_days option {
-  width: 60px;
-  font-size: 1.2em;
-  padding: 10px 0;
-  text-align: center;
-  margin-right: 20px;
-  display: inline-block;
-  cursor: pointer;
-  border: rgb(204, 204, 0) solid 1px;
-  border-radius: 5px;
-  color: rgb(204, 204, 0);
+#id_che-do option {
+    height: 30px;
+    width: 60px;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 3px 0;
+    text-align: center;
+    margin-right: 5px;
+    display: inline-block;
+    cursor: pointer;
+    border: rgb(204, 204, 0) solid 1px;
+    border-radius: 5px;
+    color: azure;
+    background-color: red;
+}
+
+.d-flex {
+    padding-top: 10%;
+
+    margin: 0 auto;
+    display: block;
+}
+
+.d-flex-container {}
+
+.row-1 {
+    max-height: 80%;
+    padding-top: 15px;
+    padding-right: 5%;
+    border-top-color: red;
+
+    padding-left: 5%;
+}
+
+.kq {
+    padding-top: 30px;
+    padding-right: 5%;
+    padding-left: 5%;
+}
+
+.button-order {
+    height: 30px;
+    width: 60px;
+    font-size: 12px;
+    padding: 5px 0;
+    text-align: center;
+    margin-right: 5px;
+    display: flex;
+    cursor: pointer;
+    border: rgb(204, 204, 0) solid 1px;
+    border-radius: 5px;
+    color: azure;
+    background-color: red;
+}
+
+.button-search {
+    height: 30px;
+    width: 60px;
+    font-size: 12px;
+    padding: 0 0 0 0;
+    text-align: center;
+    margin-top: 5px;
+    margin: 0 auto;
+    display: block;
+    cursor: pointer;
+    border: rgb(204, 204, 0) solid 1px;
+    border-radius: 5px;
+    color: azure;
+    background-color: red;
+}
+
+.search-wrapper.searchWrapper {
+    border-bottom: 1px solid red;
+    min-height: 30px;
+
+}
+
+.chip.false {
+    background: red;
+
+    height: 24px;
+
+    font-size: 15px;
+}
+
+.multiselectContainer {
+    color: red;
+    height: 30px;
+}
+
+.optionContainer {
+    height: 300px;
+
+}
+
+.option {
+    height: 30px;
+    font-size: 15px;
+
+
+
+}
+
+#search_input.searchBox {
+    font-size: 15px;
+}
+
+.icon_cancel.closeIcon {
+    max-width: 100%;
+    height: auto;
+}
+
+.ant-btn css-dev-only-do-not-override-qgg3xn {
+    margin-top: 15px;
+}
+
+.kq-container {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.col-md-6 {
+    height: 30px;
+}
+
+.ant-input {
+    font-size: 15px;
+    font-family: "Poppins", sans-serif;
 }

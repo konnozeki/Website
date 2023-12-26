@@ -1,50 +1,51 @@
 //Thêm phim, xóa phim
 import React, { useState } from 'react'
-import { Input, Form, InputNumber, Tooltip, Button, Upload, Select, Space } from 'antd'
-import { UploadOutlined, PoweroffOutlined } from '@ant-design/icons';
+import { Input, Form, InputNumber, Button, Select, Space } from 'antd'
 import "./AddMovie.scss"
 
-const NumericInput = (props) => {
-  const { value, onChange } = props;
-  const handleChange = (e) => {
-    const { value: inputValue } = e.target;
-    const reg = /^-?\d*(\.\d*)?$/;
-    if (reg.test(inputValue) || inputValue === '' || inputValue === '-') {
-      onChange(inputValue);
-    }
-  };
-
-  // '.' at the end or only '-' in the input box.
-  const handleBlur = () => {
-    let valueTemp = value;
-    if (value.charAt(value.length - 1) === '.' || value === '-') {
-      valueTemp = value.slice(0, -1);
-    }
-    onChange(valueTemp.replace(/0*(\d+)/, '$1'));
-  };
-  const title = "Input a number"
-  return (
-    <Tooltip trigger={['focus']} title={title} placement="topLeft" overlayClassName="numeric-input">
-      <Input
-        {...props}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        placeholder="Year"
-        maxLength={16}
-      />
-    </Tooltip>
-  );
-};
 const typeMovie = [
   {
-    label: "Hanh dong",
-    value: "Hanh dong"
+    label: "Action",
+    value: "Action"
   },
   {
-    label: "Tinh cam",
-    value: "Tinh cam"
+    label: "Romance",
+    value: "Romance"
+  },
+  {
+    label: "Comedy",
+    value: "Comedy"
+  },
+  {
+    label: "Science Fiction",
+    value: "Science Fiction"
+  },
+  {
+    label: "Adventure",
+    value: "Adventure"
+  },
+  {
+    label: "Horror",
+    value: "Horror"
+  },
+  {
+    label: "Thriller",
+    value: "Thriller"
+  },
+  {
+    label: "Family",
+    value: "Family"
+  },
+  {
+    label: "Drama",
+    value: "Drama"
+  },
+  {
+    label: "School",
+    value: "School"
   }
 ];
+
 const handleChangeTypeMovie = (value) => {
   console.log(`selected ${value}`);
 };
@@ -113,14 +114,8 @@ function AddMovie() {
                 },
               ]}
             >
-              <NumericInput
-                style={{
-                  width: 120,
-                  height: 40,
-                }}
-                value={year}
-                onChange={setYear}
-              />
+
+              <InputNumber style={{ width: 120, height: 40, fontSize: 16 }} placeholder="Year" onChange={setYear} value={year} />
 
             </Form.Item>
             <Form.Item
@@ -136,10 +131,10 @@ function AddMovie() {
               >
                 <Select
                   mode="multiple"
+                  size="large"
                   allowClear
                   style={{
                     width: 400,
-                    height: 40,
                     borderRadius: 10,
                   }}
                   placeholder="Select type movie"
@@ -149,17 +144,7 @@ function AddMovie() {
               </Space>
             </Form.Item>
 
-            {/* <Form.Item
-              name="Description"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input Description!',
-                },
-              ]}
-            >
 
-            </Form.Item> */}
             <TextArea rows={5} placeholder='Description' required={true} className='input-description' style={{ width: 400 }} />
 
 
@@ -174,19 +159,35 @@ function AddMovie() {
               <Input type="text" placeholder='Name Actors' className='input-infor-movie' />
             </Form.Item>
 
-            <Upload>
-              <Button icon={<UploadOutlined />} style={{ height: 40 }}>Upload Movie Image</Button>
-            </Upload>
+            <Form.Item
+              name="trailer"
+              rules={[
+                {
+                  required: true,
+                  message: "Link trailer youtube."
+                }
+              ]}
+            >
+              <Input type="text" placeholder='Link trailer' className='input-infor-movie' />
+            </Form.Item>
+
+            {/* <Upload>
+              <Button icon={<UploadOutlined style={{ color: "red" }} />} style={{ height: 40 }}>Upload Movie Image</Button>
+            </Upload> */}
+            <Input style={{ width: 400, height: 40, marginBottom: 20 }} placeholder='Link picture movie' size='medium' />
+
           </Form>
         </div>
 
         <div className='upload'>
-          <Upload maxCount={1}>
-            <Button icon={<UploadOutlined />} style={{ marginTop: 10, height: 40 }}>Upload Movie poster</Button>
-          </Upload>
-          <Upload>
-            <Button icon={<UploadOutlined />} style={{ marginTop: 307, height: 40 }}>Upload Actors</Button>
-          </Upload>
+          {/* <Upload maxCount={1}>
+            <Button icon={<UploadOutlined style={{ color: "red" }} />} style={{ marginTop: 10, height: 40 }}>Upload Movie poster</Button>
+          </Upload> */}
+          <Input style={{ width: 400, marginTop: 10, height: 40 }} placeholder='Link picture movie poster' size='medium' />
+
+          {/* <Upload>
+            <Button icon={<UploadOutlined style={{ color: "red" }} />} style={{ marginTop: 307, height: 40 }}>Upload Actors</Button>
+          </Upload> */}
 
         </div>
       </div>
