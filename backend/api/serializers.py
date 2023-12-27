@@ -27,14 +27,21 @@ from django.utils.text import slugify
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        read_only_fields = ["name", "slug"]
         fields = ["id", "name", "description", "slug"]
+
+    def create(self, validated_data):
+        validated_data["slug"] = slugify(validated_data["name"])
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["slug"] = slugify(validated_data["name"])
+        return super().update(instance, validated_data)
 
 
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
-        fields = ["id", "country_name", "country_flag"]
+        fields = ["id", "name", "flag", "slug"]
 
 
 class ActorSerializer(serializers.ModelSerializer):
@@ -43,26 +50,12 @@ class ActorSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description", "slug", "gender", "country", "avatar"]
 
     def create(self, validated_data):
-        actor = Actor.objects.create(
-            name=validated_data["name"],
-            slug=slugify(validated_data["name"]),
-            description=validated_data["description"],
-            gender=validated_data["gender"],
-            country=validated_data["country"],
-            avatar=validated_data["avatar"],
-        )
-        actor.save()
-        return actor
+        validated_data["slug"] = slugify(validated_data["name"])
+        return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        instance.name = validated_data["name"]
-        instance.slug = slugify(validated_data["name"])
-        instance.description = validated_data["description"]
-        instance.gender = validated_data["gender"]
-        instance.country = validated_data["country"]
-        instance.avatar = validated_data["avatar"]
-        instance.save()
-        return instance
+        validated_data["slug"] = slugify(validated_data["name"])
+        return super().update(instance, validated_data)
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -113,15 +106,25 @@ class FilmSerializer(serializers.ModelSerializer):
     class Meta:
         model = Film
         fields = [
+            "id",
             "name",
             "slug",
             "description",
             "actors",
-            "category",
-            "avatar",
+            "categories",
+            "country",
+            "poster",
             "age_restriction",
             "release_date",
         ]
+
+    def create(self, validated_data):
+        validated_data["slug"] = slugify(validated_data["name"])
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["slug"] = slugify(validated_data["name"])
+        return super().update(instance, validated_data)
 
 
 class FilmEpisodeSerializer(serializers.ModelSerializer):
@@ -132,11 +135,33 @@ class FilmEpisodeSerializer(serializers.ModelSerializer):
             "film",
             "slug",
             "episode",
-            "avatar",
+            "poster",
             "release_date",
             "link",
             "description",
         ]
+
+    def validate_episode(self, value):
+        film_episodes = FilmEpisode.objects.filter(film__id=self.initial_data["film"])
+        print(self.initial_data)
+        for film_episode in film_episodes:
+            if self.instance and self.instance == film_episode:
+                continue
+            if film_episode.episode == value:
+                raise serializers.ValidationError("Episode is exists")
+        return value
+
+    def create(self, validated_data):
+        validated_data["slug"] = "{}-{}".format(
+            validated_data["film"].slug, validated_data["episode"]
+        )
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["slug"] = "{}-{}".format(
+            validated_data["film"].slug, validated_data["episode"]
+        )
+        return super().update(instance, validated_data)
 
 
 class RateFilmSerializer(serializers.ModelSerializer):
@@ -148,8 +173,7 @@ class RateFilmSerializer(serializers.ModelSerializer):
 class RateFilmEpisodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = RateFilmEpisode
-        fields = ["rate"]
-        read_only_fields = ["user", "film_episode"]
+        fields = ["id", "rate", "user", "film_episode"]
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -218,8 +242,21 @@ class PlayListSerializer(serializers.ModelSerializer):
         model = PlayList
         fields = ["id", "user", "name", "slug"]
 
+    def create(self, validated_data):
+        validated_data["slug"] = slugify(
+            "{}-{}".format(validated_data["user"].username, validated_data["name"])
+        )
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["slug"] = slugify(
+            "{}-{}".format(validated_data["user"].username, validated_data["name"])
+        )
+        return super().update(instance, validated_data)
+
 
 class PlayListEpisodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayListEpisode
         fields = ["id", "play_list", "film_episode", "index"]
+        depth=1

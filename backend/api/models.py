@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.validators import MinValueValidator, MaxValueValidator
 import os
 
 # Create your models here.
@@ -18,15 +19,16 @@ class Category(models.Model):
 
     name = models.CharField(max_length=50, null=False, unique=True)
     description = models.TextField()
-    slug = models.SlugField()
+    slug = models.SlugField(null=True)
 
 
 class Country(models.Model):
     def __str__(self):
-        return self.country_name  # this 'name' field must be exist in your model.
+        return self.name  # this 'name' field must be exist in your model.
 
-    country_name = models.CharField(max_length=250, null=False, blank=False)
-    country_flag = models.URLField(null=False)
+    name = models.CharField(max_length=250, null=False, blank=False)
+    flag = models.URLField(null=False)
+    slug = models.SlugField(null=True)
 
 
 def actor_avatar_path(instance, filename):
@@ -78,22 +80,42 @@ class UserProfile(models.Model):
 age_restrictions = [(0, 0), (14, 14), (16, 16), (18, 18)]
 
 
+def film_poster_path(instance, filename):
+    extension = filename.split(".")[-1]
+    path = "films/{}.{}".format(instance.slug, extension)
+
+    if os.path.exists(os.path.join(settings.MEDIA_ROOT, path)):
+        os.remove(os.path.join(settings.MEDIA_ROOT, path))
+    return path
+
+
 class Film(models.Model):
-    name = models.CharField(max_length=250, null=False, primary_key=True)
-    slug = models.SlugField()
+    name = models.CharField(max_length=250, null=False, unique=True)
+    slug = models.SlugField(null=True)
     description = models.TextField()
     actors = models.ManyToManyField(Actor)
-    category = models.ManyToManyField(Category)
-    avatar = models.ImageField(null=True, blank=True)
+    categories = models.ManyToManyField(Category)
+    country = models.ForeignKey(
+        Country, null=True, blank=False, on_delete=models.CASCADE
+    )
+    poster = models.ImageField(null=True, blank=True, upload_to=film_poster_path)
     age_restriction = models.IntegerField(null=False, choices=age_restrictions)
     release_date = models.DateField(null=False)
 
 
+def film_episode_poster_path(instance, filename):
+    extension = filename.split(".")[-1]
+    path = "film_episodes/{}.{}".format(instance.slug, extension)
+    if os.path.exists(os.path.join(settings.MEDIA_ROOT, path)):
+        os.remove(os.path.join(settings.MEDIA_ROOT, path))
+    return path
+
+
 class FilmEpisode(models.Model):
     film = models.ForeignKey(Film, on_delete=models.CASCADE)
-    slug = models.SlugField()
+    slug = models.SlugField(null=True)
     episode = models.IntegerField(null=False)
-    avatar = models.ImageField(null=True)
+    poster = models.ImageField(upload_to=film_episode_poster_path, null=True)
     release_date = models.DateField(null=False)
     link = models.URLField(null=False)
     description = models.TextField()
@@ -102,13 +124,21 @@ class FilmEpisode(models.Model):
 class RateFilm(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     film = models.ForeignKey(Film, on_delete=models.CASCADE)
-    rate = models.IntegerField(default=0, null=False)
+    rate = models.IntegerField(
+        default=0,
+        null=False,
+        validators=[MinValueValidator(0), MaxValueValidator(5)],
+    )
 
 
 class RateFilmEpisode(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     film_episode = models.ForeignKey(FilmEpisode, on_delete=models.CASCADE)
-    rate = models.IntegerField(default=0, null=False)
+    rate = models.IntegerField(
+        default=0,
+        null=False,
+        validators=[MinValueValidator(0), MaxValueValidator(5)],
+    )
 
 
 class Comment(models.Model):
@@ -139,13 +169,13 @@ class History(models.Model):
 class Tracking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     film_episode = models.ForeignKey(FilmEpisode, on_delete=models.CASCADE)
-    time = models.TimeField(default=0, null=False)
+    time = models.IntegerField(default=0, null=False)
 
 
 class PlayList(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=250, null=False)
-    slug = models.SlugField()
+    slug = models.SlugField(null=True)
 
 
 class PlayListEpisode(models.Model):

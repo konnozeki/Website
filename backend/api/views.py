@@ -65,7 +65,7 @@ class UpdateDeleteCategoryView(generics.RetrieveUpdateDestroyAPIView):
         return Category.objects.all()
 
     def put(self, request, *args, **kwargs):
-        category = get_object_or_404(Category, slug=kwargs.get("category_slug"))
+        category = get_object_or_404(Category, pk=kwargs.get("pk"))
         serializer = CategorySerializer(category, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -79,7 +79,7 @@ class UpdateDeleteCategoryView(generics.RetrieveUpdateDestroyAPIView):
         )
 
     def delete(self, request, *args, **kwargs):
-        category = get_object_or_404(Category, slug=kwargs.get("category_slug"))
+        category = get_object_or_404(Category, pk=kwargs.get("pk"))
         category.delete()
         return JsonResponse(
             {"message": "Delete Category successful!"}, status=status.HTTP_200_OK
@@ -103,10 +103,18 @@ class CategoryInfoView(generics.RetrieveAPIView):
         category_slug = self.kwargs["category_slug"]
         category = get_object_or_404(Category, slug=category_slug)
         films_with_category = category.film_set.all()
-        return JsonResponse({
-            "category": CategorySerializer(category, context=self.get_serializer_context()).data,
-            "films": FilmSerializer(films_with_category, context=self.get_serializer_context(), many=True).data
-        })
+        return JsonResponse(
+            {
+                "category": CategorySerializer(
+                    category, context=self.get_serializer_context()
+                ).data,
+                "films": FilmSerializer(
+                    films_with_category,
+                    context=self.get_serializer_context(),
+                    many=True,
+                ).data,
+            }
+        )
 
 
 # class này đưa ra các đất nước và quốc kỳ.
@@ -120,6 +128,19 @@ class ListCountryView(generics.ListAPIView):
         return JsonResponse(countries_serializer.data, safe=False)
 
 
+class ListActorInCountryView(generics.ListAPIView):
+    model = Actor
+    serializer_class = ActorSerializer
+
+    def get(self, request, *args, **kwargs):
+        country = get_object_or_404(Country, slug=kwargs.get("country_slug"))
+        actors = Actor.objects.filter(country=country)
+        return JsonResponse(
+            {"actors": ActorSerializer(actors, many=True).data},
+            status=status.HTTP_200_OK,
+        )
+
+
 # Class này đưa ra danh sách tất cả các diễn viên
 class ListActorView(generics.ListAPIView):
     model = Actor
@@ -127,25 +148,11 @@ class ListActorView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         actors = Actor.objects.all()
-        actors_serializer = ActorSerializer(actors, many=True)
-        return JsonResponse(actors_serializer.data, safe=False)
+        return JsonResponse(
+            {"actors": ActorSerializer(actors, many=True).data},
+            status=status.HTTP_200_OK,
+        )
 
-
-# Class này đưa ra danh sách diễn viên mà bộ phim này có
-class ListActorInFilmView(generics.ListAPIView):
-    serializer_class = ActorSerializer
-
-    def get(self, request, *args, **kwargs):
-        film_slug = self.kwargs["film_slug"]
-        try:
-            film = Film.objects.get(slug=film_slug)
-            actors_in_film = film.actors.all()
-            serialized_actors = self.serializer_class(actors_in_film, many=True).data
-            return Response(serialized_actors, status=status.HTTP_200_OK)
-        except Film.DoesNotExist:
-            return Response(
-                {"message": "Film not found"}, status=status.HTTP_404_NOT_FOUND
-            )
 
 # Class này tạo ra các Actor.
 class ListCreateActorView(generics.ListCreateAPIView):
@@ -157,6 +164,7 @@ class ListCreateActorView(generics.ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer = ActorSerializer(data=request.data)
+        print(request.data)
         print(serializer.is_valid())
         if serializer.is_valid():
             serializer.save()
@@ -210,10 +218,16 @@ class ActorInfoView(generics.RetrieveAPIView):
         actor_slug = self.kwargs["actor_slug"]
         actor = get_object_or_404(Actor, slug=actor_slug)
         films_with_actor = actor.film_set.all()
-        return JsonResponse({
-            "actor": ActorSerializer(actor, context=self.get_serializer_context()).data,
-            "films": FilmSerializer(films_with_actor, context=self.get_serializer_context(), many=True).data
-        })
+        return JsonResponse(
+            {
+                "actor": ActorSerializer(
+                    actor, context=self.get_serializer_context()
+                ).data,
+                "films": FilmSerializer(
+                    films_with_actor, context=self.get_serializer_context(), many=True
+                ).data,
+            }
+        )
 
 
 # Class này là class đăng ký
@@ -335,14 +349,42 @@ class ListFilmView(generics.ListAPIView):
         return JsonResponse(film_serializer.data, safe=False)
 
 
-# Class này đưa ra tất cả phim với thể loại được cho
-class ListFilmByCategoryView(generics.ListAPIView):
+class FilmInfoView(generics.RetrieveAPIView):
+    model = Film
     serializer_class = FilmSerializer
 
-    def get_queryset(self):
-        category_slug = self.kwargs["category_slug"]
-        films_by_category = Film.objects.filter(category__slug=category_slug)
-        return films_by_category
+    def get(self, request, *args, **kwargs):
+        film_slug = self.kwargs["film_slug"]
+        film = get_object_or_404(Film, slug=film_slug)
+        average_rate = RateFilm.objects.filter(film=film).aggregate(Avg("rate"))[
+            "rate__avg"
+        ]
+        if average_rate is None:
+            average_rate = 0
+
+        return JsonResponse(
+            {
+                "film": FilmSerializer(
+                    film, context=self.get_serializer_context()
+                ).data,
+                "actors": ActorSerializer(
+                    film.actors, context=self.get_serializer_context(), many=True
+                ).data,
+                "categories": CategorySerializer(
+                    film.categories, context=self.get_serializer_context(), many=True
+                ).data,
+                "country": CountrySerializer(
+                    film.country, context=self.get_serializer_context()
+                ).data,
+                "average_rate": average_rate,
+                "film_episodes": FilmEpisodeSerializer(
+                    FilmEpisode.objects.filter(film=film),
+                    context=self.get_serializer_context(),
+                    many=True,
+                ).data,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 # Class này đưa ra tất cả phim và tạo ra phim từ phía Admin.
@@ -378,14 +420,14 @@ class UpdateDeleteFilmView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAdminUser]
 
     def delete(self, request, *args, **kwargs):
-        film = get_object_or_404(Film, slug=kwargs.get("film_slug"))
+        film = get_object_or_404(Film, pk=kwargs.get("pk"))
         film.delete()
         return JsonResponse(
             {"message": "Delete film successful!"}, status=status.HTTP_200_OK
         )
 
     def put(self, request, *args, **kwargs):
-        film = get_object_or_404(Film, slug=kwargs.get("film_slug"))
+        film = get_object_or_404(Film, pk=kwargs.get("pk"))
         serializer = FilmSerializer(film, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -398,15 +440,6 @@ class UpdateDeleteFilmView(generics.RetrieveUpdateDestroyAPIView):
         )
 
 
-# class này đưa ra danh sách các tập phim trong một bộ phim
-class ListFilmEpisodeView(generics.ListAPIView):
-    serializer_class = FilmEpisodeSerializer
-
-    def get_queryset(self):
-        film_slug = self.kwargs["film_slug"]
-        return FilmEpisode.objects.filter(film__slug=film_slug)
-
-
 # class này đưa ra danh sách các tập phim trong một bộ phim và tạo ra tập phim mới
 class ListCreateFilmEpisodeView(generics.ListCreateAPIView):
     model = FilmEpisode
@@ -414,10 +447,12 @@ class ListCreateFilmEpisodeView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAdminUser]
 
     def get_queryset(self):
-        film_slug = self.kwargs["film_slug"]
-        return FilmEpisode.objects.filter(film__slug=film_slug)
+        pk = self.kwargs["pk"]
+        return FilmEpisode.objects.filter(film__pk=pk)
 
     def post(self, request, *args, **kwargs):
+        data = request.data
+        data["film"] = kwargs.get("pk")
         serializer = FilmEpisodeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -438,14 +473,20 @@ class UpdateDeleteFilmEpisodeView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FilmEpisodeSerializer
 
     def delete(self, request, *args, **kwargs):
-        film_episode = self.get_object()
+        film_episode = get_object_or_404(
+            FilmEpisode, pk=kwargs.get("pk"), film__pk=kwargs.get("film_pk")
+        )
         film_episode.delete()
         return JsonResponse(
             {"message": "Delete Episode successful!"}, status=status.HTTP_200_OK
         )
 
     def update(self, request, *args, **kwargs):
-        film_episode = self.get_object()
+        data = request.data
+        data["film"] = kwargs.get("film_pk")
+        film_episode = get_object_or_404(
+            FilmEpisode, pk=kwargs.get("pk"), film__pk=kwargs.get("film_pk")
+        )
         serializer = self.get_serializer(film_episode, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -462,28 +503,47 @@ class UpdateDeleteFilmEpisodeView(generics.RetrieveUpdateDestroyAPIView):
         return FilmEpisode.objects.all()
 
 
-# class này đưa ra trung bình rate của bộ phim.
-class AverageRateFilmView(generics.RetrieveAPIView):
-    serializer_class = RateFilmSerializer
+class FilmEpisodeInfoView(generics.RetrieveAPIView):
+    model = FilmEpisode
+    serializer_class = FilmEpisodeSerializer
 
     def get(self, request, *args, **kwargs):
-        film_slug = kwargs.get("film_slug")
-        film = get_object_or_404(Film, slug=film_slug)
-
-        average_rate = RateFilm.objects.filter(film=film).aggregate(Avg("rate"))[
-            "rate__avg"
-        ]
-
-        if average_rate is not None:
-            response_data = {"film_slug": film_slug, "average_rate": average_rate}
-            return JsonResponse(response_data, status=status.HTTP_200_OK)
+        film_slug = self.kwargs["film_slug"]
+        film_episode_slug = self.kwargs["film_episode_slug"]
+        film_episode = get_object_or_404(
+            FilmEpisode, slug=film_episode_slug, film__slug=film_slug
+        )
+        if self.request.user.username == "":
+            if film_episode.film.age_restriction != 0:
+                return JsonResponse(
+                    {"message": "Sorry, content is age-rstriction"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
+            try:
+                user_profile = UserProfile.objects.get(user=self.request.user)
+                delta = datetime.now().date() - user_profile.birth
+            except UserProfile.DoesNotExist:
+                delta = 0
+            if delta // 365 < film_episode.film.age_restriction:
+                return JsonResponse(
+                    {"message": "Sorry, content is age-rstriction"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        average_rate = RateFilmEpisode.objects.filter(
+            film_episode=film_episode
+        ).aggregate(Avg("rate"))["rate__avg"]
+        if average_rate is None:
+            average_rate = 0
 
         return JsonResponse(
             {
-                "message": "No ratings available for the specified film",
-                "film_slug": film_slug,
+                "film_episode": FilmEpisodeSerializer(
+                    film_episode, context=self.get_serializer_context()
+                ).data,
+                "average_rate": average_rate,
             },
-            status=status.HTTP_404_NOT_FOUND,
+            status=status.HTTP_200_OK,
         )
 
 
@@ -492,70 +552,26 @@ class CreateRateFilmView(generics.CreateAPIView):
     serializer_class = RateFilmSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        film_slug = self.kwargs["film_slug"]
-        film = get_object_or_404(Film, slug=film_slug)
+    def post(self, request, *args, **kwargs):
+        data = dict()
+        data["rate"] = request.data["rate"]
         user = self.request.user
-
+        film = get_object_or_404(Film, slug=self.kwargs["film_slug"])
+        data["user"] = user.pk
+        data["film"] = film.pk
+        serializer = RateFilmSerializer(data=data)
         existing_rate = RateFilm.objects.filter(user=user, film=film).first()
         if existing_rate:
             serializer.instance = existing_rate
-        else:
-            serializer.save(user=user, film=film)
-
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(
+                {"message": "Create a new Rate Film successful!"},
+                status=status.HTTP_201_CREATED,
+            )
         return JsonResponse(
-            {"message": "Create rating successful!"}, status=status.HTTP_201_CREATED
-        )
-
-
-# class này update và delete rate cho bộ phim
-class UpdateDeleteRateFilmView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = RateFilmSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        film_slug = self.kwargs["film_slug"]
-        user = self.request.user
-        return RateFilm.objects.filter(user=user, film__slug=film_slug)
-
-    def perform_destroy(self, instance):
-        instance.delete()
-        return JsonResponse(
-            {"message": "Delete rating successful!"}, status=status.HTTP_200_OK
-        )
-
-    def perform_update(self, serializer):
-        serializer.save()
-        return JsonResponse(
-            {"message": "Update rating successful!"}, status=status.HTTP_200_OK
-        )
-
-
-# Class này đưa ra rate trung bình của tập phim
-class AverageRateFilmEpisodeView(generics.RetrieveAPIView):
-    serializer_class = RateFilmEpisodeSerializer
-
-    def get(self, request, *args, **kwargs):
-        film_episode_slug = kwargs.get("film_episode_slug")
-        film_episode = get_object_or_404(FilmEpisode, slug=film_episode_slug)
-
-        average_rate = RateFilmEpisode.objects.filter(
-            film_episode=film_episode
-        ).aggregate(Avg("rate"))["rate__avg"]
-
-        if average_rate is not None:
-            response_data = {
-                "film_episode_slug": film_episode_slug,
-                "average_rate": average_rate,
-            }
-            return JsonResponse(response_data, status=status.HTTP_200_OK)
-
-        return JsonResponse(
-            {
-                "message": "No ratings available for the specified film episode",
-                "film_episode_slug": film_episode_slug,
-            },
-            status=status.HTTP_404_NOT_FOUND,
+            {"message": "Create a new Rate Film unsuccessful!"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 
@@ -564,50 +580,32 @@ class CreateRateFilmEpisodeView(generics.CreateAPIView):
     serializer_class = RateFilmEpisodeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        film_slug = self.kwargs["film_slug"]
-        film_episode_slug = self.kwargs["film_episode_slug"]
-
-        film = get_object_or_404(Film, slug=film_slug)
-        film_episode = get_object_or_404(FilmEpisode, film=film, slug=film_episode_slug)
-
+    def post(self, request, *args, **kwargs):
+        data = dict()
+        data["rate"] = request.data["rate"]
         user = self.request.user
-
+        film_episode = get_object_or_404(
+            FilmEpisode,
+            film__slug=self.kwargs["film_slug"],
+            slug=self.kwargs["film_episode_slug"],
+        )
+        data["user"] = user.pk
+        data["film_episode"] = film_episode.pk
+        serializer = RateFilmEpisodeSerializer(data=data)
         existing_rate = RateFilmEpisode.objects.filter(
             user=user, film_episode=film_episode
         ).first()
         if existing_rate:
             serializer.instance = existing_rate
-        else:
-            serializer.save(user=user, film_episode=film_episode)
-
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(
+                {"message": "Create a new Rate Film Episode successful!"},
+                status=status.HTTP_201_CREATED,
+            )
         return JsonResponse(
-            {"message": "Create rating successful!"}, status=status.HTTP_201_CREATED
-        )
-
-
-# Class này update và delete rate của tập phim
-class UpdateDeleteRateFilmEpisodeView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = RateFilmEpisodeSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self):
-        film_episode_slug = self.kwargs["film_episode_slug"]
-        user = self.request.user
-        return get_object_or_404(
-            RateFilmEpisode, user=user, film_episode__slug=film_episode_slug
-        )
-
-    def perform_destroy(self, instance):
-        instance.delete()
-        return JsonResponse(
-            {"message": "Delete rating successful!"}, status=status.HTTP_200_OK
-        )
-
-    def perform_update(self, serializer):
-        serializer.save()
-        return JsonResponse(
-            {"message": "Update rating successful!"}, status=status.HTTP_200_OK
+            {"message": "Create a new Rate Film Episode unsuccessful!"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 
@@ -632,30 +630,29 @@ class CreateCommentForFilmView(generics.CreateAPIView):
         film_slug = self.kwargs["film_slug"]
         film = get_object_or_404(Film, slug=film_slug)
         user = self.request.user
+        data = dict()
+        data["content"] = request.data["content"]
+        parent_comment = None
+        if "parent_comment" in request.data:
+            data["parent_comment"] = request.data["parent_comment"]
+            parent_comment = get_object_or_404(
+                Comment, pk=request.data["parent_comment"]
+            )
 
-        # Manually set user and time fields
-        request.data["user"] = user.id
-        request.data["time"] = datetime.now()
+        data["user"] = user.id
+        data["time"] = datetime.now()
 
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-
-        # Create a Comment instance
         comment = Comment.objects.create(
             user=user,
             time=datetime.now(),
-            content=request.data.get("content"),
-            parent_comment=request.data.get("parent_comment"),
+            content=data.get("content"),
+            parent_comment=parent_comment,
         )
-
-        # Create a CommentFilm instance to associate the comment with the film
         CommentFilm.objects.create(comment=comment, film=film)
-
-        headers = self.get_success_headers(serializer.data)
         return JsonResponse(
-            {"message": "Create comment successful!"},
-            status=status.HTTP_201_CREATED,
-            headers=headers,
+            {"message": "Create comment successful!"}, status=status.HTTP_201_CREATED
         )
 
 
@@ -664,26 +661,28 @@ class UpdateDeleteCommentForFilmView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        film_slug = self.kwargs["film_slug"]
-        user = self.request.user
-        return Comment.objects.filter(pk=self.kwargs["pk"], user=user)
-
-    def perform_destroy(self, instance):
-        instance.delete()
+    def delete(self, request, *args, **kwargs):
+        comment = get_object_or_404(
+            Comment, user=self.request.user, pk=kwargs.get("pk")
+        )
+        comment.delete()
         return JsonResponse(
-            {"message": "Delete comment successful!"}, status=status.HTTP_200_OK
+            {"message": "Delete film successful!"}, status=status.HTTP_200_OK
         )
 
-    def perform_update(self, serializer):
-        # Manually set user and time fields
-        user = self.request.user
-        serializer.validated_data["user"] = user
-        serializer.validated_data["time"] = datetime.now()
-
-        serializer.save()
+    def put(self, request, *args, **kwargs):
+        comment = get_object_or_404(
+            Comment, pk=kwargs.get("pk"), user=self.request.user
+        )
+        serializer = CommentSerializer(comment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(
+                {"message": "Update Comment successful!"}, status=status.HTTP_200_OK
+            )
         return JsonResponse(
-            {"message": "Update comment successful!"}, status=status.HTTP_200_OK
+            {"message": "Update Comment unsuccessful!"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 
@@ -692,12 +691,13 @@ class ListCommentsForFilmEpisodeView(generics.ListAPIView):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        film_slug = self.kwargs["film_slug"]
-        film_episode_slug = self.kwargs["film_episode_slug"]
-        film = get_object_or_404(Film, slug=film_slug)
-        film_episode = get_object_or_404(FilmEpisode, film=film, slug=film_episode_slug)
+        film_episode = get_object_or_404(
+            FilmEpisode,
+            film__slug=self.kwargs["film_slug"],
+            slug=self.kwargs["film_episode_slug"],
+        )
         comment_ids = CommentFilmEpisode.objects.filter(
-            film_episode__slug=film_episode_slug
+            film_episode=film_episode
         ).values_list("comment_id", flat=True)
         return Comment.objects.filter(id__in=comment_ids)
 
@@ -707,61 +707,322 @@ class CreateCommentForFilmEpisodeView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        film_slug = self.kwargs["film_slug"]
-        film_episode_slug = self.kwargs["film_episode_slug"]
-        film = get_object_or_404(Film, slug=film_slug)
-        film_episode = get_object_or_404(FilmEpisode, film=film, slug=film_episode_slug)
+        film_episode = get_object_or_404(
+            FilmEpisode,
+            film__slug=self.kwargs["film_slug"],
+            slug=self.kwargs["film_episode_slug"],
+        )
         user = self.request.user
+        data = dict()
+        data["content"] = request.data["content"]
+        parent_comment = None
+        if "parent_comment" in request.data:
+            data["parent_comment"] = request.data["parent_comment"]
+            parent_comment = get_object_or_404(
+                Comment, pk=request.data["parent_comment"]
+            )
 
-        # Manually set user and time fields
-        request.data["user"] = user.id
-        request.data["time"] = datetime.now()
+        data["user"] = user.id
+        data["time"] = datetime.now()
 
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-
-        # Create a Comment instance
         comment = Comment.objects.create(
             user=user,
             time=datetime.now(),
-            content=request.data.get("content"),
-            parent_comment=request.data.get("parent_comment"),
+            content=data.get("content"),
+            parent_comment=parent_comment,
         )
-
-        # Create a CommentFilm instance to associate the comment with the film
         CommentFilmEpisode.objects.create(comment=comment, film_episode=film_episode)
-
-        headers = self.get_success_headers(serializer.data)
         return JsonResponse(
-            {"message": "Create comment successful!"},
-            status=status.HTTP_201_CREATED,
-            headers=headers,
+            {"message": "Create comment successful!"}, status=status.HTTP_201_CREATED
         )
 
 
-# class này update và delete các comment trong một bộ phim
-class UpdateDeleteCommentForFilmView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = CommentSerializer
+class ListCreateHistoryView(generics.ListCreateAPIView):
+    model = History
+    serializer_class = HistorySerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        film_slug = self.kwargs["film_slug"]
-        user = self.request.user
-        return Comment.objects.filter(pk=self.kwargs["pk"], user=user)
+    def get(self, request, *args, **kwargs):
+        histories = History.objects.filter(user=self.request.user)
+        history_serializer = HistorySerializer(histories, many=True)
+        return JsonResponse(history_serializer.data, safe=False)
 
-    def perform_destroy(self, instance):
-        instance.delete()
+    def create(self, request, *args, **kwargs):
+        data = dict()
+        data["user"] = self.request.user.pk
+        film_episode = get_object_or_404(FilmEpisode, slug=request.data["film_episode"])
+        data["film_episode"] = film_episode.pk
+        data["time"] = datetime.now()
+        history = History.objects.filter(
+            user=self.request.user,
+            film_episode=film_episode,
+            time__date=data["time"].date(),
+        ).first()
+        serializer = HistorySerializer(history, data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(
+                {"message": "Create a new History successful!"},
+                status=status.HTTP_201_CREATED,
+            )
+
         return JsonResponse(
-            {"message": "Delete comment successful!"}, status=status.HTTP_200_OK
+            {
+                "message": "Create a new History unsuccessful!",
+            },
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
-    def perform_update(self, serializer):
-        # Manually set user and time fields
-        user = self.request.user
-        serializer.validated_data["user"] = user
-        serializer.validated_data["time"] = datetime.now()
 
-        serializer.save()
+class DeleteHistoryView(generics.DestroyAPIView):
+    model = History
+    serializer_class = History
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        film_episode = get_object_or_404(
+            FilmEpisode, slug=kwargs.get("film_episode_slug")
+        )
+        histories = History.objects.filter(
+            user=self.request.user, film_episode=film_episode
+        )
+        for history in histories:
+            history.delete()
         return JsonResponse(
-            {"message": "Update comment successful!"}, status=status.HTTP_200_OK
+            {"message": "Delete Episode successful!"}, status=status.HTTP_200_OK
+        )
+
+
+class CreateTrackingView(generics.CreateAPIView):
+    model = Tracking
+    serializer_class = TrackingSerializer
+
+    def create(self, request, *args, **kwargs):
+        data = dict()
+        data["user"] = self.request.user.pk
+        film_episode = get_object_or_404(
+            FilmEpisode, slug=request.data["film_episode_slug"]
+        )
+        data["film_episode"] = film_episode.pk
+        data["time"] = request.data["time"]
+        tracking = Tracking.objects.filter(
+            user=self.request.user,
+            film_episode=film_episode,
+        ).first()
+        serializer = TrackingSerializer(tracking, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(
+                {"message": "Create a new Tracking successful!"},
+                status=status.HTTP_201_CREATED,
+            )
+        return JsonResponse(
+            {"message": "Create a new Tracking unsuccessful!"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class ListCreatePlayListView(generics.ListCreateAPIView):
+    model = PlayList
+    serializer_class = PlayListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        play_lists = PlayList.objects.filter(user=self.request.user)
+        play_list_serializer = PlayListSerializer(play_lists, many=True)
+        return JsonResponse(play_list_serializer.data, safe=False)
+
+    def create(self, request, *args, **kwargs):
+        data = dict()
+        data["user"] = self.request.user.pk
+        data["name"] = request.data["name"]
+        serializer = PlayListSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(
+                {"message": "Create a new Play List successful!"},
+                status=status.HTTP_201_CREATED,
+            )
+
+        return JsonResponse(
+            {"message": "Create a new Play List unsuccessful!"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class RetrieveUpdateDeletePlayListView(generics.RetrieveUpdateDestroyAPIView):
+    model = PlayList
+    serializer_class = PlayListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        play_list = get_object_or_404(
+            PlayList, user=self.request.user, slug=kwargs.get("playlist_slug")
+        )
+        play_list_episodes = PlayListEpisode.objects.filter(
+            play_list=play_list
+        ).order_by("index")
+        return JsonResponse(
+            {
+                "play_list": PlayListSerializer(
+                    play_list, context=self.get_serializer_context()
+                ).data,
+                "episodes": PlayListEpisodeSerializer(
+                    play_list_episodes, context=self.get_serializer_context(), many=True
+                ).data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, *args, **kwargs):
+        playlist = get_object_or_404(
+            PlayList, user=self.request.user, slug=kwargs.get("playlist_slug")
+        )
+        playlist.delete()
+        return JsonResponse(
+            {"message": "Delete Play List successful!"}, status=status.HTTP_200_OK
+        )
+
+    def put(self, request, *args, **kwargs):
+        playlist = get_object_or_404(
+            PlayList, user=self.request.user, slug=kwargs.get("playlist_slug")
+        )
+        data = dict()
+        data["user"] = self.request.user.pk
+        data["name"] = request.data["name"]
+        serializer = PlayListSerializer(playlist, data=data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return JsonResponse(
+                {"message": "Update Play List successful!"}, status=status.HTTP_200_OK
+            )
+
+        return JsonResponse(
+            {"message": "Update Play List unsuccessful!"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class CreatePlayListEpisodeView(generics.CreateAPIView):
+    model = PlayListEpisode
+    serializer_class = PlayListEpisodeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        play_list = get_object_or_404(
+            PlayList, user=self.request.user, slug=kwargs.get("playlist_slug")
+        )
+        film_episode = get_object_or_404(
+            FilmEpisode, slug=self.request.data["film_episode_slug"]
+        )
+        play_list_episodes = PlayListEpisode.objects.filter(play_list=play_list)
+        for episode in play_list_episodes:
+            if episode.film_episode == film_episode:
+                return JsonResponse(
+                    {"message": "Episode exists in this Play List"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        data = dict()
+        data["play_list"] = play_list.pk
+        data["film_episode"] = film_episode.pk
+        data["index"] = len(play_list_episodes) + 1
+        serializer = PlayListEpisodeSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(
+                {"message": "Create a new Play List Episode successful!"},
+                status=status.HTTP_201_CREATED,
+            )
+
+        return JsonResponse(
+            {"message": "Create a new Play List Episode unsuccessful!"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class UpdateDeletePlayListEpisodeView(generics.RetrieveUpdateDestroyAPIView):
+    model = PlayList
+    serializer_class = PlayListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        play_list = get_object_or_404(
+            PlayList, user=self.request.user, slug=kwargs.get("playlist_slug")
+        )
+        play_list_episode = get_object_or_404(
+            PlayListEpisode, play_list=play_list, pk=kwargs.get("pk")
+        )
+        play_list_episode.delete()
+        cnt = 0
+        play_list_episodes = PlayListEpisode.objects.filter(
+            play_list=play_list
+        ).order_by("index")
+        for episode in play_list_episodes:
+            cnt += 1
+            episode.index = cnt
+            episode.save()
+        return JsonResponse(
+            {"message": "Delete Play List Episode successful!"},
+            status=status.HTTP_200_OK,
+        )
+
+    def put(self, request, *args, **kwargs):
+        play_list = get_object_or_404(
+            PlayList, user=self.request.user, slug=kwargs.get("playlist_slug")
+        )
+        play_list_episode = get_object_or_404(
+            PlayListEpisode, play_list=play_list, pk=kwargs.get("pk")
+        )
+        index = int(self.request.data["index"])
+        play_list_episode.index = index
+        play_list_episode.save()
+        cnt = 0
+        play_list_episodes = PlayListEpisode.objects.filter(
+            play_list=play_list
+        ).order_by("index")
+        for episode in play_list_episodes:
+            if episode == play_list_episode:
+                continue
+            cnt += 1
+            if cnt == index:
+                cnt += 1
+            episode.index = cnt
+            episode.save()
+
+        return JsonResponse(
+            {"message": "Update Play List Episode successful!"},
+            status=status.HTTP_200_OK,
+        )
+
+
+class SearchView(generics.RetrieveAPIView):
+    model = Film
+    serializer_class = FilmSerializer
+
+    def get(self, request, *args, **kwargs):
+        keyword = request.data["keyword"]
+        categories = request.data["categories"]
+        films = Film.objects.filter(name__contains=keyword)
+        if len(categories) > 0:
+            tmp = []
+            for film in films:
+                cnt = 0
+                for category in film.categories.all():
+                    if category.pk in categories:
+                        cnt += 1
+                if cnt == len(categories):
+                    tmp.append(film)
+            films = tmp
+        return JsonResponse(
+            {
+                "films": FilmSerializer(
+                    films, context=self.get_serializer_context(), many=True
+                ).data
+            },
+            status=status.HTTP_200_OK,
         )
