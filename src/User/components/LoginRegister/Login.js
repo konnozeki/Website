@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useNavigate } from "react-router-dom"
 import { Button, Form, Input, Typography } from 'antd';
 import "./Login.scss"
+import axios from 'axios';
 
 const { Text } = Typography;
 function Login() {
@@ -23,25 +24,37 @@ function Login() {
   };
 
   const loginButtonNavigate = useNavigate();
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (username === '' || password === '') {
+    } else if ((username === "admin" || username === 'Admin') && password === '123') {
+      loginButtonNavigate('/Home')
+      window.localStorage.setItem("isLogedin", true)
+      window.localStorage.setItem("isAdmin", true)
     } else {
-      if (username === 'admin' && password !== '') {
-        loginButtonNavigate('/Home')
-        window.localStorage.setItem("isLogedin", true)
-        window.localStorage.setItem("isAdmin", true)
-      } else {
-        loginButtonNavigate("/Home")
-        window.localStorage.setItem("isLogedin", true)
-        window.localStorage.setItem("isUser", true)
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/api/login/', {
+          username,
+          password,
+        });
+
+        console.log(response.data);
+        if (response.data.token !== "") {
+          loginButtonNavigate("/Home")
+          window.localStorage.setItem("isLogedin", true)
+          window.localStorage.setItem("isUser", true)
+          window.localStorage.setItem("username", username)
+        } else {
+          alert("Wrong username or password!")
+        }
+      } catch (error) {
+        console.error(error)
+        alert("Wrong username or password!")
+
       }
+
     }
   };
 
-  const forgotPasswordNavigate = useNavigate();
-  const handleForgotPassword = () => {
-    forgotPasswordNavigate('/ForgotPassword');
-  }
   const registerNavigate = useNavigate();
   const handleRegister = () => {
     registerNavigate('/Register');
@@ -110,9 +123,7 @@ function Login() {
             </Form.Item>
 
             <Form.Item>
-              <Text>
-                <p className='forgot-password' onClick={handleForgotPassword}>Forgot Password?</p>
-              </Text>
+
               <Text style={{ paddingLeft: "10%", color: "white" }}>
                 New member? <p className='sign-up-now' onClick={handleRegister}>Sign up now</p>
               </Text>

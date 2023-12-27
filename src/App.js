@@ -9,12 +9,12 @@ import Watch from "./User/components/WatchMovie/Watch"
 import Search from "./User/components/Search/Search"
 import Login from "./User/components/LoginRegister/Login";
 import Register from "./User/components/LoginRegister/Register";
-import ForgotPassWord from "./User/components/LoginRegister/ForgotPassword";
+// import ForgotPassWord from "./User/components/LoginRegister/ForgotPassword";
 import UserFavourite from "./User/components/UserManagement/UserFavourite";
 import UserProfile from "./User/components/UserManagement/UserProfile";
 import AdminHome from "./Admin/components/AdminHome/AdminHome";
 import AddMovie from "./Admin/components/AddMovie/AddMovie";
-import AddEspisode from "./Admin/components/AddEspisode/AddEspisode";
+// import AddEspisode from "./Admin/components/AddEspisode/AddEspisode";
 import ManageMovie from "./Admin/components/ManageMovie/ManageMovie";
 import ManageUser from "./Admin/components/ManageUser/ManageUser";
 import AdminProfile from "./Admin/components/AdminProfile/AdminProfile";
@@ -35,7 +35,7 @@ function App() {
           <Routes>
             <Route path="/Login" exact element={<Login />}></Route>
             <Route path="/Register" exact element={<Register />}></Route>
-            <Route path="/ForgotPassword" exact element={<ForgotPassWord />}></Route>
+            {/* <Route path="/ForgotPassword" exact element={<ForgotPassWord />}></Route> */}
             <Route path='/Home' exact element={<Home />}></Route>
             <Route path='/Watch/:slug' exact element={<Watch />}></Route>
             <Route path='/Movies' exact element={<Movies />}></Route>
@@ -46,7 +46,7 @@ function App() {
             <Route path="/User/Favourite" exact element={<UserFavourite />}></Route>
             <Route path="/Admin" exact element={<AdminHome />}></Route>
             <Route path="/Admin/AddMovie" exact element={<AddMovie />}></Route>
-            <Route path="/Admin/AddEspisode" exact element={<AddEspisode />}></Route>
+            {/* <Route path="/Admin/AddEspisode" exact element={<AddEspisode />}></Route> */}
             <Route path="/Admin/ManageMovie" exact element={<ManageMovie />}></Route>
             <Route path="/Admin/ManageUser" exact element={<ManageUser />}></Route>
             <Route path="/Admin/Profile" exact element={<AdminProfile />}></Route>

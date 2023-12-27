@@ -4,13 +4,14 @@ import React, { useState } from 'react'
 import { useNavigate } from "react-router-dom"
 import { Button, Form, Input, Typography } from 'antd';
 import "./Register.scss"
+import axios from 'axios';
 
 const { Text } = Typography;
 function Register() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState('')
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -20,26 +21,43 @@ function Register() {
     setPassword(e.target.value);
   };
 
-  const handleConfirmPassword = (e) => {
-    setConfirmPassword(e.target.value);
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
   }
 
   const registerButtonNavigate = useNavigate();
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
 
-    if (username === '' || password === '' || confirmPassword === '') {
-    } else {
-      if (username === 'admin' && password !== '' && confirmPassword !== '') {
+    if (username === '' || password === '' || email === '') {
+    } else if (!email.includes("@gmail.com")) {
+      alert("Invalid email format")
+    }
+    else {
+      if ((username === 'admin' || username === "Admin")) {
         alert("Username mustn't be 'admin' or 'Admin'")
-      } else if (password !== confirmPassword) {
-        alert("Wrong password!")
       } else {
-        alert("Successful")
-        registerButtonNavigate("/Home")
-        window.localStorage.setItem("isLogedin", true)
-        window.localStorage.setItem("isUser", true)
+        try {
+          const response = await axios.post('http://127.0.0.1:8000/api/register/', {
+            username,
+            email,
+            password,
+          })
+          console.log(response.data.user.id)
+          if (response.data.token) {
+            alert("Successfull!");
+            registerButtonNavigate("/Home")
+            window.localStorage.setItem("isLogedin", true)
+            window.localStorage.setItem("isUser", true)
+            window.localStorage.setItem("username", username)
+            window.localStorage.setItem("email", email)
+          }
+        } catch (error) {
+          alert("Account already exists!")
+          console.error(error)
+        }
       }
     }
+
   };
 
   return (
@@ -80,6 +98,22 @@ function Register() {
           </Form.Item>
 
           <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: 'Please input your email!',
+              },
+            ]}
+
+          >
+            <Input type="text"
+              value={email}
+              onChange={handleEmailChange} />
+          </Form.Item>
+
+          <Form.Item
             label="Password"
             name="password"
             rules={[
@@ -92,21 +126,6 @@ function Register() {
             <Input.Password type="password"
               value={password}
               onChange={handlePasswordChange} />
-          </Form.Item>
-
-          <Form.Item
-            label="Confirm"
-            name="confirm-password"
-            rules={[
-              {
-                required: true,
-                message: 'Confirm password!',
-              },
-            ]}
-          >
-            <Input.Password type="password"
-              value={confirmPassword}
-              onChange={handleConfirmPassword} />
           </Form.Item>
 
           <Form.Item

@@ -123,9 +123,9 @@ const MovieList = () => {
   // Your list of movies (replace this with your actual data)
   const movieList = movieData.map((movie) => (
     <div key={movie.key} style={{ marginRight: 10, marginTop: 10 }} >
-      <Link to={{ pathname: `/${encodeURIComponent(movie.title)}` }}>
-        <Image className='movie-image' width={250} height={350} src={movie.src} preview={false} />
-      </Link>
+      {/* <Link to={{ pathname: `/${encodeURIComponent(movie.title)}` }}> */}
+      <Image className='movie-image' width={250} height={350} src={movie.src} preview={false} />
+      {/* </Link> */}
     </div>
   ));
 

@@ -20,17 +20,12 @@ const items = [
   {
     key: '3',
     label: 'Email',
-    children: 'Vuong12345@gmail.com',
+    children: 'Admin@gmail.com',
   },
   {
     key: '4',
     label: 'Username',
-    children: 'Vuong',
-  },
-  {
-    key: '5',
-    label: 'DOB',
-    children: '2003/1/1',
+    children: 'Admin',
   },
 
 ];
@@ -58,7 +53,7 @@ function AdminProfile() {
             contentStyle={{ fontSize: 20, marginTop: 20, marginRight: 20 }}
             labelStyle={{ fontSize: 20, marginTop: 20 }} title="" items={items} />
 
-          <Button className='change-password' onClick={showModalChangePW}>Change Password</Button>
+          {/* <Button className='change-password' onClick={showModalChangePW}>Change Password</Button> */}
           <Modal title="Change Password" open={isModalChangePWOpen} onOk={handleOkChangePW} onCancel={handleCancelChangePW} style={{ marginTop: 80, marginLeft: "28%" }}>
             <Form name="basic"
               labelCol={{

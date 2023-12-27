@@ -1,42 +1,56 @@
 //Giao diện Profile
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Descriptions, Modal, Form, Input, DatePicker } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import userIcon from "../Nav/UserIcon.png"
 import "./UserProfile.scss"
-
-const items = [
-  {
-    key: '1',
-    label: 'ID',
-    children: '#1',
-  },
-  {
-    key: '2',
-    label: 'Role',
-    children: 'User',
-  },
-  {
-    key: '3',
-    label: 'Email',
-    children: 'Vuong12345@gmail.com',
-  },
-  {
-    key: '4',
-    label: 'Username',
-    children: 'Vuong',
-  },
-  {
-    key: '5',
-    label: 'DOB',
-    children: '2003/1/1',
-  },
-
-];
-
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 function UserProfile() {
+  const params = useParams()
+  const [userInfor, setUserInfor] = useState([]);
+  const userUserName = window.localStorage.getItem("username")
+  const userEmail = window.localStorage.getItem("email")
+  const getUserInfor = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/generic/user/")
+      console.log(response.data)
+      setUserInfor(response.data.filter(item => item.username === userUserName));
+      console.log(userInfor[0]?.id)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    getUserInfor();
+  }, [params.id])
+
+  const items = [
+    {
+      key: '1',
+      label: 'ID',
+      children: `#${userInfor[0]?.id}`,
+    },
+    {
+      key: '2',
+      label: 'Role',
+      children: "User",
+    },
+    {
+      key: '3',
+      label: 'Email',
+      children: userEmail ? userEmail : "Vuong123@gmail.com",
+    },
+    {
+      key: '4',
+      label: 'Username',
+      children: userUserName,
+    },
+
+  ];
   const [isModalProfileOpen, setIsModalProfileOpen] = useState(false);
   const showModalProfile = () => {
     setIsModalProfileOpen(true);
@@ -74,7 +88,7 @@ function UserProfile() {
           <Button className='change-password' onClick={showModalProfile}> Edit Profile</Button>
           <Modal title="Edit Profile" open={isModalProfileOpen} onOk={handleOk} onCancel={handleCancel} style={{ marginTop: 100, marginLeft: "28%" }}>
             <Form
-              name="basic"
+              name="change information"
               labelCol={{
                 span: 6,
               }}
@@ -108,7 +122,7 @@ function UserProfile() {
                   },
                 ]}
               >
-                <Input type="text" size='large' defaultValue={items[1].children} />
+                <Input type="text" size='large' defaultValue={items[2].children} />
               </Form.Item>
               <Form.Item
                 label="Username"
@@ -120,27 +134,16 @@ function UserProfile() {
                   },
                 ]}
               >
-                <Input type="text" size='large' defaultValue={items[2].children} />
+                <Input type="text" size='large' defaultValue={items[3].children} />
               </Form.Item>
 
-              <Form.Item
-                label="DOB"
-                name="DOB"
-                rules={[
-                  {
-                    required: true,
-                    message: "Select your birth!",
-                  }
-                ]}>
-                <DatePicker size='large' style={{ bordered: true, borderColor: "black" }} />
-              </Form.Item>
             </Form>
           </Modal>
 
 
           <Button className='change-password' onClick={showModalChangePW}>Change Password</Button>
           <Modal title="Change Password" open={isModalChangePWOpen} onOk={handleOkChangePW} onCancel={handleCancelChangePW} style={{ marginTop: 80, marginLeft: "28%" }}>
-            <Form name="basic"
+            <Form name="change password"
               labelCol={{
                 span: 6,
               }}

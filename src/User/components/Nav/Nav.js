@@ -51,6 +51,7 @@ function Nav() {
             window.localStorage.removeItem("isLogedin")
             window.localStorage.removeItem("isAdmin")
             window.localStorage.removeItem("isUser")
+            window.localStorage.removeItem("username");
             handleLogin();
         }
     }

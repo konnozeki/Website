@@ -2,23 +2,23 @@
 //Có thể xóa người dùng
 // UserList.js
 import { DeleteFilled, SearchOutlined } from '@ant-design/icons';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Input, Space, Table, message, Popconfirm, ConfigProvider, Select } from 'antd';
 import "./ManageUser.scss"
+import axios from 'axios';
 
 const onConfirm = (e) => {
   message.success("Delete successfully!")
+  console.log(e)
 }
 const generateData = (count) => {
   const data = [];
 
   for (let i = 1; i <= count; i++) {
     data.push({
-      key: `${i}`,
-      name: `Student ${i}`,
-      sex: Math.random() < 0.5 ? "Male" : "Female",
-      birth: "20/10/2023",
-      role: Math.random() < 0.5 ? "Admin" : "User"
+      id: `${i - 1}`,
+      username: "Admin",
+      role: "Admin"
     });
   }
 
@@ -26,7 +26,22 @@ const generateData = (count) => {
 };
 
 const ManageUser = () => {
-  const [data, setData] = useState(generateData(21));
+  const [data, setData] = useState(generateData(1));
+
+  const getUserInfor = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/generic/user/");
+      console.log(response.data)
+      const array = response.data.map(obj => ({ ...obj, role: 'User' }));
+      // setData(...data, array)
+      setData(data.concat(array))
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  useEffect(() => {
+    getUserInfor()
+  }, [])
 
   const handleRoleChange = (value, record) => {
     // Find the index of the updated record in the data array
@@ -118,71 +133,63 @@ const ManageUser = () => {
   const columns = [
     {
       title: "ID",
-      dataIndex: 'key'
+      dataIndex: 'id',
+      key: "id",
+      width: "5%"
     },
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      width: '30%',
-      ...getColumnSearchProps('name'),
+      title: 'User Name',
+      dataIndex: 'username',
+      key: 'username',
+      // width: '30%',
+      ...getColumnSearchProps('username'),
     },
-    {
-      title: 'Sex',
-      dataIndex: 'sex',
-      key: 'sex',
-      width: '20%',
-      sorter: (a, b) => a.sex.localeCompare(b.sex)
-    },
-    {
-      title: 'Birthday',
-      dataIndex: 'birth',
-      key: 'birth',
-      width: '20%',
 
-    },
     {
       title: 'Role',
       dataIndex: 'role',
       key: 'role',
       width: "10%",
-      render: (text, record) => (
-        <Select
-          defaultValue={record.role}
-          style={{
-            width: 120,
-          }}
-          onChange={(value) => handleRoleChange(value, record)}
-          bordered={false}
-          options={[
-            {
-              value: 'Admin',
-              label: 'Admin',
-            },
-            {
-              value: 'User',
-              label: 'User',
-            },
+      // render: (text, record) => (
+      //   <Select
+      //     defaultValue={record.role}
+      //     style={{
+      //       width: 120,
+      //     }}
+      //     onChange={(value) => handleRoleChange(value, record)}
+      //     bordered={false}
+      //     options={[
+      //       {
+      //         value: 'Admin',
+      //         label: 'Admin',
+      //       },
+      //       {
+      //         value: 'User',
+      //         label: 'User',
+      //       },
 
-          ]}
-        />
-      ),
-      sorter: (a, b) => a.role.localeCompare(b.role)
+      //     ]}
+      //   />
+      // ),
+      // sorter: (a, b) => a.role.localeCompare(b.role)
     },
     {
       title: "Delete",
       dataIndex: "delete",
       key: "delete",
-      render: () => (
-        <Popconfirm
-          title="Delete movie"
-          description="Are you sure to delete this movie?"
-          onConfirm={onConfirm}
-          okText="Yes"
-          cancelText="No"
-        >
-          <DeleteFilled style={{ color: "black", fontSize: 20 }} />
-        </Popconfirm>
+      width: "10%",
+      render: (_, record, index) => (
+        // Check if it's not the first row, then render the Popconfirm
+        index !== 0 && (
+          <Popconfirm
+            title="Delete movie"
+            description="Are you sure to delete this movie?"
+            onConfirm={() => onConfirm(record.id)}  // Assuming record.id is the identifier for the row
+            okText="Yes"
+            cancelText="No"
+          >
+            <DeleteFilled style={{ color: "black", fontSize: 20 }} />
+          </Popconfirm>)
       )
     }
   ];

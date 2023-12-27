@@ -34,7 +34,7 @@ const Search = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: "rgb(60, 59, 59)", height: "100vh" }}>
       <h1 style={{ marginBottom: '20px', color: '#ee0000' }}>Search</h1>
       {/* Use Ant Design Input.Search */}
       <Input.Search

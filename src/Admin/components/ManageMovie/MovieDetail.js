@@ -84,7 +84,7 @@ function MovieDetail() {
                 <div className='image-movie'>
 
                     <Image className='movie-image' width={300} height={420}
-                        src="https://i.pinimg.com/564x/20/2a/a2/202aa259454320d63365817ea1128023.jpg" preview={false} />
+                        src="https://i.pinimg.com/564x/20/2a/a2/202aa259454320d63365817ea1128023.jpg" />
                 </div>
 
                 {/* <div className='space-gap'>Hello</div> */}
