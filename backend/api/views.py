@@ -235,8 +235,7 @@ class RegisterAPIView(generics.GenericAPIView):
     serializer_class = CreateUserSerializer
 
     def post(self, request, *args, **kwargs):
-        data = JSONParser().parse(request)
-        serializer = UserSerializer(data=data)
+        serializer = CreateUserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             return Response(
