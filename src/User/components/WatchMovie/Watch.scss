@@ -12,17 +12,19 @@
   justify-content: left;
   align-items: left;
   object-fit: cover;
+
 }
 
 .movie-poster {
   object-fit: cover;
-  max-width: 100%;
+  max-width: 50vh;
   max-height: 80vh;
   border-radius: 2%;
 }
 
 .movie-info {
   flex: 0 0 60%;
+  max-width: 60%;
 }
 
 .watch-container {

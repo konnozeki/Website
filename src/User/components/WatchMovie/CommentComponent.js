@@ -96,10 +96,18 @@ const CommentBox = (props) => {
 };
 
 const CommentComponent = (props) => {
+  const [comments, setComments] = useState([]);
+  useEffect(() => {
+    // Fetch comments when the component mounts
+    fetch(`http://localhost:8000/api/film/${props.film.film.slug}/comments/`)
+      .then((response) => response.json())
+      .then((data) => setComments(data))
+      .catch((error) => console.error("Error fetching comments:", error));
+  }, [props.film.slug]);
   return (
     <>
-      {props.comments &&
-        props.comments.map(
+      {comments &&
+        comments.map(
           (comment) =>
             comment.parent_comment == null && (
               <CommentBox

@@ -3,17 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import Card from './Card';
 import './List.scss';
 
-const List = () => {
+const CategoryList = ({category}) => {
   const [array2, setArray2] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/film/');
+        const response = await fetch(`http://localhost:8000/api/category/${category}/`);
         const data = await response.json();
-
+        
         // Assuming the response is an array of objects similar to array2
-        setArray2(data);
+        setArray2(data.films);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -24,7 +24,7 @@ const List = () => {
 
   const renderListOfPhim = (phims) => {
     // Take only the first 8 elements
-    const slicedPhims = phims.slice(0, 10);
+    const slicedPhims = phims.slice(0, 5);
 
     return slicedPhims.map((boPhim) => <Card in4phim={boPhim} key={boPhim.id} />);
   };
@@ -36,4 +36,4 @@ const List = () => {
   );
 };
 
-export default List;
+export default CategoryList;

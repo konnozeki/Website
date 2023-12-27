@@ -4,11 +4,7 @@ import "./Category.scss"
 const Category = ({ Category_Name }) => {
 
     return (
-        <div className="ten-the-loai">{Category_Name}</div>
-
-
-
-
+        <div style={{marginLeft: 40}} className="ten-the-loai">{Category_Name}</div>
     )
 }
 

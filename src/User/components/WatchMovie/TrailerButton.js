@@ -20,7 +20,7 @@ const TrailerButton = (props) => {
         type="primary"
         danger
         icon={<CaretRightOutlined />}
-        style={{ width: '180px', height: '60px', fontSize: '16px' }}
+        style={{ width: '36vh', height: '10vh', fontSize: '3vh' }}
         onClick={showModal}
       >
         Trailer

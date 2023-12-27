@@ -4,8 +4,37 @@ import React, { useState } from "react";
 import { Button } from "antd";
 
 const VideoComponent = ({ EpisodeList, isVideoVisible, setVideoVisible }) => {
+  function convertToEmbedUrl(youtubeUrl) {
+    // Lấy mã video từ URL YouTube
+    const videoId = extractVideoId(youtubeUrl);
+
+    if (videoId) {
+        // Tạo URL nhúng
+        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        return embedUrl;
+    } else {
+        // Trả về null nếu không thể trích xuất mã video
+        return null;
+    }
+}
+
+// Hàm để trích xuất mã video từ URL YouTube
+function extractVideoId(url) {
+    const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = url.match(regExp);
+
+    // Mảng thứ 2 trong kết quả là mã video
+    return match && match[1] ? match[1] : null;
+}
+
+// Sử dụng hàm để chuyển đổi URL
+
+
+
   const [selectedEpisode, setSelectedEpisode] = useState(0);
-  const Link = EpisodeList[selectedEpisode].Link;
+  const Link = EpisodeList[selectedEpisode].link;
+  const embedUrl = convertToEmbedUrl(Link);
+  console.log(embedUrl);
   const handleEpisodeChange = (index) => {
     setSelectedEpisode(index);
   };
@@ -18,11 +47,11 @@ const VideoComponent = ({ EpisodeList, isVideoVisible, setVideoVisible }) => {
       <div>
           <h1 style={{ display: "block" }}>Xem phim</h1>
         </div>
-      <div style={{display: "block", height: "70vh"}}>
+      <div style={{display: "block", height: "80vh"}}>
         <iframe
           width={"100%"}
           height={"100%"}
-          src={Link}
+          src={embedUrl}
           title="YouTube video player"
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
