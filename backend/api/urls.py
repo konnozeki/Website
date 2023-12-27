@@ -15,6 +15,7 @@ urlpatterns = [
     path("logout/", knox_views.LogoutView.as_view(), name="logout"),
     path("api/logoutall", knox_views.LogoutAllView.as_view(), name="logout-all"),
     path("login/", LoginAPI.as_view(), name="login"),
+    path("changepassword/", UpdatePasswordView.as_view(), name="changepassword"),
     # Test xong GET và DELETE
     path("admin/user_list/", ListUserView.as_view()),
     path("admin/user_list/<int:pk>/", UpdateDeleteUserAdminView.as_view()),

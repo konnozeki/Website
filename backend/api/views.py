@@ -17,6 +17,7 @@ from knox.models import AuthToken
 from .serializers import *
 from .models import *
 from datetime import datetime
+from django.contrib.auth import authenticate
 
 
 # testing user
@@ -334,6 +335,21 @@ class UpdateDeleteUserView(generics.RetrieveUpdateDestroyAPIView):
                 "user_profile_data": user_profile_serializer.data,
             },
             status=status.HTTP_200_OK,
+        )
+
+
+class UpdatePasswordView(generics.UpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        user = authenticate(username = self.request.user.username, password = self.request.data["old_password"])
+        if user is None:
+            return JsonResponse(
+                {"message": "password incorrect"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        user.set_password(self.request.data["new_password"])
+        return JsonResponse(
+            {"message": "Update password successful"}, status=status.HTTP_200_OK
         )
 
 
