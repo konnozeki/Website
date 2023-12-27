@@ -7,9 +7,9 @@ const FavoriteButton = () => {
 
   const handleClick = () => {
     if (!isFilled) {
-      showNotification({ content: 'Đã thêm vào favorite' });
+      showNotification({ content: 'Đã thêm vào Playlist' });
     } else {
-      showNotification({ content: 'Đã xoá khỏi favorite' });
+      showNotification({ content: 'Đã xóa khỏi Playlist' });
     }
     setIsFilled(!isFilled);
   };
@@ -29,7 +29,7 @@ const FavoriteButton = () => {
       danger
       icon={isFilled ? <HeartFilled /> : <HeartOutlined />}
       onClick={handleClick}
-      style={{ width: '60px', height: '60px', fontSize: '16px' }}
+      style={{ width: '10vh', height: '10vh', fontSize: '3vh' }}
     >
       {isFilled}
     </Button>

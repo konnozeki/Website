@@ -4,7 +4,7 @@ import { Carousel, Image } from 'antd';
 
 const ActorCarousel = ({ actors }) => {
   return (
-    <Carousel autoplay style={{ height: "10%", width: "40vw" }} slidesToShow={4} >
+    <Carousel dots={false} autoplay style={{ height: "10%", width: actors.length >= 4? "40vw" : `${actors.length * 10}vw` }} slidesToShow={actors.length>=4?4:actors.length} >
       {actors.map((actor, index) => (
         <a
           key={index}
@@ -15,11 +15,11 @@ const ActorCarousel = ({ actors }) => {
             alignItems: "center",
             overflow: "hidden",
           }}
-          href={actor.link} target="_blank" rel="noopener noreferrer"
+          href={`/Actor/${actor.slug}`} target="_blank" rel="noopener noreferrer"
 
         >
           <Image
-            src={actor.image}
+            src={actor.avatar}
             style={{
               height: "35vh",
               width: "10vw",
@@ -27,10 +27,11 @@ const ActorCarousel = ({ actors }) => {
               alignItems:"center"
             }}
           />
-          <span
+          <p
           style={{
-            color: "black", // Đặt màu chữ là đen
-          }}>{actor.name}</span>
+            color: "black",
+            textAlign: 'center' // Đặt màu chữ là đen
+          }}>{actor.name}</p>
         </a>
       ))}
     </Carousel>

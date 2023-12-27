@@ -3,13 +3,12 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 10px;
+    padding: 20px;
     z-index: 3;
-    border-radius: 10px;
     overflow: hidden;
-    background-color: rgba(0,0,0,1);
-    width: 250px;
-    height: 375px;
+    background-color: rgba(0,0,0,0.7);
+    width: 225px;
+    height: 350px;
 }
 .detail-row-0 {
     line-height: 1.2;
@@ -19,7 +18,7 @@
     -webkit-box-orient: vertical;
     text-align: center;
     font-weight: 800;
-    color:#CD201F;
+    color:red;
     text-overflow: ellipsis;
     font-size: 18px;
 
@@ -28,7 +27,7 @@
 } 
 .score-info-number { 
     font-size: 14px;
-    color: #CD201F; 
+    color: red; 
     letter-spacing: 0px;
     text-shadow: rgba(0, 0, 0, 0.7) 1px 1px 0px;
     font-weight: 700;
@@ -77,8 +76,9 @@
     line-height: 16px;
     margin-top: 8px;
     margin-bottom: 8px;
-     width: 225px;
+    text-align: center;
      display: block;
+     align-items: center;
 }
 .focus-info-tag type {
     
@@ -88,7 +88,7 @@
     height: 20px; 
     display: block;
     max-height: 34px;
-    text-align:left;
+    text-align:center;
 
 
 

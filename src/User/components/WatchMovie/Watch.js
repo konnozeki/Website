@@ -1,9 +1,9 @@
 //Chứa thông tin phim, khung xem phim, bình luận
 //Giao diện "Xem phim/ Xem trailer - WATCH - User" trong giao diện 31-46
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import ReactDOM from "react-dom";
-
+import { useParams } from "react-router-dom";
 import ActorCarousel from "./ActorCarousel";
 import CommentComponent from "./CommentComponent";
 import FavoriteButton from "./FavoriteButton";
@@ -12,7 +12,6 @@ import VideoComponent from "./VideoComponent";
 import CommentDropdown from "./CommentDropdown";
 import {
   Rate,
-  Divider,
   Space,
   Tag,
   Button,
@@ -25,125 +24,61 @@ import {
 import { Comment } from "@ant-design/compatible";
 import "./Watch.scss";
 
-import posterimage from "./img.jpg";
-import image1 from "./1.webp";
-import image2 from "./2.jpg";
-import image3 from "./3.jpg";
-import image4 from "./4.jpg";
-import image5 from "./5.jpg";
-import image6 from "./6.jpg";
+
 
 const Watch = () => {
-  //dữ liệu
-  const movie = {
-    Title: "Spiderman",
-    Ratings: "2.5",
-    Genre: ["Thriller", "Action", "Adventure"],
-    Description:
-      "With Spider-Man's identity now revealed, Peter asks Doctor Strange for help. When a spell goes wrong, dangerous foes from other worlds start to appear, forcing Peter to discover what it truly means to be Spider-Man.",
-    TrailerLink:
-      "https://www.youtube.com/embed/t06RUxPbp_c?si=Jl5SOTapUl3ywXbN",
-    Poster: posterimage,
-    Actors: [
-      { name: "Tobey Maguire", image: image1, link: "/Actor/fos" },
-      { name: "Willem Dafoe", image: image2, link: "/Actor/fos" },
-      { name: "Kirsten Dunst", image: image3, link: "/Actor/fos" },
-      { name: "James Franco", image: image4, link: "/Actor/fos" },
-      { name: "Cliff Robertson", image: image5, link: "/Actor/fos" },
-      { name: "Rosemary Harris", image: image6, link: "/Actor/fos" },
-      // Thêm các diễn viên khác theo cùng mẫu
-    ],
-    Episode_List: [
-      {
-        Episode: 1,
-        Link: "https://www.youtube.com/embed/phjbaDTEikE?si=MEALoJhUMQ5QNd_j",
-      },
-      {
-        Episode: 2,
-        Link: "https://www.youtube.com/embed/W2tSIxRG7Mk?si=7NdPRzCGw-e8xUiD",
-      },
-      {
-        Episode: 3,
-        Link: "https://www.youtube.com/embed/z6LzHsVjaZg?si=0f2-bK79WkmhEjOO",
-      },
-      {
-        Episode: 4,
-        Link: "https://www.youtube.com/embed/jlhd38UFBC8?si=UDpTUIIlslGpbtNG",
-      },
-    ],
-  };
-
-  //dữ liệu comment
-  const commentFilm = {
-    comments: [
-      {
+  const { slug } = useParams();
+  const [film, setFilm] = useState({
+    
+    film: {
+      id: 0,
+      name: '',
+      slug: '',
+      description: '',
+      actors: [],
+      categories: [],
+      country: 0,
+      poster: '',
+      age_restriction: 0,
+      release_date: "2000-01-01"
+    },
+    actors: [],
+    categories: [],
+    country: {
+      id: 0,
+      name: "Vietnam",
+      flag: "https://flagcdn.com/w320/vn.png",
+      slug: "vietnam"
+    },
+    average_rate: 0,
+    film_episodes: [{
         id: 1,
-        user: {
-          name: "NguyenVanA",
-          avatar: "",
-        },
-        parent_comment: null,
-        content: "Bộ phim hay quá!",
-        time: "2023-12-24T12:30:45Z",
-        likes: 10,
-      },
-      {
-        id: 2,
-        user: {
-          name: "TranThiB",
-          avatar: "",
-        },
-        parent_comment: 1,
-        content: "Đúng là rất hay, tôi đã xem 2 lần rồi!",
-        time: "2023-12-24T13:15:20Z",
-        likes: 5,
-      },
-      {
-        id: 3,
-        user: {
-          name: "LeVanC",
-          avatar: "",
-        },
-        parent_comment: 1,
-        content: "Mình thấy nó không hợp khẩu vị mình lắm",
-        time: "2023-12-24T14:05:10Z",
-        likes: 2,
-      },
-      {
-        id: 4,
-        user: {
-          name: "NguyenVanD",
-          avatar: "",
-        },
-        parent_comment: null,
-        content: "Lần thứ 3 sẽ còn thú vị hơn đó!",
-        time: "2023-12-24T15:00:55Z",
-        likes: 8,
-      },
-      {
-        id: 5,
-        user: {
-          name: "NguyenVanD",
-          avatar: "",
-        },
-        parent_comment: 4,
-        content: "Lần thứ 3 sẽ còn thú vị hơn đó!",
-        time: "2023-12-24T15:00:55Z",
-        likes: 3,
-      },
-      {
-        id: 6,
-        user: {
-          name: "NguyenVanD",
-          avatar: "",
-        },
-        parent_comment: 4,
-        content: "Lần thứ 3 sẽ còn thú vị hơn đó!",
-        time: "2023-12-24T15:00:55Z",
-        likes: 1,
-      },
-    ],
-  };
+        film: 1,
+        slug: "song-o-ay-song-1",
+        episode: 1,
+        poster: "http://localhost:8000/media/film_episodes/song-o-ay-song-1.jpg",
+        release_date: "2000-01-01",
+        link: "https://www.youtube.com/watch?v=4DumeqZmtYU",
+        description: "Đây là nội dung tập 1"
+    }],
+  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/film/${slug}/`);
+        const data = await response.json();
+        setFilm(data);
+      } catch (error) {
+        console.error("Error fetching movie data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+
+
 
   const [isVideoVisible, setIsVideoVisible] = useState(false);
   //của nút watch movie
@@ -157,7 +92,7 @@ const Watch = () => {
     }
   };
 
-  const [rating, setRating] = useState(movie.Ratings);
+  const [rating, setRating] = useState(film.average_rate);
 
   const handleRateChange = (value) => {
     // Xử lý sự kiện khi người dùng thay đổi đánh giá
@@ -167,19 +102,11 @@ const Watch = () => {
 
   //của nút addcomment
   const [replyToID, setReplyToID] = useState(null);
-  const [comments, setComments] = useState(commentFilm.comments);
   const [commentValue, setCommentValue] = useState("");
   const handleAddCommentButtonClick = (CommentContent) => {
     if (CommentContent !== "") {
       newComment.content = CommentContent;
-      newComment.id = comments.length + 1;
       newComment.parent_comment = replyToID;
-      if (replyToID === null) {
-        setComments([newComment, ...comments]);
-        setReplyToID(null);
-      } else {
-        setComments([...comments, newComment]);
-      }
       setCommentValue("");
       setReplyToID(null);
       console.log(CommentContent);
@@ -207,69 +134,59 @@ const Watch = () => {
     <div>
       <div className="info-container">
         <div className="movie-poster-container">
-          <img src={movie.Poster} alt="movie poster" className="movie-poster" />
+          <img src={film.film.poster} alt="movie poster" className="movie-poster" />
         </div>
         <div className="movie-info">
-          <h1>{movie.Title}</h1>
+          <h1 style={{fontSize: '5vh'}}>{film.film.name}</h1>
           <div>
             <Rate
               allowHalf
-              defaultValue={movie.Ratings}
+              defaultValue={film.average_rate}
               onChange={handleRateChange}
             />
-            <span style={{ marginLeft: "10px" }}>{movie.Ratings}</span>
+            <span style={{ marginLeft: "10px" }}>{film.average_rate}</span>
           </div>
-          {movie.Genre.map((Genre, index) => (
+          {film.categories.map((Genre, index) => (
             <Tag key={index} color="red">
-              {Genre}
+              {Genre.name}
             </Tag>
           ))}
-          <h2>Description</h2>
-          <p>{movie.Description}</p>
+          <h2 style={{fontSize: '4vh'}}>Mô tả</h2>
+          <p style={{fontSize: '1rem'}}>{film.film.description}</p>
           <Space>
             <FavoriteButton />
 
-            <TrailerButton TrailerLink={movie.TrailerLink} />
+
 
             <Button
               type="primary"
               danger
               icon={<CaretRightOutlined />}
-              style={{ width: "180px", height: "60px", fontSize: "16px" }}
+              style={{ width: '40vh', height: '10vh', fontSize: '3vh' }}
               onClick={handleButtonClick}
             >
-              WATCH NOW
+              Xem ngay
             </Button>
           </Space>
-          <h2>Cast</h2>
+          <h2>Diễn viên</h2>
           <div>
-            <ActorCarousel actors={movie.Actors} />
+            <ActorCarousel actors={film.actors} />
           </div>
         </div>
       </div>
-      <br />
-      <br />
-      <br />
       <div className="watch-container" ref={myRef}>
         <VideoComponent
-          EpisodeList={movie.Episode_List}
+          EpisodeList={film.film_episodes}
           isVideoVisible={isVideoVisible}
           setIsVideoVisible={setIsVideoVisible}
         />
       </div>
-      <br />
-      <br />
-      <br />
-      <div className="suggestions">//you may also like</div>
-      <br />
-      <br />
-      <br />
-      <br />
+
 
       <div className="CommentSection">
-        <h1 style={{ display: "block" }}>USER COMMENTS</h1>
+        <h1 style={{ display: "block" }}>Bình luận</h1>
 
-        <CommentDropdown movie={movie} />
+        <CommentDropdown film={film} />
       
         <Comment
           avatar={<Avatar src="" />}
@@ -293,8 +210,7 @@ const Watch = () => {
         <br />
 
         <CommentComponent
-          key={comments.id}
-          comments={comments}
+          film = {film}
           setReplyToID={setReplyToID}
           handleAddCommentButtonClick={handleAddCommentButtonClick}
         />

@@ -14,14 +14,29 @@ function Actor() {
       description: "",
       slug: "",
       gender: "",
-      country: 0,
+      country: {
+        id: 85,
+        name: "China",
+        flag: "https://flagcdn.com/w320/cn.png",
+        slug: "china"
+      },
       avatar: ""
     },
-    films: []
+    films: [{
+        id: 0,
+        name: "",
+        slug: "",
+        description: "",
+        actors: [
+        ],
+        categories: [
+        ],
+        country: 0,
+        poster: "",
+        age_restriction: 0,
+        release_date: "1990-06-10"
+    }]
   });
-  const [flag, setFlag] = useState("");
-  const [countryName, setCountryName] = useState("");
-
   // Function to fetch actor data
   const fetchActorData = async () => {
     try {
@@ -35,16 +50,6 @@ function Actor() {
 
         // Update the actor state with the fetched data
         setActorData(data);
-
-        // Fetch the country_name using the country value
-        const countryResponse = await fetch(`http://localhost:8000/api/country/${data.actor.country}/`);
-        if (countryResponse.ok) {
-          const countryData = await countryResponse.json();
-          setCountryName(countryData.country_name);
-          setFlag(countryData.country_flag);
-        } else {
-          console.error("Failed to fetch country data");
-        }
       } else {
         // Handle the case where the request was not successful
         console.error("Failed to fetch actor data");
@@ -70,8 +75,8 @@ function Actor() {
           <h1>{actorData.actor.name}</h1>
           <p className="info-item">Giới tính: {actorData.actor.gender=="M" ? "Nam" : "Nữ"}</p>
           <div className="country-info" style={{display:'flex'}}>
-            <p className="info-item">Quốc tịch: {countryName}</p>
-            <img src={flag} style={{ height: 20, width: 30, marginLeft: 10 }} alt="Ảnh" className="flag" />
+            <p className="info-item">Quốc tịch: {actorData.actor.country.name}</p>
+            <img src={actorData.actor.country.flag} style={{ height: 20, width: 30, marginLeft: 10 }} alt="Ảnh" className="flag" />
           </div>
           <p className="description">{actorData.actor.description}</p>
         </div>

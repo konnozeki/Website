@@ -6,16 +6,16 @@ import "./BannerCard.scss"
 const BannerCard = ({in4phim }) => {
     const filmClickNavigate = useNavigate();
     const handleFilmClick = () => {
-        const filmId = in4phim.id;
+        const slug = in4phim.slug;
         // Navigate to the new page with a full reload
-        window.location.href = `/Watch/${filmId}slug`;
+        window.location.href = `/Watch/${slug}`;
     }
     return (
         <div className="banner-card">
             <div className="banner-thumbnail-box" onClick={handleFilmClick}>
                 <div>
                     <span>
-                        <img className='banner-card-image' src={in4phim.Avatar} alt={in4phim.Name}></img>
+                        <img className='banner-card-image' src={in4phim.poster.startsWith('http://') ? in4phim.poster : `http://localhost:8000${in4phim.poster}`} alt={in4phim.name}></img>
                     </span>
                 </div>
                     

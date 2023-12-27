@@ -1,42 +1,44 @@
 import List from "../Home/List";
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from "react-router-dom"
-import "../Home/Home.scss"
+import React, { useState, useEffect } from 'react';
+import "../Home/Home.scss";
 import Category from "../Home/Category";
+import CategoryList from "../Home/CategoryList";
 
 function Movies() {
-    const [category, setCategory] = useState([]);
-    const array1 = [
-        { Category_Name: "Action" },
-        { Category_Name: "Anime" },
-        { Category_Name: "Comedy" },
-        { Category_Name: "Romantic" }
-    ];
-    const renderListOfUserNames = (names) => {
-        return names.map(name => (
-            <div className="phim-theo-the-loai">
-                <Category Category_Name={name.Category_Name} />
-                <List Category_Name={name.Category_Name} />
-            </div>))
+  const [category, setCategory] = useState([]);
+
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/category/');
+      const data = await response.json();
+      setCategory(data); // Assuming the response is an array of category objects
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
-    useEffect(() => {
-        //fetchData(param).then(res => setCategory(res.data.results))
-    }, []);
+  };
 
-    return (
-        <div className='Movies'>
+  useEffect(() => {
+    fetchData();
+  }, []); // Run this effect once when the component mounts
+  console.log(category)
 
+  const renderListOfUserNames = (names) => {
+    return names.map((name) => (
+      <div key={name.id} className="phim-theo-the-loai">
+        <Category Category_Name={name.name} />
+        <CategoryList category={name.slug}/>
+      </div>
+    ));
+  };
 
-            <div className="List-containter">
-
-                {renderListOfUserNames(array1)}
-
-
-            </ div>
-        </ div>
-
-    )
+  return (
+    <div className='Movies'>
+      <div className="List-containter">
+        {category.length > 0 ? renderListOfUserNames(category) : null}
+      </div>
+    </div>
+  );
 }
 
-
-export default Movies
+export default Movies;

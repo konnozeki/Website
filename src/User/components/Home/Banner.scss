@@ -6,16 +6,20 @@
 
 .concord-img {
     width: 100%;
-    height: 100%;
+    height: 700px;
     position: relative;
 }
 
 .shadow {
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: 700px;
     background: rgba(0, 0, 0, 0.5);
     z-index: 2;
+}
+
+.banner-card-container {
+    cursor: pointer;
 }
 
 .banner-text {
@@ -28,6 +32,7 @@
     text-align: center;
     color: white;
     z-index: 3;
+
 }
 
 .banner-card-text {
@@ -40,7 +45,7 @@
 .banner-card-text h1 {
     width: 450px;
     margin: 0; /* Remove default margin */
-    font-size: 60px;
+    font-size: 45px;
 }
 
 .banner-card-text p {

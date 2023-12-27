@@ -1,13 +1,41 @@
 // Banner.jsx
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import "./Banner.scss";
 import BannerCard from './BannerCard';
 
 const Banner = () => {
-    const array2 = [
-        { id: 1, Avatar: "https://i.pinimg.com/474x/ce/d1/92/ced19202fc726b274caf80d96fb2fd0a.jpg", Name: "Elemental" },
-    ];
+    const [array2, setArray2] = useState([
+        {
+            id: 0,
+            name: '',
+            slug: '',
+            description: '',
+            actors: [],
+            categories: [],
+            country: 0,
+            poster: '',
+            age_restriction: 0,
+            release_date: "2000-01-01"
+        }
+    ]);
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await fetch('http://localhost:8000/api/film/');
+            const data = await response.json();
+            
+            // Assuming the response is an array of objects similar to array2
+            setArray2(data);
+            console.log(array2)
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+    
+        fetchData();
+
+      }, []);
 
     const maxCharacters = 256;
 
@@ -29,9 +57,9 @@ const Banner = () => {
                     <div className="banner-card-container">
                         <BannerCard in4phim={array2[0]}></BannerCard>
                     </div>
-                    <div className='banner-card-text'>
-                        <h1>{array2[0].Name}</h1>
-                        <p>{truncateText("This is the description of the Film. This is a longer description that should not affect the size of the BannerCard.This is the description of the Film. This is a longer description that should not affect the size of the BannerCard.This is the description of the Film. This is a longer description that should not affect the size of the BannerCardThis is the description of the Film. This is a longer description that should not affect the size of the BannerCardThis is the description of the Film. This is a longer description that should not affect the size of the BannerCardThis is the description of the Film. This is a longer description that should not affect the size of the BannerCard")}</p>
+                    <div className='banner-card-text' onClick={()=>{window.location.href = `/Watch/${array2[0].slug}`}}>
+                        <h1>{array2[0].name}</h1>
+                        <p>{truncateText(array2[0].description)}</p>
                     </div>
                 </div>
             </div>

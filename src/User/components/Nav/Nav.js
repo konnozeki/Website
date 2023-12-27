@@ -8,22 +8,24 @@ import "./Nav.scss"
 const {TabPane} = Tabs;
 
 const tabs = [
-    { key: 'Home', title: 'Home', label:"Home",},
-    { key: 'Movies', title: 'Movies', label:"Movies"},
-    { key: 'Search', title: 'Search', label:"Search"},
+    { key: 'Home', title: 'Home', label:"Trang chủ",},
+    { key: 'Movies', title: 'Movies', label:"Khám phá"},
+    { key: 'Search', title: 'Search', label:"Tìm kiếm"},
+    { key: 'User/Favourite', title: 'Favourite', label:"Danh sách phát"},
 
 ];
 
 const Menus=[
     {key:"User/Profile", name:"Profile", url:"/User/Profile"},
-    {key:"User/Favourite", name:"Favourite", url:'/User/Favourite'},
-    {key:"Login", name:"Log out", url:"/Login"}
+    {key: 'History', name: 'Lịch sử', url:"/History"},
+    {key:"Login", name:"Đăng xuất", url:"/Login"}
 ]
 
 const MenusAdmin=[
     {key:"Admin/Profile", name:"Profile", url:"/Admin/Profile"},
-    {key:"Admin", name:"Manage", url:'/Admin'},
-    {key:"Login", name:"Log out", url:"/Login"}
+    {key:"Admin", name:"Quản lý", url:'/Admin'},
+    {key: 'History', name: 'Lịch sử', url:"/History"},
+    {key:"Login", name:"Đăng xuất", url:"/Login"}
 ]
 function Nav() {
     const navigate = useNavigate();
