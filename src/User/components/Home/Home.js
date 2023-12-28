@@ -7,7 +7,7 @@ import Banner from "./Banner";
 import Category from "./Category";
 
 function Home() {
-
+  const token = window.localStorage.getItem('token');
 
   return (
     <div className='Home'>

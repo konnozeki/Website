@@ -1,61 +1,76 @@
-//Thêm phim, xóa phim
-import React, { useState } from 'react'
-import { Input, Form, InputNumber, Button, Select, Space } from 'antd'
-import "./AddMovie.scss"
+import React, { useEffect, useState } from 'react';
+import { Input, Form, Button, Select, Space, DatePicker, Upload, message } from 'antd';
 
-const typeMovie = [
-  {
-    label: "Action",
-    value: "Action"
-  },
-  {
-    label: "Romance",
-    value: "Romance"
-  },
-  {
-    label: "Comedy",
-    value: "Comedy"
-  },
-  {
-    label: "Science Fiction",
-    value: "Science Fiction"
-  },
-  {
-    label: "Adventure",
-    value: "Adventure"
-  },
-  {
-    label: "Horror",
-    value: "Horror"
-  },
-  {
-    label: "Thriller",
-    value: "Thriller"
-  },
-  {
-    label: "Family",
-    value: "Family"
-  },
-  {
-    label: "Drama",
-    value: "Drama"
-  },
-  {
-    label: "School",
-    value: "School"
-  }
-];
+const AddMovie = () => {
+  const [form] = Form.useForm();
+  const [categoriesArray, setCategoriesArray] = useState([]); 
 
-const handleChangeTypeMovie = (value) => {
-  console.log(`selected ${value}`);
-};
+  const token = window.localStorage.getItem('token');
+  const { TextArea } = Input;
 
+  const postData = () => {
+    const formData = new FormData();
 
-const { TextArea } = Input
-function AddMovie() {
+    formData.append('name', name);
+    formData.append('release_date', year.format('YYYY-MM-DD'));
+    formData.append('categories', categoriesArray);
+
+    console.log("Category:", categoriesArray);
+    formData.append('description', description);
+    formData.append('actors', actor);
+    formData.append('age_restriction', 0);
+    console.log(file)
+    formData.append('poster', file.file)
+  
+    fetch('http://localhost:8000/api/admin/film/', {
+      method: 'POST',
+      headers: {
+        Authorization: `TOKEN ${token}`,
+      },
+      body: formData,
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch(error => {
+        console.error('Error posting data:', error);
+      });
+  };
+  
+
+  const [actors, setActors] = useState([]);
+  useEffect(() => {
+    fetch('http://localhost:8000/api/actor/')
+      .then(response => response.json())
+      .then(data => {
+        setActors(data.actors);
+      })
+      .catch(error => {
+        console.error('Error fetching actor data:', error);
+      });
+  }, []);
+
+  
+  useEffect(() => {
+    fetch('http://localhost:8000/api/category/')
+      .then(response => response.json())
+      .then(data => {
+        setCategories(data);
+      })
+      .catch(error => {
+        console.error('Error fetching category data:', error);
+      });
+  }, []);
+  const [categories, setCategories] = useState([])
+  const [actor, setActor] = useState([])
   const [year, setYear] = useState('');
-
   const [loadings, setLoadings] = useState([]);
+  const [country, setCountry] = useState(85)
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [file, setFile] = useState(null)
+
   const enterLoading = (index) => {
     setLoadings((prevLoadings) => {
       const newLoadings = [...prevLoadings];
@@ -70,14 +85,17 @@ function AddMovie() {
       });
     }, 2000);
   };
+
+
+
+
   return (
     <div className='all-container'>
-      <div className='manage-title'>
-        Add Movie
-      </div>
+      <h1 style={{ textAlign: 'center', marginBottom: 10, color: 'red' }}>Thêm bộ phim</h1>
       <div className='add-movie-container'>
-        <div className='add-infor-movie'>
-          <Form name="basic"
+          <Form
+            form={form}
+            name="basic"
             labelCol={{
               span: 8,
             }}
@@ -86,120 +104,146 @@ function AddMovie() {
             }}
             style={{
               maxWidth: 600,
+              margin: '0 auto',
             }}
-            initialValues={{
-              remember: true,
-            }}
+            autoComplete="off"
+            onFinish={postData}
+            encType="multipart/form-data" // Thêm dòng này để đặt enctype là 'multipart/form-data'
+          >
+          <Form.Item
+            label="Tên bộ phim"
+            name="Name"
+            rules={[
+              {
+                required: true,
+                message: 'Please input Movie name!',
+              },
+            ]}
+          >
+            <Input onChange={(value)=>setName(value)} type="text" placeholder='Tên bộ phim' className='input-infor-movie' />
+          </Form.Item>
 
-            autoComplete="off">
+          <Form.Item
+            label="Ngày phát hành"
+            name="release_date"
+            rules={[
+              {
+                required: true,
+                message: 'Please input Year product!',
+              },
+            ]}
+          >
+            <DatePicker style={{ width: '100%', height: 40, fontSize: 16 }} format="YYYY-MM-DD" placeholder="Ngày phát hành" onChange={(value)=>setYear(value)} />
+          </Form.Item>
 
-            <Form.Item
-              name="Name"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input Movie name!',
-                },
-              ]}
+          <Form.Item
+            label="Chọn thể loại"
+            name="Type"
+            rules={[
+              {
+                required: true,
+                message: 'Please select movie type!',
+              },
+            ]}
+          >
+            <Space
+              style={{
+                width: '100%',
+              }}
+              direction="vertical"
             >
-              <Input type="text" placeholder='Movie name' className='input-infor-movie' />
-
-            </Form.Item>
-            <Form.Item
-              name="Year"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input Year product!',
-                },
-              ]}
-            >
-
-              <InputNumber style={{ width: 120, height: 40, fontSize: 16 }} placeholder="Year" onChange={setYear} value={year} />
-
-            </Form.Item>
-            <Form.Item
-              name="Type"
-
-            >
-              {/* <Input type="text" placeholder='Movie type' className='input-infor-movie' /> */}
-              <Space
+              <Select
+                mode="multiple"
+                size="large"
+                allowClear
                 style={{
                   width: '100%',
+                  borderRadius: 10,
                 }}
-                direction="vertical"
+                placeholder="Chọn thể loại"
+                onChange={(value)=>{setCategoriesArray(value)}}
+                options={categories.map(category => ({ label: category.name, value: category.id }))}
+              />
+            </Space>
+          </Form.Item>
+
+
+          <Form.Item
+            label="Mô tả"
+            name="Description"
+            rules={[
+              {
+                required: true,
+                message: 'Please input movie description!',
+              },
+            ]}
+          >
+            <TextArea rows={5} onChange={(value)=>{setDescription(value)}} placeholder='Mô tả' className='input-description' style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item
+            label="Diễn viên"
+            name="Actors"
+            rules={[
+              {
+                required: true,
+                message: 'Please select actors!',
+              },
+            ]}
+          >
+            <Select
+              mode="multiple"
+              size="large"
+              allowClear
+              style={{
+                width: '100%',
+                borderRadius: 10,
+              }}
+              placeholder="Chọn diễn viên"
+              options={actors.map(actor => ({ label: actor.name, value: actor.id }))}
+              onChange={(value)=>{setActor(value)}}
+            />
+          </Form.Item>
+
+
+          <Form.Item
+            label="Poster"
+            name="Poster"
+            valuePropName="fileList"
+            rules={[
+              {
+                required: true,
+                message: 'Please upload movie poster!',
+              },
+            ]}
+          >
+            <Input onChange={(value)=>setFile(value)} type="text" placeholder='URL Poster' />
+          </Form.Item>
+
+
+          <Form.Item>
+            <div className='button-submit' style={{ textAlign: 'center', marginTop: '20px' }}>
+              <Button
+                loading={loadings[0]}
+                htmlType="submit" // Sử dụng htmlType để nút này hoạt động như một nút submit trong form
+                style={{
+                  color: 'white',
+                  borderColor: 'red',
+                  backgroundColor: 'red',
+                  width: 130,
+                  height: 50,
+                  fontSize: 20,
+                  marginBottom: 10,
+                }}
+                onClick={postData}
               >
-                <Select
-                  mode="multiple"
-                  size="large"
-                  allowClear
-                  style={{
-                    width: 400,
-                    borderRadius: 10,
-                  }}
-                  placeholder="Select type movie"
-                  onChange={handleChangeTypeMovie}
-                  options={typeMovie}
-                />
-              </Space>
-            </Form.Item>
-
-
-            <TextArea rows={5} placeholder='Description' required={true} className='input-description' style={{ width: 400 }} />
-
-
-            <Form.Item
-              name="Actors"
-              rules={[
-                {
-                  required: false
-                }
-              ]}
-            >
-              <Input type="text" placeholder='Name Actors' className='input-infor-movie' />
-            </Form.Item>
-
-            <Form.Item
-              name="trailer"
-              rules={[
-                {
-                  required: true,
-                  message: "Link trailer youtube."
-                }
-              ]}
-            >
-              <Input type="text" placeholder='Link trailer' className='input-infor-movie' />
-            </Form.Item>
-
-            {/* <Upload>
-              <Button icon={<UploadOutlined style={{ color: "red" }} />} style={{ height: 40 }}>Upload Movie Image</Button>
-            </Upload> */}
-            <Input style={{ width: 400, height: 40, marginBottom: 20 }} placeholder='Link picture movie' size='medium' />
-
-          </Form>
-        </div>
-
-        <div className='upload'>
-          {/* <Upload maxCount={1}>
-            <Button icon={<UploadOutlined style={{ color: "red" }} />} style={{ marginTop: 10, height: 40 }}>Upload Movie poster</Button>
-          </Upload> */}
-          <Input style={{ width: 400, marginTop: 10, height: 40 }} placeholder='Link picture movie poster' size='medium' />
-
-          {/* <Upload>
-            <Button icon={<UploadOutlined style={{ color: "red" }} />} style={{ marginTop: 307, height: 40 }}>Upload Actors</Button>
-          </Upload> */}
-
-        </div>
-      </div>
-
-      <div className='button-submit'>
-        <Button loading={loadings[0]} onClick={() => enterLoading(0)} style={{ color: "white", backgroundColor: "red", width: 130, height: 50, fontSize: 20 }}>
-          Submit
-        </Button>
+                Thêm
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
       </div>
     </div>
+  );
+};
 
-  )
-}
-
-export default AddMovie
+export default AddMovie;

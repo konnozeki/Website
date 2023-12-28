@@ -8,6 +8,7 @@ import axios from 'axios';
 
 const { Text } = Typography;
 function Login() {
+  const [token, setToken] = useState("")
   window.localStorage.removeItem("isLogedin")
   window.localStorage.removeItem("isAdmin")
   window.localStorage.removeItem("isUser")
@@ -26,34 +27,48 @@ function Login() {
   const loginButtonNavigate = useNavigate();
   const handleSubmit = async () => {
     if (username === '' || password === '') {
-    } else if ((username === "admin" || username === 'Admin') && password === '123') {
-      loginButtonNavigate('/Home')
-      window.localStorage.setItem("isLogedin", true)
-      window.localStorage.setItem("isAdmin", true)
+      // Handle empty username or password
+    } else if ((username === 'admin' || username === 'Admin') && password === '123') {
+      // Handle admin login
+      loginButtonNavigate('/Home');
+      window.localStorage.setItem('isLogedin', true);
+      window.localStorage.setItem('isAdmin', true);
     } else {
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/login/', {
-          username,
-          password,
+        const response = await fetch('http://127.0.0.1:8000/api/login/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
         });
 
-        console.log(response.data);
-        if (response.data.token !== "") {
-          loginButtonNavigate("/Home")
-          window.localStorage.setItem("isLogedin", true)
-          window.localStorage.setItem("isUser", true)
-          window.localStorage.setItem("username", username)
+        const responseData = await response.json();
+        console.log(responseData);
+
+        if (responseData.token !== '') {
+          // Store the token in localStorage
+          window.localStorage.setItem('token', responseData.token);
+          window.localStorage.setItem('userId', responseData.user.id)
+          loginButtonNavigate('/Home');
+          window.localStorage.setItem('isLogedin', true);
+          window.localStorage.setItem('isUser', true);
+          if(username === 'administrator') window.localStorage.setItem('isAdmin', true);
+          else window.localStorage.setItem('isUser', true);
+          window.localStorage.setItem('username', username);
         } else {
-          alert("Wrong username or password!")
+          alert('Wrong username or password!');
         }
       } catch (error) {
-        console.error(error)
-        alert("Wrong username or password!")
-
+        console.error(error);
+        alert('Error during login');
       }
-
     }
   };
+
 
   const registerNavigate = useNavigate();
   const handleRegister = () => {

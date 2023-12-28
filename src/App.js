@@ -60,7 +60,8 @@ function App() {
           style={{
             textAlign: 'center',
             backgroundColor: "black",
-            color: "white"
+            color: "white",
+            marginTop: 'auto'
           }}
         >        <p>
             Your Movie Website ©{new Date().getFullYear()} Created with{' '}

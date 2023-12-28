@@ -38,12 +38,21 @@ const Search = () => {
     setFilteredOptions(newFilteredOptions);
   }, [query, data]);
 
-  const handleSearch = () => {
-    // Update the results based on the current input
-    const filteredResults = data.filter((item) =>
-      item.name.toLowerCase().includes(query.toLowerCase())
+  const handleSearch = (value) => {
+    if(value!==undefined) {
+      const filteredResults = data.filter((item) =>
+      item.name.toLowerCase().includes(value.toLowerCase())
+      
     );
     setResults(filteredResults);
+    } else {
+      const filteredResults = data.filter((item) =>
+      item.name.toLowerCase().includes(query.toLowerCase())
+      
+      );
+      setResults(filteredResults);
+    }
+    
   };
 
   return (
@@ -51,7 +60,10 @@ const Search = () => {
       <h1 style={{ marginBottom: '20px', color: '#ee0000' }}>Tìm kiếm</h1>
       <AutoComplete
         options={filteredOptions}
-        onSelect={(value) => setQuery(value)}
+        onSelect={(value) => {
+          setQuery(value);
+          handleSearch(value); // Call handleSearch when an option is selected
+        }}
         style={{ width: '80%', marginBottom: '20px' }}
       >
         <Input.Search
@@ -72,7 +84,19 @@ const Search = () => {
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
         {results.length !== 0 ? results.map((result) => (
           <SearchResult key={result.id} result={result} />
-        )) : <p style={{ marginTop: '20px' }}>Không có gì ở đây cả...</p>}
+        )) : <div>
+        <p style={{ marginTop: '20px' }}>Không có gì ở đây cả...</p>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            </div>}
       </div>
       <div style={{ marginBottom: 20 }}></div>
     </div>
