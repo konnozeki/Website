@@ -287,28 +287,27 @@ class UpdateDeleteUserAdminView(generics.RetrieveUpdateDestroyAPIView):
         )
 
 
-# Class này update và delete người dùng từ phía người dùng
 class UpdateDeleteUserView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    model = User
+    queryset = User.objects.all()
     serializer_class = UserSerializer
 
     def delete(self, request, *args, **kwargs):
-        user = get_object_or_404(User, id=kwargs.get("pk"))
-        userProfile = get_object_or_404(UserProfile, user=user)
+        user = self.get_object()
+
         if user != self.request.user:
             return JsonResponse(
                 {"message": "You don't have permission to delete this user"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        userProfile.delete()
+
         user.delete()
         return JsonResponse(
             {"message": "Delete user successful!"}, status=status.HTTP_200_OK
         )
 
     def update(self, request, *args, **kwargs):
-        user = get_object_or_404(User, id=kwargs.get("pk"))
+        user = self.get_object()
 
         if user != self.request.user:
             return JsonResponse(
@@ -316,25 +315,10 @@ class UpdateDeleteUserView(generics.RetrieveUpdateDestroyAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user_profile = get_object_or_404(UserProfile, user=user)
-        user_serializer = self.get_serializer(user, data=request.data, partial=True)
-        user_profile_serializer = UserProfileSerializer(
-            user_profile, data=request.data, partial=True
-        )
-
-        user_serializer.is_valid(raise_exception=True)
-        user_profile_serializer.is_valid(raise_exception=True)
-
-        self.perform_update(user_serializer)
-        self.perform_update(user_profile_serializer)
-
+        user.email = self.request.data["email"]
+        user.save()
         return JsonResponse(
-            {
-                "message": "Update user profile successful!",
-                "user_data": user_serializer.data,
-                "user_profile_data": user_profile_serializer.data,
-            },
-            status=status.HTTP_200_OK,
+            {"message": "Update user successful"}, status=status.HTTP_200_OK
         )
 
 
@@ -348,6 +332,7 @@ class UpdatePasswordView(generics.UpdateAPIView):
                 {"message": "password incorrect"}, status=status.HTTP_400_BAD_REQUEST
             )
         user.set_password(self.request.data["new_password"])
+        user.save()
         return JsonResponse(
             {"message": "Update password successful"}, status=status.HTTP_200_OK
         )
