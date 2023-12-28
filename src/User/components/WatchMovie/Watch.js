@@ -131,8 +131,8 @@ const Watch = () => {
   };
 
   return (
-    <div>
-      <div className="info-container">
+    <div style={{ backgroundColor: "rgb(60,59,59)", paddingTop: "10%" }}>
+      <div className="info-container" >
         <div className="movie-poster-container">
           <img src={film.film.poster} alt="movie poster" className="movie-poster" />
         </div>
@@ -184,7 +184,7 @@ const Watch = () => {
 
 
       <div className="CommentSection">
-        <h1 style={{ display: "block" }}>Bình luận</h1>
+        <h1 style={{ display: "block", color: "white" }}>Bình luận</h1>
 
         <CommentDropdown film={film} />
 

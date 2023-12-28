@@ -138,7 +138,7 @@ function UserProfile() {
                 name="ID"
                 styles={{ marginTop: 20 }}
               >
-                <Input type="text" disabled={true} size="large" defaultValue={items[1].children} />
+                <Input type="text" disabled={true} size="large" defaultValue={items[0].children} />
               </Form.Item>
 
               <Form.Item

@@ -9,25 +9,25 @@ const VideoComponent = ({ EpisodeList, isVideoVisible, setVideoVisible }) => {
     const videoId = extractVideoId(youtubeUrl);
 
     if (videoId) {
-        // Tạo URL nhúng
-        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-        return embedUrl;
+      // Tạo URL nhúng
+      const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+      return embedUrl;
     } else {
-        // Trả về null nếu không thể trích xuất mã video
-        return null;
+      // Trả về null nếu không thể trích xuất mã video
+      return null;
     }
-}
+  }
 
-// Hàm để trích xuất mã video từ URL YouTube
-function extractVideoId(url) {
+  // Hàm để trích xuất mã video từ URL YouTube
+  function extractVideoId(url) {
     const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const match = url.match(regExp);
 
     // Mảng thứ 2 trong kết quả là mã video
     return match && match[1] ? match[1] : null;
-}
+  }
 
-// Sử dụng hàm để chuyển đổi URL
+  // Sử dụng hàm để chuyển đổi URL
 
 
 
@@ -45,9 +45,9 @@ function extractVideoId(url) {
     <div>
       <br />
       <div>
-          <h1 style={{ display: "block" }}>Xem phim</h1>
-        </div>
-      <div style={{display: "block", height: "80vh"}}>
+        <h1 style={{ display: "block", color: "white" }}>Xem phim</h1>
+      </div>
+      <div style={{ display: "block", height: "80vh" }}>
         <iframe
           width={"100%"}
           height={"100%"}
@@ -60,7 +60,7 @@ function extractVideoId(url) {
         ></iframe>
       </div>
       <div>
-        <h2>Chọn tập phim:</h2>
+        <h2 style={{ color: "white" }}>Chọn tập phim:</h2>
         {EpisodeList.map((episode, index) => (
           <Button
             key={index}

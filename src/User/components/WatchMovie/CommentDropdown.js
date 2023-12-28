@@ -33,7 +33,7 @@ const CommentDropdown = ({ film, selectedEpisode }) => {
 
   return (
     <Dropdown overlay={<Menu>{menuItems}</Menu>}>
-      <a onClick={(e) => e.preventDefault()}>
+      <a onClick={(e) => e.preventDefault()} style={{ color: "white" }}>
         <Space>
           {localSelectedEpisode ? `Tập ${localSelectedEpisode}` : 'All'} <DownOutlined />
         </Space>

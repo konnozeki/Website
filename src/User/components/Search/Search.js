@@ -39,24 +39,24 @@ const Search = () => {
   }, [query, data]);
 
   const handleSearch = (value) => {
-    if(value!==undefined) {
+    if (value !== undefined) {
       const filteredResults = data.filter((item) =>
-      item.name.toLowerCase().includes(value.toLowerCase())
-      
-    );
-    setResults(filteredResults);
+        item.name.toLowerCase().includes(value.toLowerCase())
+
+      );
+      setResults(filteredResults);
     } else {
       const filteredResults = data.filter((item) =>
-      item.name.toLowerCase().includes(query.toLowerCase())
-      
+        item.name.toLowerCase().includes(query.toLowerCase())
+
       );
       setResults(filteredResults);
     }
-    
+
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: "100vh", backgroundColor: "rgb(60,59,59)" }}>
       <h1 style={{ marginBottom: '20px', color: '#ee0000' }}>Tìm kiếm</h1>
       <AutoComplete
         options={filteredOptions}
@@ -85,18 +85,18 @@ const Search = () => {
         {results.length !== 0 ? results.map((result) => (
           <SearchResult key={result.id} result={result} />
         )) : <div>
-        <p style={{ marginTop: '20px' }}>Không có gì ở đây cả...</p>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            </div>}
+          <p style={{ marginTop: '20px', color: "white" }}>Không có gì ở đây cả...</p>
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+        </div>}
       </div>
       <div style={{ marginBottom: 20 }}></div>
     </div>

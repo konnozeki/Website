@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import "../Home/Home.scss";
 import Category from "../Home/Category";
 import CategoryList from "../Home/CategoryList";
+// import "./Movies.scss"
 
 function Movies() {
   const [category, setCategory] = useState([]);
@@ -25,7 +26,7 @@ function Movies() {
 
   const renderListOfUserNames = (names) => {
     return names.map((name) => (
-      <div key={name.id} className="phim-theo-the-loai">
+      <div key={name.id} className="phim-theo-the-loai" style={{ margin: "0 5% 0 5%" }}>
         <Category Category_Name={name.name} />
         <CategoryList category={name.slug} />
       </div>

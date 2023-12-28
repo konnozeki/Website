@@ -23,18 +23,18 @@ function Actor() {
       avatar: ""
     },
     films: [{
-        id: 0,
-        name: "",
-        slug: "",
-        description: "",
-        actors: [
-        ],
-        categories: [
-        ],
-        country: 0,
-        poster: "",
-        age_restriction: 0,
-        release_date: "1990-06-10"
+      id: 0,
+      name: "",
+      slug: "",
+      description: "",
+      actors: [
+      ],
+      categories: [
+      ],
+      country: 0,
+      poster: "",
+      age_restriction: 0,
+      release_date: "1990-06-10"
     }]
   });
   // Function to fetch actor data
@@ -69,16 +69,16 @@ function Actor() {
     <div className="container">
       <div className="info-container">
         <div className="avatar-container">
-          <Image src={actorData.actor.avatar} style={{ height: 500 }} alt="Ảnh" className="avatar"/>
+          <Image src={actorData.actor.avatar} style={{ height: 500 }} alt="Ảnh" className="avatar" />
         </div>
         <div className="info">
           <h1>{actorData.actor.name}</h1>
-          <p className="info-item">Giới tính: {actorData.actor.gender=="M" ? "Nam" : "Nữ"}</p>
-          <div className="country-info" style={{display:'flex'}}>
+          <p className="info-item">Giới tính: {actorData.actor.gender == "M" ? "Nam" : "Nữ"}</p>
+          <div className="country-info" style={{ display: 'flex' }}>
             <p className="info-item">Quốc tịch: {actorData.actor.country.name}</p>
             <img src={actorData.actor.country.flag} style={{ height: 20, width: 30, marginLeft: 10 }} alt="Ảnh" className="flag" />
           </div>
-          <p className="description">{actorData.actor.description}</p>
+          <p className="description-actor">{actorData.actor.description}</p>
         </div>
       </div>
     </div>

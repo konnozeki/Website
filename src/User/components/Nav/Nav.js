@@ -17,13 +17,13 @@ const tabs = [
 ];
 
 const Menus = [
-    { key: "User/Profile", name: "Profile", url: "/User/Profile" },
+    { key: "User/Profile", name: "Hồ sơ", url: "/User/Profile" },
     { key: 'History', name: 'Lịch sử', url: "/History" },
     { key: "Login", name: "Đăng xuất", url: "/Login" }
 ]
 
 const MenusAdmin = [
-    { key: "Admin/Profile", name: "Profile", url: "/Admin/Profile" },
+    { key: "Admin/Profile", name: "Hồ sơ", url: "/Admin/Profile" },
     { key: "Admin", name: "Quản lý", url: '/Admin' },
     { key: 'History', name: 'Lịch sử', url: "/History" },
     { key: "Login", name: "Đăng xuất", url: "/Login" }
