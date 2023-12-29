@@ -4,7 +4,7 @@ export const backendUrl = function (url) {
     return HOST + url; 
 } 
 
-export const ADMIN_GET_LIST_FILM_API = HOST + "api/admin/film/";
-export const ADMIN_GET_FILM_API = function (id) {
-    return HOST + "admin/film/" + id + "/";
-}
+export const ADMIN_LIST_CREATE_FILM_API = HOST + "api/admin/film/";
+export const ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API = function (id) {
+  return HOST + "api/admin/film/" + id + "/";
+};

@@ -12,7 +12,7 @@ import {
 } from "antd";
 import "./ManageMovie.scss";
 import { Link } from "react-router-dom";
-import { ADMIN_GET_LIST_FILM_API, backendUrl } from "../../../api";
+import { ADMIN_LIST_CREATE_FILM_API, backendUrl } from "../../../api";
 
 const MovieList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +21,7 @@ const MovieList = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(ADMIN_GET_LIST_FILM_API, {
+      const response = await fetch(ADMIN_LIST_CREATE_FILM_API, {
         method: "GET",
         headers: {
           Authorization: `TOKEN ${window.localStorage.getItem("token")}`,
