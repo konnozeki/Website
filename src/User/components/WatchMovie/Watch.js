@@ -1,7 +1,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ActorCarousel from "./ActorCarousel";
 import CommentComponent from "./CommentComponent";
 import FavoriteButton from "./FavoriteButton";
@@ -59,18 +59,19 @@ const Watch = () => {
       description: "Đây là nội dung tập 1"
     }],
   });
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`http://localhost:8000/api/film/${slug}/`);
-        const data = await response.json();
-        setFilm(data);
-      } catch (error) {
-        console.error("Error fetching movie data:", error);
-      }
-    };
+  const fetchFilmData = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/film/${slug}/`);
+      const data = await response.json();
+      setFilm(data);
+      setRating(data.average_rate); // Cập nhật giá trị xếp hạng khi fetch dữ liệu
+    } catch (error) {
+      console.error("Error fetching movie data:", error);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    fetchFilmData();
   }, []);
 
   const [commentComponentKey, setCommentComponentKey] = useState(0); // State để làm trigger cho việc re-render
@@ -93,10 +94,28 @@ const Watch = () => {
 
   const [rating, setRating] = useState(film.average_rate);
 
-  const handleRateChange = (value) => {
-
-
+  const handleRateChange = async (value) => {
     setRating(value);
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/film/${slug}/rate/`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          "Authorization": `TOKEN ${window.localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          rate: value // Sử dụng giá trị mới của 'value'
+        })
+      });
+
+      // Nếu bạn muốn cập nhật dữ liệu ngay sau khi đánh giá, bạn có thể gọi lại fetchFilmData()
+      fetchFilmData();
+    } catch (error) {
+      console.error("Error updating movie rate:", error);
+    }
+
+    console.log(value);
   };
 
   //của nút addcomment
@@ -154,14 +173,21 @@ const Watch = () => {
         <div className="movie-info">
           <h1 style={{ fontSize: '5vh' }}>{film.film.name}</h1>
           <div>
+          {
+            window.localStorage.getItem('token')!==null ?
             <Rate
               allowClear
-              
-              allowHalf
-              defaultValue={film.average_rate}
+              defaultValue={rating}
               onChange={handleRateChange}
             />
-            <span style={{ marginLeft: "10px" }}>{film.average_rate}</span>
+            : <Rate
+              allowClear
+              disabled
+              value={rating}
+              defaultValue={rating}
+            />
+          }
+            <span style={{ marginLeft: "10px" }}>{film.average_rate.toFixed(2)}/5</span>
           </div>
           {film.categories.map((Genre, index) => (
             <Tag key={index} color="red">
