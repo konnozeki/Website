@@ -234,7 +234,7 @@ const History = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <p>Bạn có chắc chắn muốn xóa tập phim này trong lịch sử?</p>
+        <p style={{textAlign: 'center'}}>Bạn có chắc chắn muốn xóa tập phim này trong lịch sử?</p>
       </Modal>
 
       {/* Modal Xóa tất cả */}
@@ -244,7 +244,7 @@ const History = () => {
         onOk={handleOkDeleteAll}
         onCancel={handleCancelDeleteAll}
       >
-        <p>Bạn có chắc chắn muốn xóa tất cả tập phim trong lịch sử?</p>
+        <p style={{textAlign: 'center'}}>Bạn có chắc chắn muốn xóa tất cả tập phim trong lịch sử?</p>
       </Modal>
     </div>
   );

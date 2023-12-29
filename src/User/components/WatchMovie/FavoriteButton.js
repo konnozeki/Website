@@ -17,7 +17,6 @@ const FavoriteButton = ({ film }) => {
       setEpisodeCount(film.film_episodes.length);
     }
   }, [film]);
-  console.log("Film:" + film.film.slug);
   useEffect(() => {
     // Fetch playlist data from API
     const fetchPlaylistData = async () => {
@@ -92,8 +91,6 @@ const FavoriteButton = ({ film }) => {
 
   const handleSave = () => {
     // Sử dụng danh sách giá trị đã được chọn
-    console.log("Selected values:", selectedValues);
-    console.log(film.film_episodes[episodeCount-1].slug)
     selectedValues.forEach( async (element) => {
       const response = await fetch(`http://localhost:8000/api/playlist/${element}/create/`, {
         method: 'POST',

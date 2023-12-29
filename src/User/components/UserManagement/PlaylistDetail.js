@@ -172,7 +172,7 @@ const PlaylistDetail = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <p>Bạn có chắc chắn muốn xóa tập phim này khỏi danh sách phát?</p>
+        <p style={{textAlign: 'center'}}>Bạn có chắc chắn muốn xóa tập phim này khỏi danh sách phát?</p>
       </Modal>
     </div>
   );

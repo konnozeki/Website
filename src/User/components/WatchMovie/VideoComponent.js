@@ -43,12 +43,10 @@ function extractVideoId(url) {
       Math.min(episodes - 1, EpisodeList.length >= episodes ? episodes - 1 : 0)
     );
   }, [EpisodeList]);
-  console.log(selectedEpisode)
 
 
   const Link = EpisodeList[selectedEpisode].link;
   const embedUrl = convertToEmbedUrl(Link);
-  console.log(embedUrl);
   const handleEpisodeChange = (index) => {
     setSelectedEpisode(index);
   };

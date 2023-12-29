@@ -162,7 +162,7 @@ const handleCreatePlaylist = async () => {
         
         cancelText="Hủy"
       >
-        <p>Bạn có chắc chắn muốn xóa danh sách phát "<strong>{selectedPlaylist?.name}</strong>" không?</p>
+        <p style={{textAlign: 'center'}}>Bạn có chắc chắn muốn xóa danh sách phát "<strong>{selectedPlaylist?.name}</strong>" không?</p>
       </Modal>
 
 

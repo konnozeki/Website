@@ -14,6 +14,7 @@ import {
   Input,
   Avatar,
 } from "antd";
+
 import {
   CaretRightOutlined,
 } from "@ant-design/icons";
@@ -72,6 +73,8 @@ const Watch = () => {
     fetchData();
   }, []);
 
+  const [commentComponentKey, setCommentComponentKey] = useState(0); // State để làm trigger cho việc re-render
+
 
 
 
@@ -92,7 +95,7 @@ const Watch = () => {
 
   const handleRateChange = (value) => {
 
-    console.log("New rating:", value);
+
     setRating(value);
   };
 
@@ -100,10 +103,12 @@ const Watch = () => {
   const [replyToID, setReplyToID] = useState(null);
   const [commentValue, setCommentValue] = useState("");
 
-  const token = window.localStorage.getItem('token')
+ 
+
+
+  //Xử lý tạo comment
   const handleAddCommentButtonClick = (CommentContent) => {
     if (CommentContent !== "") {
-      console.log(CommentContent);
       const postData = async () => {
         try {
           const response = await fetch(`http://localhost:8000/api/film/${slug}/comments/create/`, {
@@ -117,7 +122,7 @@ const Watch = () => {
               content: CommentContent
             })
           });
-          console.log(response)
+
           if (response.ok) {
             // Handle success if needed
             
@@ -132,26 +137,13 @@ const Watch = () => {
       };
       setCommentValue('')
       postData();
+      setCommentComponentKey((prevKey) => prevKey + 1)
     }
   };
-  const newComment = {
-    id: null,
-    user: {
-      name: "YourName",
-      avatar: "YourAvatarUrl",
-    },
-    parent_comment: null,
-    content: null,
-    time: "fghfghgfh",
-    likes: 0,
-  };
 
-  //của comment dropdown
-  const [selectedEpisode, setSelectedEpisode] = useState(null);
-  const handleSetSelectedEpisode = (episode) => {
-    setSelectedEpisode(episode);
-  };
-  console.log(window.localStorage.getItem('currentWatching'))
+
+
+
 
   return (
     <div>
@@ -164,6 +156,7 @@ const Watch = () => {
           <div>
             <Rate
               allowClear
+              
               allowHalf
               defaultValue={film.average_rate}
               onChange={handleRateChange}
@@ -210,8 +203,7 @@ const Watch = () => {
 
       <div className="CommentSection">
         <h1 style={{ display: "block" }}>Bình luận</h1>
-
-        <Comment
+        {window.localStorage.getItem('token')!==null? (<><Comment
           avatar={<Avatar src="" />}
           content={
             <Input.TextArea
@@ -228,11 +220,12 @@ const Watch = () => {
           style={{ marginLeft: "44px" }}
         >
           Bình luận
-        </Button>
+        </Button></>): <></>}
+        
         <br />
         <br />
-
         <CommentComponent
+          key={commentComponentKey} // Sử dụng key để re-render khi state thay đổi
           film={film}
           setReplyToID={setReplyToID}
           handleAddCommentButtonClick={handleAddCommentButtonClick}
