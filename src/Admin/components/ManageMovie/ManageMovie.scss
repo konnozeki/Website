@@ -60,6 +60,18 @@
     transition: transform 0.2s ease-in-out;
 }
 
+.addMovie {
+    background-color: green;
+    width: 150px;
+    height: 40px;
+    text-align: center;
+    padding: 8px;
+    font-size: large;
+    text-decoration: none;
+    color: black;
+    margin: 20px;
+    border-radius: 20px;
+}
 .content {
     position: absolute;
     top: 80%;
@@ -83,7 +95,7 @@
     display: block;
     width: 230px;
     height: 97px;
-    background-color: transparent
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .ant-input-search-button {

@@ -1,7 +1,8 @@
 import { Button, Image, Input, Popconfirm, message, Modal, InputNumber } from 'antd';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import "./MovieDetail.scss"
+import { ADMIN_GET_FILM_API } from '../../../api';
 
 const generateEpisodes = (numEpisodes) => {
     const episodes = [];
@@ -25,6 +26,25 @@ const confirmChangeInformation = (e) => {
 
 function MovieDetail() {
     const [espisodeList, setEspisodesList] = useState(generateEpisodes(40));
+    const { id } = useParams();
+    const titleMovie = decodeURIComponent(id);
+      const fetchData = async () => {
+        try {
+          const response = await fetch(ADMIN_GET_FILM_API (id), {
+            method: "GET",
+            headers: {
+              Authorization: `TOKEN ${window.localStorage.getItem("token")}`,
+            },
+          });
+          const data = await response.json();
+          console.log(data);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+      useEffect(() => {
+        fetchData();
+      }, []);
 
 
     const [selectedEpisodes, setSelectedEpisodes] = useState([]);
@@ -44,8 +64,6 @@ function MovieDetail() {
     const handleReset = () => {
         setSelectedEpisodes([])
     }
-    const { title } = useParams();
-    const titleMovie = decodeURIComponent(title)
 
     const EpisodeDisplay = () => {
         return (
@@ -80,9 +98,7 @@ function MovieDetail() {
     return (
         <div>
             <div className='movie-detail-container'>
-
                 <div className='image-movie'>
-
                     <Image className='movie-image' width={300} height={420}
                         src="https://i.pinimg.com/564x/20/2a/a2/202aa259454320d63365817ea1128023.jpg" />
                 </div>
