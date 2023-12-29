@@ -326,7 +326,10 @@ class UpdatePasswordView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
-        user = authenticate(username = self.request.user.username, password = self.request.data["old_password"])
+        user = authenticate(
+            username=self.request.user.username,
+            password=self.request.data["old_password"],
+        )
         if user is None:
             return JsonResponse(
                 {"message": "password incorrect"}, status=status.HTTP_400_BAD_REQUEST
@@ -746,8 +749,12 @@ class ListCreateHistoryView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         histories = History.objects.filter(user=self.request.user)
-        history_serializer = HistorySerializer(histories, many=True)
-        return JsonResponse(history_serializer.data, safe=False)
+        histories = HistorySerializer(histories, many=True).data
+        for history in histories:
+            history["film_episode"] = FilmEpisodeSerializer(
+                FilmEpisode.objects.get(pk=history["film_episode"])
+            ).data
+        return JsonResponse(histories, safe=False)
 
     def create(self, request, *args, **kwargs):
         data = dict()
@@ -866,14 +873,19 @@ class RetrieveUpdateDeletePlayListView(generics.RetrieveUpdateDestroyAPIView):
         play_list_episodes = PlayListEpisode.objects.filter(
             play_list=play_list
         ).order_by("index")
+        episodes = PlayListEpisodeSerializer(
+            play_list_episodes, context=self.get_serializer_context(), many=True
+        ).data
+        for episode in episodes:
+            episode["film_episode"] = FilmEpisodeSerializer(
+                FilmEpisode.objects.get(pk=episode["film_episode"])
+            ).data
         return JsonResponse(
             {
                 "play_list": PlayListSerializer(
                     play_list, context=self.get_serializer_context()
                 ).data,
-                "episodes": PlayListEpisodeSerializer(
-                    play_list_episodes, context=self.get_serializer_context(), many=True
-                ).data,
+                "episodes": episodes,
             },
             status=status.HTTP_200_OK,
         )

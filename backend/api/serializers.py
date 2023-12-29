@@ -233,7 +233,6 @@ class HistorySerializer(serializers.ModelSerializer):
         model = History
         fields = ["id", "user", "film_episode", "time"]
 
-
 class TrackingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tracking
@@ -262,4 +261,3 @@ class PlayListEpisodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayListEpisode
         fields = ["id", "play_list", "film_episode", "index"]
-        depth = 1
