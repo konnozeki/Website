@@ -6,15 +6,40 @@
 }
 
 .image-movie {
-    margin: 90px 10% 100px 200px
+    margin: 100px
 }
 
 .detail-movie {
-    width: 500px
+    margin: 100px 100px 100px 0px;
+    color: white;
 }
 
 .detail-children {
     margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.detail-label {
+    width: 150px;
+}
+
+.detail-content{
+    width: 80%;
+    display: flex;
+}
+
+.flag{
+    padding-right: 10px;
+}
+
+.info-box {
+    margin-right: 10px;
+    border: #ddd 1px solid;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 20px;
 }
 
 .detail-infor {

@@ -3,6 +3,7 @@ import { Button, Descriptions, Modal, Form, Input } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import userIcon from "../Nav/UserIcon.png";
 import "./UserProfile.scss";
+import { UPDATE_DELETE_USER_API, CHANGE_PASSWORD_API } from '../../../api';
 
 function UserProfile() {
   const token = window.localStorage.getItem('token');
@@ -23,7 +24,7 @@ function UserProfile() {
         return;
       }
 
-      const response = await fetch(`http://127.0.0.1:8000/api/user/${userId}/`, {
+      const response = await fetch(UPDATE_DELETE_USER_API(userId), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -43,6 +44,26 @@ function UserProfile() {
     }
   };
 
+  const handleChangePassword = async () => {
+    try {
+      const response = await fetch(CHANGE_PASSWORD_API, {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json',
+          // Authorization: `TOKEN ${window.localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          old_password,
+          new_password,
+        }),
+      }
+      )
+      const responseData = await response.json();
+      console.log(responseData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
   const items = [
     {
       key: '1',
@@ -80,6 +101,23 @@ function UserProfile() {
     setIsModalProfileOpen(false);
   };
 
+  const [isModalChangePWOpen, setIsModalChangePWOpen] = useState(false);
+  const showModalChangePW = () => {
+    setIsModalChangePWOpen(true);
+  };
+  const handleOkChangePW = () => {
+    handleChangePassword();
+    setIsModalChangePWOpen(false);
+  };
+  const [old_password, setOldPassword] = useState("");
+  const [new_password, setNewPassword] = useState("");
+  const ModalButtonChangePW = () => (
+    <div style={{ textAlign: 'center' }}>
+      <Button type="primary" onClick={() => { handleOkChangePW(); }}>
+        Save Change
+      </Button>
+    </div>
+  );
   const ModalButtons = () => (
     <div style={{ textAlign: 'center' }}>
       <Button type="primary" onClick={() => { handleOk(); updateUserProfile(); }}>
@@ -173,6 +211,60 @@ function UserProfile() {
               </Form.Item>
             </Form>
           </Modal>
+
+          <Button className='change-password' onClick={showModalChangePW}>Change Password</Button>
+          <Modal
+            title="Change Password"
+            open={isModalChangePWOpen}
+            style={{ marginTop: 80, marginLeft: "28%" }}
+            footer={<ModalButtonChangePW />}
+          >
+            <Form name="basic"
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              style={{
+                maxWidth: 600,
+              }}
+              initialValues={{
+                remember: true,
+              }}
+
+              autoComplete="off">
+              <Form.Item label="Old Password"
+                name="old password"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your password!',
+                  },
+                ]}>
+                <Input.Password
+                  style={{ marginLeft: 20 }}
+                  iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item label="New Password"
+                name="new password"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your password!',
+                  },
+                ]}>
+                <Input.Password
+                  style={{ marginLeft: 20 }}
+                  iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </Form.Item>
+            </Form>
+          </Modal>
+
         </div>
       </div>
     </>

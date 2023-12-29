@@ -5,36 +5,34 @@ import { DeleteFilled, SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Input, Space, Table, message, Popconfirm, ConfigProvider, Select } from 'antd';
 import "./ManageUser.scss"
-import axios from 'axios';
+import { ADMIN_LIST_USER_API, ADMIN_UPDATE_DELETE_USER_API } from '../../../api';
+
 
 const onConfirm = (e) => {
   message.success("Delete successfully!")
   console.log(e)
 }
-const generateData = (count) => {
-  const data = [];
-
-  for (let i = 1; i <= count; i++) {
-    data.push({
-      id: `${i - 1}`,
-      username: "Admin",
-      role: "Admin"
-    });
-  }
-
-  return data;
-};
 
 const ManageUser = () => {
-  const [data, setData] = useState(generateData(1));
+  const [data, setData] = useState([]);
 
   const getUserInfor = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/generic/user/");
-      console.log(response.data)
-      const array = response.data.map(obj => ({ ...obj, role: 'User' }));
+      const response = await fetch(ADMIN_LIST_USER_API, {
+        method: 'GET',
+        headers: {
+          'Authorization': `TOKEN ${window.localStorage.getItem('token')}`
+        },
+
+      });
+      const responseData = await response.json();
+      console.log(responseData)
+      const array = responseData.map(obj => ({ ...obj, role: 'User' }));
+      const newDataSource = array.map((item) =>
+        item.username === "administrator" ? { ...item, role: "Admin" } : item
+      );
       // setData(...data, array)
-      setData(data.concat(array))
+      setData(newDataSource)
     } catch (error) {
       console.error(error);
     }
@@ -43,25 +41,20 @@ const ManageUser = () => {
     getUserInfor()
   }, [])
 
-  const handleRoleChange = (value, record) => {
-    // Find the index of the updated record in the data array
-    const dataIndex = data.findIndex(item => item.key === record.key);
-
-    // Create a new copy of the data array
-    const newData = [...data];
-
-    // Update the role of the corresponding record
-    newData[dataIndex] = {
-      ...newData[dataIndex],
-      role: value,
-    };
-
-    // Update the state with the modified data
-    setData(newData);
-
-    // Log the updated record
-    console.log('Updated Record:', newData[dataIndex]);
-  };
+  const handleDeleteUser = async (key) => {
+    try {
+      const response = await fetch(ADMIN_UPDATE_DELETE_USER_API(key), {
+        method: 'DELETE',
+        headers: {
+          Authorization: `TOKEN ${window.localStorage.getItem("token")}`,
+        },
+      })
+      const responseData = await response.json();
+      console.log(responseData);
+    } catch (error) {
+      console.error(error)
+    }
+  }
   const searchInput = useRef(null);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -144,34 +137,18 @@ const ManageUser = () => {
       // width: '30%',
       ...getColumnSearchProps('username'),
     },
-
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      // width: '30%',
+      ...getColumnSearchProps('email'),
+    },
     {
       title: 'Role',
       dataIndex: 'role',
       key: 'role',
       width: "10%",
-      // render: (text, record) => (
-      //   <Select
-      //     defaultValue={record.role}
-      //     style={{
-      //       width: 120,
-      //     }}
-      //     onChange={(value) => handleRoleChange(value, record)}
-      //     bordered={false}
-      //     options={[
-      //       {
-      //         value: 'Admin',
-      //         label: 'Admin',
-      //       },
-      //       {
-      //         value: 'User',
-      //         label: 'User',
-      //       },
-
-      //     ]}
-      //   />
-      // ),
-      // sorter: (a, b) => a.role.localeCompare(b.role)
     },
     {
       title: "Delete",
@@ -184,7 +161,7 @@ const ManageUser = () => {
           <Popconfirm
             title="Delete movie"
             description="Are you sure to delete this movie?"
-            onConfirm={() => onConfirm(record.id)}  // Assuming record.id is the identifier for the row
+            onConfirm={() => { handleDeleteUser(record.id); handleDeleteUser(); getUserInfor(); }}  // Assuming record.id is the identifier for the row
             okText="Yes"
             cancelText="No"
           >
@@ -193,10 +170,13 @@ const ManageUser = () => {
       )
     }
   ];
+  const handleUserDetail = (username) => {
+    window.location.href = `/admin/user/detail/${username}`
+  }
   return (
     <div className='manage-user-container'>
       <div className='manage-user-header'>
-        <h1 className='manage-user-title'>Mangage User</h1>
+        <h1 className='manage-user-title'>Manage User</h1>
       </div>
 
       <ConfigProvider
@@ -210,7 +190,11 @@ const ManageUser = () => {
             }
           },
         }}>
-        <Table columns={columns} dataSource={data} />
+        <Table columns={columns} dataSource={data} onRow={(record) => {
+          return {
+            onClick: () => { handleUserDetail(record.username) },
+          };
+        }} />
 
       </ConfigProvider>
     </div>

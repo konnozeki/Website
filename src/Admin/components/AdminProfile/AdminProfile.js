@@ -10,7 +10,7 @@ const items = [
   {
     key: '1',
     label: 'ID',
-    children: '#Admin',
+    children: '#1',
   },
   {
     key: '2',
@@ -25,7 +25,7 @@ const items = [
   {
     key: '4',
     label: 'Username',
-    children: 'Admin',
+    children: 'administrator',
   },
 
 ];

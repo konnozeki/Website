@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from './Card';
 import './List.scss';
+import { CATEGORY_INFO_API} from '../../../api';
 
 const CategoryList = ({category}) => {
   const [array2, setArray2] = useState([]);
@@ -9,7 +10,8 @@ const CategoryList = ({category}) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/category/${category}/`);
+        
+        const response = await fetch(CATEGORY_INFO_API(category));
         const data = await response.json();
         
         // Assuming the response is an array of objects similar to array2
