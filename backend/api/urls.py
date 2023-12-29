@@ -37,7 +37,7 @@ urlpatterns = [
         name="category-info",
     ),
     path("admin/film/", ListCreateFilmView.as_view()),
-    path("admin/film/<int:pk>/", UpdateDeleteFilmView.as_view()),
+    path("admin/film/<int:pk>/", RetrieveUpdateDeleteFilmView.as_view()),
     path("film/", ListFilmView.as_view()),
     path("film/<slug:film_slug>/", FilmInfoView.as_view(), name="film-info"),
     path(

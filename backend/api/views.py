@@ -417,10 +417,42 @@ class ListCreateFilmView(generics.ListCreateAPIView):
 
 
 # class này cho phép update và delete film.
-class UpdateDeleteFilmView(generics.RetrieveUpdateDestroyAPIView):
+class RetrieveUpdateDeleteFilmView(generics.RetrieveUpdateDestroyAPIView):
     model = Film
     serializer_class = FilmSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, *args, **kwargs):
+        film = get_object_or_404(Film, pk =self.kwargs["pk"])
+        average_rate = RateFilm.objects.filter(film=film).aggregate(Avg("rate"))[
+            "rate__avg"
+        ]
+        if average_rate is None:
+            average_rate = 0
+
+        return JsonResponse(
+            {
+                "film": FilmSerializer(
+                    film, context=self.get_serializer_context()
+                ).data,
+                "actors": ActorSerializer(
+                    film.actors, context=self.get_serializer_context(), many=True
+                ).data,
+                "categories": CategorySerializer(
+                    film.categories, context=self.get_serializer_context(), many=True
+                ).data,
+                "country": CountrySerializer(
+                    film.country, context=self.get_serializer_context()
+                ).data,
+                "average_rate": average_rate,
+                "film_episodes": FilmEpisodeSerializer(
+                    FilmEpisode.objects.filter(film=film),
+                    context=self.get_serializer_context(),
+                    many=True,
+                ).data,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     def delete(self, request, *args, **kwargs):
         film = get_object_or_404(Film, pk=kwargs.get("pk"))
