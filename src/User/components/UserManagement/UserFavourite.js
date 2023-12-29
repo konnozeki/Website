@@ -1,224 +1,188 @@
-//Bộ sưu tập của người dùng
+import React, { useState, useEffect } from 'react';
+import { Card, Row, Col, Button, Modal, Input } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
-//Sửa thông tin phim(tên, năm, mô tả phim, diễn viên,...)
-import React, { useState } from 'react'
-import { Image, Input, Pagination, Row, message, Popconfirm, Button, ConfigProvider, } from 'antd'
-import imageMovie from "../Nav/UserIcon.png";
-import { Link } from 'react-router-dom';
-
-const movieData = [
-  {
-    key: 1,
-    id: 1,
-    src: "https://i.pinimg.com/564x/20/2a/a2/202aa259454320d63365817ea1128023.jpg",
-    title: "Hello1"
-  },
-  {
-    key: 2,
-    id: 2,
-    src: "https://d1hjkbq40fs2x4.cloudfront.net/2017-12-12/files/eos-6d-mark-ii-sample-image_1723-1.jpg",
-    title: "Hello2"
-  },
-  {
-    key: 3,
-    id: 3,
-    src: imageMovie,
-    title: "Hello3"
-  },
-  {
-    key: 4,
-    id: 4,
-    src: imageMovie,
-    title: "Hello4"
-  },
-  {
-    key: 5,
-    id: 5,
-    src: imageMovie,
-    title: "Hello5"
-  },
-  {
-    key: 6,
-    id: 6,
-    src: imageMovie,
-    title: "Hello6"
-  },
-  {
-    key: 7,
-    id: 7,
-    src: imageMovie,
-    title: "Hello7"
-  },
-  {
-    key: 8,
-    id: 8,
-    src: imageMovie,
-    title: "Hello8"
-  },
-  {
-    key: 9,
-    id: 9,
-    src: imageMovie,
-    title: "Hello9"
-  },
-  {
-    key: 10,
-    id: 10,
-    src: imageMovie,
-    title: "Hello10"
-  }, {
-    key: 11,
-    id: 11,
-    src: imageMovie,
-    title: "Hello11"
-  },
-  {
-    key: 12,
-    id: 12,
-    src: imageMovie,
-    title: "Hello12"
-  },
-  {
-    key: 13,
-    id: 13,
-    src: imageMovie,
-    title: "Hello13"
-  },
-  {
-    key: 14,
-    id: 14,
-    src: imageMovie,
-    title: "Hello14"
-  },
-  {
-    key: 15,
-    id: 15,
-    src: imageMovie,
-    title: "Hello5"
-  },
-  {
-    key: 16,
-    id: 16,
-    src: imageMovie,
-    title: "Hello16"
-  },
-  {
-    key: 17,
-    id: 17,
-    src: imageMovie,
-    title: "Hello17"
-  },
-  {
-    key: 18,
-    id: 18,
-    src: imageMovie,
-    title: "Hello18"
-  },
-]
-
-const MovieList = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
-
-  // Your list of movies (replace this with your actual data)
-  const movieList = movieData.map((movie) => (
-    <div key={movie.key} style={{ marginRight: 10, marginTop: 10 }} >
-      {/* <Link to={{ pathname: `/${encodeURIComponent(movie.title)}` }}> */}
-      <Image className='movie-image' width={250} height={350} src={movie.src} preview={false} />
-      {/* </Link> */}
-    </div>
-  ));
-
-  const totalItems = movieList.length;
-
-  const handleChangePage = (page) => {
-    setCurrentPage(page);
-  };
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-
-  const currentMovies = movieList.slice(startIndex, endIndex);
-
-  const confirm = (e) => {
-    message.success('Delete successfully!');
-  };
-  const [hoveredMovie, setHoveredMovie] = useState(null);
-
-  return (
-    <div>
-      <Row justify="center">
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: "center", justifyContent: "center" }}>
-          {currentMovies.map((movie, index) => (
-            <div
-              key={movie.key}
-              className="movie-container"
-              onMouseEnter={() => setHoveredMovie(index)}
-              onMouseLeave={() => setHoveredMovie(null)}
-            >
-              {movie}
-              {hoveredMovie === index &&
-                (<div className='content'>
-                  <p>Name: Hello</p>
-                  <p>Year: 2030</p>
-                  <p>Type: Romantic asdhkasdhs askhdasdlshdsa jjjjjjjj jjjjjjjj</p>
-
-                </div>)}
-
-              <Popconfirm
-                title="Delete movie"
-                description="Are you sure to delete this movie?"
-                onConfirm={confirm}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button style={{ backgroundColor: "red", color: "white", marginLeft: 85 }} key={index}>Delete</Button>
-              </Popconfirm>
-            </div>
-
-          ))}
-        </div>
-
-      </Row>
-
-      <ConfigProvider
-        theme={{
-          components: {
-            Pagination: {
-              itemActiveBg: "red",
-            },
-          },
-        }}
-      >
-        <Pagination
-          current={currentPage}
-          total={totalItems}
-          pageSize={itemsPerPage}
-          onChange={handleChangePage}
-          showSizeChanger={false}
-          style={{ marginTop: '16px', textAlign: 'center', }}
-        />
-      </ConfigProvider>
-    </div>
-  );
-};
-
+const { Meta } = Card;
 
 function UserFavourite() {
-  return (
-    <div className="manage-movie-container">
-      <div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "5%" }}>
-          <h1 style={{ color: "white" }}>FAVOURITE</h1>
-        </div>
-      </div>
+  const [index, setIndex] = useState(0);
+  const [playlistData, setPlaylistData] = useState([]);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
-      <div className='movie-list'>
-        <MovieList />
-      </div>
+  const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [newPlaylistName, setNewPlaylistName] = useState('');
+  const showCreateModal = () => {
+    setCreateModalVisible(true);
+  };
+  const navigation = useNavigate();
+const fetchPlaylistData = async () => {
+  try {
+    const response = await fetch('http://localhost:8000/api/playlist/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `TOKEN ${window.localStorage.getItem('token')}`,
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setPlaylistData(data);
+    } else {
+      console.error('Failed to fetch playlist data');
+    }
+  } catch (error) {
+    console.error('Error fetching playlist data:', error);
+  }
+};
+
+useEffect(() => {
+  // Fetch playlist data when the component mounts
+  fetchPlaylistData();
+}, []); // The empty dependency array ensures that this effect runs only once when the component mounts
+
+// Function to handle creating a new playlist
+const handleCreatePlaylist = async () => {
+  try {
+    const response = await fetch('http://localhost:8000/api/playlist/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `TOKEN ${window.localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({
+        user: window.localStorage.getItem('userid'),
+        name: newPlaylistName,
+      }),
+    });
+
+    if (response.ok) {
+      const newPlaylist = await response.json();
+      setPlaylistData((prevData) => [...prevData, newPlaylist]);
+      setCreateModalVisible(false);
+      setNewPlaylistName(''); // Clear the input field
+
+      // Fetch the updated playlist data
+      fetchPlaylistData();
+    } else {
+      console.error('Failed to create playlist');
+    }
+  } catch (error) {
+    console.error('Error creating playlist:', error);
+  }
+};
+
+  
+
+  const handleDeletePlaylist = async () => {
+    try {
+      // Send a DELETE request to remove the playlist
+      const response = await fetch(`http://localhost:8000/api/playlist/${selectedPlaylist.slug}/`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `TOKEN ${window.localStorage.getItem('token')}`,
+        },
+      });
+  
+      if (response.ok) {
+        // Remove the playlist from the state if the request is successful
+        setPlaylistData((prevData) => prevData.filter((playlist) => playlist.id !== selectedPlaylist.id));
+        setDeleteModalVisible(false);
+      } else {
+        console.error('Failed to delete playlist');
+      }
+    } catch (error) {
+      console.error('Error deleting playlist:', error);
+    }
+  };
+  
+
+  const showDeleteModal = (playlist) => {
+    setSelectedPlaylist(playlist);
+    setDeleteModalVisible(true);
+  };
+
+  const hideDeleteModal = () => {
+    setDeleteModalVisible(false);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <h1 style={{ marginBottom: '10px', color: '#ee0000' }}>Danh sách phát</h1>
+
+      <Row style={{ margin: 20 }}>
+        {playlistData.length !== 0 ? playlistData.map((playlist) => (
+          <Col key={playlist.id} style={{alignItems: 'center'}} span={playlistData.length<=2?12:8}>
+            <Card
+              onClick={() => navigation(`/playlist/${playlist.slug}`)}
+              hoverable
+              style={{ width: '30vw', margin: '1px' }}
+              cover={<img alt="playlist" src="https://assets.nflxext.com/ffe/siteui/vlv3/6e32b96a-d4be-4e44-a19b-1bd2d2279b51/ee068656-14b9-4821-89b4-53b4937d9f1c/IN-en-20220516-popsignuptwoweeks-perspective_alpha_website_small.jpg" style={{ height: 200 }} />}
+            >
+              <Meta title={playlist.name} />
+              <Button
+                type="primary"
+                
+                style={{ marginTop: '10px', backgroundColor: 'red' }}
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent card click event
+                  showDeleteModal(playlist);
+                }}
+              >
+                Xóa
+              </Button>
+            </Card>
+          </Col>
+        )) : 
+        <div style={{height: 350}}>
+          <p style={{fontSize: 20}}>Không có gì ở đây cả...</p>
+
+        </div>
+        }
+      </Row>
+
+      <Button
+        type="primary"
+        style={{ backgroundColor: 'red', borderColor: 'red', width: 200, color: 'white', margin: 20 }}
+        onClick={showCreateModal}
+        title='Tạo danh sách mới'
+      >
+        Tạo danh sách mới
+      </Button>
+
+      {/* Delete Playlist Modal */}
+      <Modal
+        title="Xóa Playlist"
+        visible={deleteModalVisible}
+        onOk={handleDeletePlaylist}
+        onCancel={hideDeleteModal}
+        okText="Xóa"
+        
+        cancelText="Hủy"
+      >
+        <p>Bạn có chắc chắn muốn xóa danh sách phát "<strong>{selectedPlaylist?.name}</strong>" không?</p>
+      </Modal>
+
+
+      <Modal
+        title="Tạo danh sách mới"
+        visible={createModalVisible}
+        onOk={handleCreatePlaylist}
+        onCancel={() => setCreateModalVisible(false)}
+        okText="Tạo"
+        cancelText="Hủy"
+      >
+        <p>Tên danh sách phát:</p>
+        <Input
+          type="text"
+          value={newPlaylistName}
+          onChange={(e) => setNewPlaylistName(e.target.value)}
+        />
+      </Modal>
     </div>
-  )
+  );
 }
 
-export default UserFavourite
+export default UserFavourite;

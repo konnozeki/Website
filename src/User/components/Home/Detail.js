@@ -9,14 +9,14 @@ const Detail = ({ in4phim }) => {
         <div className="detail">
             
             <h1 className="detail-row-0">{in4phim.name}</h1>
-            <div class="focus-info-tag">
-                <span class="eps-info-number">{in4phim.release_date}</span>
+            <div className="focus-info-tag">
+                <span className="eps-info-number">{in4phim.release_date}</span>
             </div>
-            <div class="focus-info-desc ">
-                <span class="key">
+            <div className="focus-info-desc ">
+                <span className="key">
                     <h3>Mô tả</h3>
                 </span>
-                <span class="description">{in4phim.description}</span>
+                <span className="description">{in4phim.description}</span>
 
             </div>
             

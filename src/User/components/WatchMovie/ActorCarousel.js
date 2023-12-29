@@ -19,6 +19,7 @@ const ActorCarousel = ({ actors }) => {
 
         >
           <Image
+            preview={false}
             src={actor.avatar}
             style={{
               height: "35vh",

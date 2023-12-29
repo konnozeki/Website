@@ -23,6 +23,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Nav from "./User/components/Nav/Nav";
 import "./App.scss"
 import { Layout } from "antd";
+import PlaylistDetail from "./User/components/UserManagement/PlaylistDetail";
+import History from "./User/components/UserManagement/History";
 
 function App() {
   //fetch du lieu
@@ -33,24 +35,24 @@ function App() {
         <div>
           <Nav></Nav>
           <Routes>
-            <Route path="/Login" exact element={<Login />}></Route>
-            <Route path="/Register" exact element={<Register />}></Route>
-            {/* <Route path="/ForgotPassword" exact element={<ForgotPassWord />}></Route> */}
-            <Route path='/Home' exact element={<Home />}></Route>
-            <Route path='/Watch/:slug' exact element={<Watch />}></Route>
-            <Route path='/Movies' exact element={<Movies />}></Route>
-            {/* <Route path='/TvSeries' exact element={<TVSeries />}></Route> */}
-            <Route path='/Search' exact element={<Search />}></Route>
-            <Route path="/Actor/:slug" exact element={<Actor />}></Route>
-            <Route path="/User/Profile" exact element={<UserProfile />}></Route>
-            <Route path="/User/Favourite" exact element={<UserFavourite />}></Route>
-            <Route path="/Admin" exact element={<AdminHome />}></Route>
-            <Route path="/Admin/AddMovie" exact element={<AddMovie />}></Route>
+            <Route path="/login" exact element={<Login />}></Route>
+            <Route path="/register" exact element={<Register />}></Route>
+            <Route path='/home' exact element={<Home />}></Route>
+            <Route path='/watch/:slug' exact element={<Watch />}></Route>
+            <Route path='/movies' exact element={<Movies />}></Route>
+            <Route path='/search' exact element={<Search />}></Route>
+            <Route path="/actor/:slug" exact element={<Actor />}></Route>
+            <Route path="/user/profile" exact element={<UserProfile />}></Route>
+            <Route path="/user/playlist" exact element={<UserFavourite />}></Route>
+            <Route path="/admin" exact element={<AdminHome />}></Route>
+            <Route path="/admin/AddMovie" exact element={<AddMovie />}></Route>
+            <Route path="/playlist/:slug" exact element={<PlaylistDetail/>}></Route>
             {/* <Route path="/Admin/AddEspisode" exact element={<AddEspisode />}></Route> */}
             <Route path="/Admin/ManageMovie" exact element={<ManageMovie />}></Route>
             <Route path="/Admin/ManageUser" exact element={<ManageUser />}></Route>
             <Route path="/Admin/Profile" exact element={<AdminProfile />}></Route>
             <Route path="/Admin/ManageMovie/Detail/:title" exact element={<MovieDetail />}></Route>
+            <Route path="/history" exact element={<History />}></Route>
           </Routes>
         </div>
       </BrowserRouter>

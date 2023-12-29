@@ -1,35 +1,49 @@
 import { Comment } from "@ant-design/compatible";
-import {
-  DislikeFilled,
-  DislikeOutlined,
-  LikeFilled,
-  LikeOutlined,
-} from "@ant-design/icons";
 import React, { createElement, useState, useEffect } from "react";
-import { Avatar, Button, Tooltip, Form, Input } from "antd";
+import { Avatar, Button, Dropdown, Form, Input, Menu } from "antd";
+import { EllipsisOutlined } from "@ant-design/icons";
 import "./CommentComponent.scss";
 
 const CommentBox = (props) => {
-  const [likes, setLikes] = useState(props.likes);
   const [parent_comment, setParent_comment] = useState(props.parent_comment);
-  const [action, setAction] = useState(null);
 
   const [replyVisible, setReplyVisible] = useState(false);
   const [replyContent, setReplyContent] = useState("");
-  const like = () => {
-    if (action !== "liked") {
-      setLikes(likes + 1);
-      setAction("liked");
-    }
-  };
-  const dislike = () => {
-    if (action !== "disliked") {
-      setLikes(likes - 1);
-      setAction("disliked");
-    }
-  };
+
+  
 
   const handleReply = () => {
+    const postData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/film/${props.film.film.slug}/comments/create/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `TOKEN ${window.localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+              user: window.localStorage.getItem("userId"),
+              content: replyContent,
+              parent_comment: props.id,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          // Handle success if needed
+          console.log("Reply posted successfully");
+        } else {
+          // Handle error if needed
+          console.error("Failed to post reply");
+        }
+      } catch (error) {
+        console.error("Error posting reply:", error);
+      }
+    };
+
+    postData();
     setReplyVisible(!replyVisible);
   };
 
@@ -37,19 +51,6 @@ const CommentBox = (props) => {
     setReplyContent(e.target.value);
   };
   const actions = [
-    <Tooltip key="comment-basic-like" title="Like">
-      <span onClick={like}>
-        {createElement(action === "liked" ? LikeFilled : LikeOutlined)}
-        <span className="comment-action">{likes}</span>
-      </span>
-    </Tooltip>,
-    <Tooltip key="comment-basic-dislike" title="Dislike">
-      <span onClick={dislike}>
-        {React.createElement(
-          action === "disliked" ? DislikeFilled : DislikeOutlined
-        )}
-      </span>
-    </Tooltip>,
     <span
       key="comment-basic-reply-to"
       onClick={() => {
@@ -57,18 +58,30 @@ const CommentBox = (props) => {
         handleReply(); // Call your handleReply function here
       }}
     >
-      Reply to
+      Trả lời Người dùng số {props.user}
     </span>,
   ];
 
+  const menu = (
+    <Menu>
+      <Menu.Item key="edit">Chỉnh sửa</Menu.Item>
+      <Menu.Item key="delete">Xóa</Menu.Item>
+    </Menu>
+  );
+
   return (
     <Comment
-      actions={actions}
-      author={<a>{props.user.name}</a>}
+      actions={[
+        parent_comment === null ? [...actions] : "",
+        window.localStorage.getItem('userId') == props.user ? <Dropdown key="dropdown" overlay={menu} placement="bottomRight">
+          <EllipsisOutlined style={{ fontSize: "20px" }} />
+        </Dropdown> : "",
+      ]}
+      author={<a>{"Người dùng số " + props.user}</a>}
       avatar={<Avatar src={props.user.avatar} alt="Han Solo" />}
       content={<p>{props.content}</p>}
       datetime={<span>{props.time}</span>}
-      style={{ border: '1px solid #ccc', borderRadius: '5px', padding: '10px' }}
+      style={{ border: "1px solid #ccc", borderRadius: "5px", padding: "10px" }}
     >
       {replyVisible && (
         <Form.Item>
@@ -79,13 +92,14 @@ const CommentBox = (props) => {
           />
           <span>
             <Button
+              style={{ marginTop: 10, backgroundColor: "red" }}
               type="primary"
               onClick={() => {
                 props.handleAddCommentButtonClick(replyContent);
                 handleReply();
               }}
             >
-              Reply
+              Trả lời
             </Button>
           </span>
         </Form.Item>
@@ -96,14 +110,23 @@ const CommentBox = (props) => {
 };
 
 const CommentComponent = (props) => {
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState([
+    {
+      content: "",
+      id: 0,
+      parent_comment: null,
+      user: 0,
+    },
+  ]);
+
   useEffect(() => {
     // Fetch comments when the component mounts
     fetch(`http://localhost:8000/api/film/${props.film.film.slug}/comments/`)
       .then((response) => response.json())
       .then((data) => setComments(data))
       .catch((error) => console.error("Error fetching comments:", error));
-  }, [props.film.slug]);
+  }, [props.film.film.slug]);
+  console.log(comments);
   return (
     <>
       {comments &&
@@ -112,11 +135,12 @@ const CommentComponent = (props) => {
             comment.parent_comment == null && (
               <CommentBox
                 key={comment.id}
+                film={props.film}
                 {...comment}
                 setReplyToID={props.setReplyToID}
                 handleAddCommentButtonClick={props.handleAddCommentButtonClick}
               >
-                {props.comments.map(
+                {comments.map(
                   (childComment) =>
                     childComment.parent_comment === comment.id && (
                       <CommentBox

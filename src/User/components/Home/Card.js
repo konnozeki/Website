@@ -11,7 +11,8 @@ const Card = ({ in4phim }) => {
         const filmId = in4phim.id;
         const filmSlug = in4phim.slug
         // Navigate to the new page with a full reload
-        window.location.href = `/Watch/${filmSlug}`;
+        window.localStorage.setItem('currentWatching', 1)
+        filmClickNavigate(`/watch/${filmSlug}`);
     }
     const [hoveredMovie, setHoveredMovie] = useState(false);
     return (

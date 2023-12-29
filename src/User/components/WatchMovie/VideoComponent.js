@@ -1,9 +1,9 @@
 // VideoComponent.js
 import CommentComponent from "./CommentComponent";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "antd";
 
-const VideoComponent = ({ EpisodeList, isVideoVisible, setVideoVisible }) => {
+const VideoComponent = ({ EpisodeList, isVideoVisible, setVideoVisible, episodes = 1 }) => {
   function convertToEmbedUrl(youtubeUrl) {
     // Lấy mã video từ URL YouTube
     const videoId = extractVideoId(youtubeUrl);
@@ -18,6 +18,9 @@ const VideoComponent = ({ EpisodeList, isVideoVisible, setVideoVisible }) => {
     }
 }
 
+
+
+
 // Hàm để trích xuất mã video từ URL YouTube
 function extractVideoId(url) {
     const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
@@ -30,8 +33,19 @@ function extractVideoId(url) {
 // Sử dụng hàm để chuyển đổi URL
 
 
+  const [selectedEpisode, setSelectedEpisode] = useState(
+    Math.min(episodes - 1, EpisodeList.length >= episodes ? episodes - 1 : 0)
+  );
 
-  const [selectedEpisode, setSelectedEpisode] = useState(0);
+  useEffect(() => {
+    // Đảm bảo giữa 0 và độ dài của EpisodeList
+    setSelectedEpisode(() =>
+      Math.min(episodes - 1, EpisodeList.length >= episodes ? episodes - 1 : 0)
+    );
+  }, [EpisodeList]);
+  console.log(selectedEpisode)
+
+
   const Link = EpisodeList[selectedEpisode].link;
   const embedUrl = convertToEmbedUrl(Link);
   console.log(embedUrl);
@@ -41,6 +55,41 @@ function extractVideoId(url) {
   const handleStop = (index) => {
     setVideoVisible(false);
   };
+
+
+  const addToHistory = async (filmEpisodeSlug, token) => {
+    try {
+      const response = await fetch("http://localhost:8000/api/history/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `TOKEN ${token}`,
+        },
+        body: JSON.stringify({ film_episode: filmEpisodeSlug }),
+      });
+
+      if (response.ok) {
+        // Xử lý thành công nếu cần thiết
+        console.log("Added to history successfully");
+      } else {
+        // Xử lý lỗi nếu cần thiết
+        console.error("Failed to add to history");
+      }
+    } catch (error) {
+      console.error("Error adding to history:", error);
+    }
+  };
+
+    // Trong component VideoComponent
+  useEffect(() => {
+    if (isVideoVisible && EpisodeList[selectedEpisode]) {
+      const filmEpisodeSlug = EpisodeList[selectedEpisode].slug;
+      const token = window.localStorage.getItem("token");
+
+      addToHistory(filmEpisodeSlug, token);
+    }
+  }, [isVideoVisible, selectedEpisode, EpisodeList]);
+
   return isVideoVisible ? (
     <div>
       <br />

@@ -7,8 +7,8 @@ const BannerCard = ({in4phim }) => {
     const filmClickNavigate = useNavigate();
     const handleFilmClick = () => {
         const slug = in4phim.slug;
-        // Navigate to the new page with a full reload
-        window.location.href = `/Watch/${slug}`;
+        window.localStorage.setItem('currentWatching', 1)
+        filmClickNavigate(`/watch/${slug}`);
     }
     return (
         <div className="banner-card">
@@ -17,11 +17,8 @@ const BannerCard = ({in4phim }) => {
                     <span>
                         <img className='banner-card-image' src={in4phim.poster.startsWith('http://') ? in4phim.poster : `http://localhost:8000${in4phim.poster}`} alt={in4phim.name}></img>
                     </span>
-                </div>
-                    
-                
-            </div>
-            
+                </div>                 
+            </div>     
         </div>
     )
 }

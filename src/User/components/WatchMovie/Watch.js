@@ -1,15 +1,11 @@
-//Chứa thông tin phim, khung xem phim, bình luận
-//Giao diện "Xem phim/ Xem trailer - WATCH - User" trong giao diện 31-46
 
 import { useState, useRef, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import ActorCarousel from "./ActorCarousel";
 import CommentComponent from "./CommentComponent";
 import FavoriteButton from "./FavoriteButton";
-import TrailerButton from "./TrailerButton";
 import VideoComponent from "./VideoComponent";
-import CommentDropdown from "./CommentDropdown";
 import {
   Rate,
   Space,
@@ -95,7 +91,7 @@ const Watch = () => {
   const [rating, setRating] = useState(film.average_rate);
 
   const handleRateChange = (value) => {
-    // Xử lý sự kiện khi người dùng thay đổi đánh giá
+
     console.log("New rating:", value);
     setRating(value);
   };
@@ -103,13 +99,39 @@ const Watch = () => {
   //của nút addcomment
   const [replyToID, setReplyToID] = useState(null);
   const [commentValue, setCommentValue] = useState("");
+
+  const token = window.localStorage.getItem('token')
   const handleAddCommentButtonClick = (CommentContent) => {
     if (CommentContent !== "") {
-      newComment.content = CommentContent;
-      newComment.parent_comment = replyToID;
-      setCommentValue("");
-      setReplyToID(null);
       console.log(CommentContent);
+      const postData = async () => {
+        try {
+          const response = await fetch(`http://localhost:8000/api/film/${slug}/comments/create/`, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `TOKEN ${window.localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+              user: window.localStorage.getItem('userId'),
+              content: CommentContent
+            })
+          });
+          console.log(response)
+          if (response.ok) {
+            // Handle success if needed
+            
+            console.log('Reply posted successfully');
+          } else {
+            // Handle error if needed
+            console.error('Failed to post reply');
+          }
+        } catch (error) {
+          console.error('Error posting reply:', error);
+        }
+      };
+      setCommentValue('')
+      postData();
     }
   };
   const newComment = {
@@ -129,6 +151,7 @@ const Watch = () => {
   const handleSetSelectedEpisode = (episode) => {
     setSelectedEpisode(episode);
   };
+  console.log(window.localStorage.getItem('currentWatching'))
 
   return (
     <div>
@@ -140,6 +163,7 @@ const Watch = () => {
           <h1 style={{ fontSize: '5vh' }}>{film.film.name}</h1>
           <div>
             <Rate
+              allowClear
               allowHalf
               defaultValue={film.average_rate}
               onChange={handleRateChange}
@@ -154,7 +178,7 @@ const Watch = () => {
           <h2 style={{ fontSize: '4vh' }}>Mô tả</h2>
           <p style={{ fontSize: '1rem' }}>{film.film.description}</p>
           <Space>
-            <FavoriteButton />
+            <FavoriteButton film={film} />
 
 
 
@@ -179,14 +203,13 @@ const Watch = () => {
           EpisodeList={film.film_episodes}
           isVideoVisible={isVideoVisible}
           setIsVideoVisible={setIsVideoVisible}
+          episodes={window.localStorage.getItem('currentWatching')}
         />
       </div>
 
 
       <div className="CommentSection">
         <h1 style={{ display: "block" }}>Bình luận</h1>
-
-        <CommentDropdown film={film} />
 
         <Comment
           avatar={<Avatar src="" />}
@@ -204,7 +227,7 @@ const Watch = () => {
           loading={0}
           style={{ marginLeft: "44px" }}
         >
-          Add Comment
+          Bình luận
         </Button>
         <br />
         <br />
