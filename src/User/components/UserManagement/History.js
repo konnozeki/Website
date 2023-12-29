@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, List, Avatar, Space, Button, Modal } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { DELETE_HISTORY_API, HISTORY_API, backendUrl } from '../../../api';
 
 const { Title, Text } = Typography;
 
@@ -51,7 +52,7 @@ const History = () => {
 
   const fetchPlaylistData = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/history/`, {
+      const response = await fetch(HISTORY_API, {
         method: 'GET',
         headers: {
           Authorization: `TOKEN ${window.localStorage.getItem('token')}`,
@@ -108,7 +109,8 @@ const History = () => {
       for (const history of playlistData) {
         const episodeSlug = history.film_episode.slug;
   
-        const response = await fetch(`http://localhost:8000/api/history/${episodeSlug}/`, {
+        DELETE_HISTORY_API(episodeSlug)
+        const response = await fetch(DELETE_HISTORY_API(episodeSlug), {
           method: 'DELETE',
           headers: {
             Authorization: `TOKEN ${window.localStorage.getItem('token')}`,
@@ -145,7 +147,7 @@ const History = () => {
         return;
       }
   
-      const response = await fetch(`http://localhost:8000/api/history/${episodeSlug}/`, {
+      const response = await fetch(DELETE_HISTORY_API(episodeSlug), {
         method: 'DELETE',
         headers: {
           Authorization: `TOKEN ${window.localStorage.getItem('token')}`,
@@ -207,7 +209,7 @@ const History = () => {
                         window.localStorage.setItem('currentWatching', history.film_episode.episode)
                         navigation(`/watch/${getShortSlug(history.film_episode.slug)}`)
                     }} style={{cursor: 'pointer'}}>
-                  <Avatar src={`http://localhost:8000${history.film_episode.poster}`} size={100} shape="square" />
+                  <Avatar src={ backendUrl(history.film_episode.poster)} size={100} shape="square" />
                   <Space direction="vertical" style={{ marginLeft: '10em' }}>
                     <Text>{history.film_episode.description}</Text>
                     <Text>{formatDateTime(history.time)}</Text>

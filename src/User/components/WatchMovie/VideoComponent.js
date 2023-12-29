@@ -2,6 +2,7 @@
 import CommentComponent from "./CommentComponent";
 import React, { useEffect, useState } from "react";
 import { Button } from "antd";
+import { HISTORY_API } from "../../../api";
 
 const VideoComponent = ({ EpisodeList, isVideoVisible, setVideoVisible, episodes = 1 }) => {
   function convertToEmbedUrl(youtubeUrl) {
@@ -57,7 +58,8 @@ function extractVideoId(url) {
 
   const addToHistory = async (filmEpisodeSlug, token) => {
     try {
-      const response = await fetch("http://localhost:8000/api/history/", {
+      
+      const response = await fetch(HISTORY_API, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

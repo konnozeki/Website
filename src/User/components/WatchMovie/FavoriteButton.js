@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, notification, Modal, Checkbox, Input, Select } from "antd";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { CREATE_PLAYLIST_EPISODE_API, LIST_CREATE_PLAYLIST_API } from "../../../api";
 const { Option } = Select;
 const FavoriteButton = ({ film }) => {
   const [isFilled, setIsFilled] = useState(false);
@@ -21,7 +22,8 @@ const FavoriteButton = ({ film }) => {
     // Fetch playlist data from API
     const fetchPlaylistData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/playlist/", {
+        
+        const response = await fetch(LIST_CREATE_PLAYLIST_API, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -92,7 +94,8 @@ const FavoriteButton = ({ film }) => {
   const handleSave = () => {
     // Sử dụng danh sách giá trị đã được chọn
     selectedValues.forEach( async (element) => {
-      const response = await fetch(`http://localhost:8000/api/playlist/${element}/create/`, {
+      
+      const response = await fetch(CREATE_PLAYLIST_EPISODE_API(element), {
         method: 'POST',
         headers: {
           'content-type': 'application/json',

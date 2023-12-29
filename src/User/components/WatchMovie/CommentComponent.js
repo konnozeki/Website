@@ -3,6 +3,7 @@ import React, { createElement, useState, useEffect } from "react";
 import { Avatar, Button, Dropdown, Form, Input, Menu, Modal } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import "./CommentComponent.scss";
+import { CREATE_COMMENT_FOR_FILM_API, LIST_COMMENT_FOR_FILM_API, UPDATE_DELETE_COMMENT_FOR_FILM_API } from "../../../api";
 
 const CommentBox = (props) => {
   const [parent_comment, setParent_comment] = useState(props.parent_comment);
@@ -26,7 +27,8 @@ const CommentBox = (props) => {
     const postData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/film/${props.film.film.slug}/comments/create/`,
+          
+          CREATE_COMMENT_FOR_FILM_API(props.film.film.slug),
           {
             method: "POST",
             headers: {
@@ -86,8 +88,9 @@ const CommentBox = (props) => {
 
   const deleteComment = async (commentId) => {
     try {
+      
       const response = await fetch(
-        `http://localhost:8000/api/film/${props.film.film.slug}/comments/${commentId}/`,
+        UPDATE_DELETE_COMMENT_FOR_FILM_API(props.film.film.slug, commentId),
         {
           method: "DELETE",
           headers: {
@@ -133,7 +136,7 @@ const CommentBox = (props) => {
   const updateComment = async (commentId) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/film/${props.film.film.slug}/comments/${commentId}/`,
+        UPDATE_DELETE_COMMENT_FOR_FILM_API(props.film.film.slug, commentId),
         {
           method: "PUT",
           headers: {
@@ -263,7 +266,8 @@ const CommentComponent = (props) => {
   ]);
 
   const updateComments = (filmSlug) => {
-    fetch(`http://localhost:8000/api/film/${filmSlug}/comments/`)
+    
+    fetch(LIST_COMMENT_FOR_FILM_API(filmSlug))
       .then((response) => response.json())
       .then((data) => setComments(data))
       .catch((error) => console.error("Error fetching comments:", error));

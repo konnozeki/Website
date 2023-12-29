@@ -20,6 +20,7 @@ import {
 } from "@ant-design/icons";
 import { Comment } from "@ant-design/compatible";
 import "./Watch.scss";
+import { CREATE_COMMENT_FOR_FILM_API, CREATE_RATE_FILM_API, FILM_INFO_API } from "../../../api";
 
 
 
@@ -53,7 +54,7 @@ const Watch = () => {
       film: 1,
       slug: "song-o-ay-song-1",
       episode: 1,
-      poster: "http://localhost:8000/media/film_episodes/song-o-ay-song-1.jpg",
+      poster: "",
       release_date: "2000-01-01",
       link: "https://www.youtube.com/watch?v=4DumeqZmtYU",
       description: "Đây là nội dung tập 1"
@@ -61,7 +62,7 @@ const Watch = () => {
   });
   const fetchFilmData = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/film/${slug}/`);
+      const response = await fetch(FILM_INFO_API(slug));
       const data = await response.json();
       setFilm(data);
       setRating(data.average_rate); // Cập nhật giá trị xếp hạng khi fetch dữ liệu
@@ -98,7 +99,8 @@ const Watch = () => {
     setRating(value);
 
     try {
-      const response = await fetch(`http://localhost:8000/api/film/${slug}/rate/`, {
+      
+      const response = await fetch(CREATE_RATE_FILM_API(slug), {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -130,7 +132,8 @@ const Watch = () => {
     if (CommentContent !== "") {
       const postData = async () => {
         try {
-          const response = await fetch(`http://localhost:8000/api/film/${slug}/comments/create/`, {
+          
+          const response = await fetch(CREATE_COMMENT_FOR_FILM_API(slug), {
             method: "POST",
             headers: {
               'Content-Type': 'application/json',

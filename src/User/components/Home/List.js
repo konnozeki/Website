@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from './Card';
 import './List.scss';
+import { LIST_FILM_API } from '../../../api';
 
 const List = () => {
   const [array2, setArray2] = useState([]);
@@ -9,7 +10,7 @@ const List = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/film/');
+        const response = await fetch(LIST_FILM_API);
         const data = await response.json();
 
         // Assuming the response is an array of objects similar to array2

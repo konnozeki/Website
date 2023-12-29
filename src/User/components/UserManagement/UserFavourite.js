@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Button, Modal, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { LIST_CREATE_PLAYLIST_API, RETRIEVE_UPDATE_DELETE_PLAYLIST_API } from '../../../api';
 
 const { Meta } = Card;
 
@@ -17,8 +18,9 @@ function UserFavourite() {
   };
   const navigation = useNavigate();
 const fetchPlaylistData = async () => {
+  
   try {
-    const response = await fetch('http://localhost:8000/api/playlist/', {
+    const response = await fetch(LIST_CREATE_PLAYLIST_API, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -45,7 +47,7 @@ useEffect(() => {
 // Function to handle creating a new playlist
 const handleCreatePlaylist = async () => {
   try {
-    const response = await fetch('http://localhost:8000/api/playlist/', {
+    const response = await fetch(LIST_CREATE_PLAYLIST_API, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -78,7 +80,8 @@ const handleCreatePlaylist = async () => {
   const handleDeletePlaylist = async () => {
     try {
       // Send a DELETE request to remove the playlist
-      const response = await fetch(`http://localhost:8000/api/playlist/${selectedPlaylist.slug}/`, {
+      
+      const response = await fetch(RETRIEVE_UPDATE_DELETE_PLAYLIST_API(selectedPlaylist.slug), {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

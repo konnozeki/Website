@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Form, Input, Typography } from 'antd';
+import { LOGIN_API } from '../../../api';
 
 const { Text } = Typography;
 
@@ -28,7 +29,8 @@ const Login = () => {
       window.localStorage.setItem('isAdmin', true);
     } else {
       try {
-        const response = await fetch('http://localhost:8000/api/login/', {
+        
+        const response = await fetch(LOGIN_API, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

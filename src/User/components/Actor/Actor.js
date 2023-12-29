@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";  // Import useParams
 import "./Actor.scss";
 import { Image } from "antd";
+import { ACTOR_INFO_API } from "../../../api";
 
 function Actor() {
   const { slug } = useParams();  // Get the slug parameter from the URL
@@ -40,8 +41,9 @@ function Actor() {
   // Function to fetch actor data
   const fetchActorData = async () => {
     try {
+      
       // Make a fetch request to the API endpoint based on the extracted slug
-      const response = await fetch(`http://localhost:8000/api/actor/${slug}/`);
+      const response = await fetch(ACTOR_INFO_API(slug));
 
       // Check if the request was successful (status code 200)
       if (response.ok) {

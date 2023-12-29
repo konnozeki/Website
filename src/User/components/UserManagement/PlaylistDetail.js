@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, List, Avatar, Space, Button, Modal } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useNavigate, Link, useParams } from 'react-router-dom';
+import { RETRIEVE_UPDATE_DELETE_PLAYLIST_API, UPDATE_DELETE_PLAYLIST_EPISODE_API, backendUrl } from '../../../api';
 
 const { Title, Text } = Typography;
 
@@ -53,7 +54,8 @@ const PlaylistDetail = () => {
   useEffect(() => {
     const fetchPlaylistData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/playlist/${slug}/`, {
+        RETRIEVE_UPDATE_DELETE_PLAYLIST_API(slug)
+        const response = await fetch(RETRIEVE_UPDATE_DELETE_PLAYLIST_API(slug), {
           method: 'GET',
           headers: {
             Authorization: `TOKEN ${window.localStorage.getItem('token')}`,
@@ -76,7 +78,8 @@ const PlaylistDetail = () => {
   const handleDelete = async (episodeId) => {
     try {
       // Send a DELETE request to remove the episode
-      const response = await fetch(`http://localhost:8000/api/playlist/${slug}/episode/${episodeId}/`, {
+      
+      const response = await fetch(UPDATE_DELETE_PLAYLIST_EPISODE_API(slug, episodeId), {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +144,7 @@ const PlaylistDetail = () => {
                     }}
                   >
                   <div onClick={()=>handleEpisodeClick(episode)} style={{cursor: 'pointer'}}>
-                    <Avatar src={`http://localhost:8000${episode.film_episode.poster}`} size={100} shape="square" />
+                    <Avatar src={backendUrl(episode.film_episode.poster)} size={100} shape="square" />
                     <Space direction="vertical" style={{ marginLeft: '10em' }}>
                       <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Tập phim {episode.index}</Text>
                       <Text>{episode.film_episode.description}</Text>

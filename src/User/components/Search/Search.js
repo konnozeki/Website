@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, AutoComplete } from 'antd';
 import Card from '../Home/Card';
+import { LIST_FILM_API } from '../../../api';
 
 const SearchResult = ({ result }) => {
   return (
@@ -14,8 +15,9 @@ const Search = () => {
   const [data, setData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
+      
       try {
-        const response = await fetch('http://localhost:8000/api/film/');
+        const response = await fetch(LIST_FILM_API);
         const responseData = await response.json();
         setData(responseData);
       } catch (error) {

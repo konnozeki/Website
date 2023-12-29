@@ -3,6 +3,7 @@ import { Button, Descriptions, Modal, Form, Input } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import userIcon from "../Nav/UserIcon.png";
 import "./UserProfile.scss";
+import { UPDATE_DELETE_USER_API } from '../../../api';
 
 function UserProfile() {
   const token = window.localStorage.getItem('token');
@@ -22,8 +23,8 @@ function UserProfile() {
         console.error("User ID not found.");
         return;
       }
-
-      const response = await fetch(`http://127.0.0.1:8000/api/user/${userId}/`, {
+      
+      const response = await fetch(UPDATE_DELETE_USER_API(userId), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

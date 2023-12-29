@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Form, Input, Typography } from 'antd';
+import { REGISTER_API } from '../../../api';
 
 const { Text } = Typography;
 
@@ -33,7 +34,7 @@ function Register() {
         alert("Username mustn't be 'admin'");
       } else {
         try {
-          const response = await fetch('http://127.0.0.1:8000/api/register/', {
+          const response = await fetch(REGISTER_API, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

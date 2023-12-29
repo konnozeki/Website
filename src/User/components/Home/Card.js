@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { Button, Form, Input, Typography } from 'antd'
 import "./Card.scss"
 import Detail from './Detail'
+import { backendUrl } from '../../../api'
 
 const Card = ({ in4phim }) => {
     const filmClickNavigate = useNavigate();
@@ -23,7 +24,7 @@ const Card = ({ in4phim }) => {
                     (<Detail in4phim={in4phim} />)}
                 <div>
                     <span>
-                        <img className='card-image' src={in4phim.poster.startsWith('http://') ? in4phim.poster : `http://localhost:8000${in4phim.poster}`}
+                        <img className='card-image' src={in4phim.poster.startsWith('http://') ? in4phim.poster : backendUrl(in4phim.poster)}
                             alt={in4phim.name}></img>
                     </span>
                 </div>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import "../Home/Home.scss";
 import Category from "../Home/Category";
 import CategoryList from "../Home/CategoryList";
+import { LIST_CATEGORY_API } from "../../../api";
 
 function Movies() {
   const [category, setCategory] = useState([]);
@@ -10,7 +11,8 @@ function Movies() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/category/');
+      
+      const response = await fetch(LIST_CATEGORY_API);
       const data = await response.json();
       setCategory(data); // Assuming the response is an array of category objects
     } catch (error) {

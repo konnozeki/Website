@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Input, Form, Button, Select, Space, DatePicker, Upload, message } from 'antd';
+import { ADMIN_LIST_CREATE_FILM_API, LIST_ACTOR_API, LIST_CATEGORY_API } from '../../../api';
 
 const AddMovie = () => {
   const [form] = Form.useForm();
@@ -22,7 +23,7 @@ const AddMovie = () => {
     console.log(file)
     formData.append('poster', file.file)
   
-    fetch('http://localhost:8000/api/admin/film/', {
+    fetch(ADMIN_LIST_CREATE_FILM_API, {
       method: 'POST',
       headers: {
         Authorization: `TOKEN ${token}`,
@@ -41,7 +42,7 @@ const AddMovie = () => {
 
   const [actors, setActors] = useState([]);
   useEffect(() => {
-    fetch('http://localhost:8000/api/actor/')
+    fetch(LIST_ACTOR_API)
       .then(response => response.json())
       .then(data => {
         setActors(data.actors);
@@ -53,7 +54,7 @@ const AddMovie = () => {
 
   
   useEffect(() => {
-    fetch('http://localhost:8000/api/category/')
+    fetch(LIST_CATEGORY_API)
       .then(response => response.json())
       .then(data => {
         setCategories(data);

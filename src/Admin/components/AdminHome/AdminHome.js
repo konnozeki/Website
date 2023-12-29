@@ -7,38 +7,59 @@ const AdminHome = () => {
 
 
   return (
-    <div className='admin-home-container'>
+    <div className="admin-home-container">
       <div>
-        <h1 className='title-admin-home'>Management</h1>
+        <h1 className="title-admin-home">Management</h1>
       </div>
-      <div className='admin-feature'>
+      <div className="admin-feature">
         <Row gutter={[16, 16]}>
           <Col span={6}>
-            <div className='feature' onClick={() => window.location.href = "./Admin/AddMovie"}>
-              <a href="Admin/AddMovie" style={{ color: "white" }}>Add Movie</a>
+            <div
+              className="feature"
+              onClick={() => (window.location.href = "./admin/movie")}
+            >
+              <a href="admin/movie" style={{ color: "white" }}>
+                Movie
+              </a>
             </div>
           </Col>
           <Col span={6}>
-            <div className='feature' onClick={() => window.location.href = "./Admin/ManageMovie"}>
-              <a href="Admin/ManageMovie" style={{ color: "white" }}>Manage Movie</a>
+            <div
+              className="feature"
+              onClick={() => (window.location.href = "./admin/actor")}
+            >
+              <a href="admin/actor" style={{ color: "white" }}>
+                Actor
+              </a>
             </div>
           </Col>
         </Row>
-
       </div>
-      <div className='admin-feature'>
+      <div className="admin-feature">
         <Row gutter={[16, 16]}>
           <Col span={6}>
-            <div className='feature' onClick={() => window.location.href = "./Admin/ManageUser"}>
-              <a href="Admin/ManageUser" style={{ color: "white" }}>Manage User</a>
+            <div
+              className="feature"
+              onClick={() => (window.location.href = "./admin/category")}
+            >
+              <a href="admin/category" style={{ color: "white" }}>
+                Category
+              </a>
             </div>
           </Col>
-
+          <Col span={6}>
+            <div
+              className="feature"
+              onClick={() => (window.location.href = "./admin/user")}
+            >
+              <a href="admin/user" style={{ color: "white" }}>
+                User
+              </a>
+            </div>
+          </Col>
         </Row>
       </div>
     </div>
-
-
   );
 };
 
