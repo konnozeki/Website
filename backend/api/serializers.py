@@ -62,7 +62,7 @@ class ActorSerializer(serializers.ModelSerializer):
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "password", "email")
+        fields = ("id", "username", "password", "first_name", "email")
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
@@ -71,13 +71,15 @@ class CreateUserSerializer(serializers.ModelSerializer):
             validated_data["email"],
             validated_data["password"],
         )
+        user.first_name = validated_data["first_name"]
+        user.save()
         return user
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username")
+        fields = ("id", "username", "first_name", "email")
 
 
 class LoginUserSerializer(serializers.Serializer):
@@ -95,7 +97,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = [
-            "id",
             "user",
             "birth",
             "gender",
@@ -232,6 +233,7 @@ class HistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = History
         fields = ["id", "user", "film_episode", "time"]
+
 
 class TrackingSerializer(serializers.ModelSerializer):
     class Meta:

@@ -239,26 +239,35 @@ class RegisterAPIView(generics.GenericAPIView):
         serializer = CreateUserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            return Response(
-                {
-                    "user": UserSerializer(
-                        user, context=self.get_serializer_context()
-                    ).data,
-                    "token": AuthToken.objects.create(user)[1],
-                }
-            )
+            data = dict()
+            data["user"] = user.id
+            data["birth"] = request.data["birth"]
+            data["gender"] = request.data["gender"]
+            serializer = UserProfileSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        "user": UserSerializer(
+                            user, context=self.get_serializer_context()
+                        ).data,
+                        "token": AuthToken.objects.create(user)[1],
+                    }
+                )
         return JsonResponse(serializer.errors, status=400)
 
 
 # Class này liệt kê tất cả người dùng
 class ListUserView(generics.ListAPIView):
     permission_classes = [permissions.IsAdminUser]
-    serializer_class = UserSerializer
+    serializer_class = UserProfileSerializer
 
     def get(self, request, *args, **kwargs):
-        user = User.objects.all()
-        user_serializer = UserSerializer(user, many=True)
-        return JsonResponse(user_serializer.data, safe=False)
+        users = UserProfile.objects.all()
+        users = UserProfileSerializer(users, many=True).data
+        for user in users:
+            user["user"] = UserSerializer(User.objects.get(pk=user["user"])).data
+        return JsonResponse(users, safe=False)
 
 
 # Class này update và delete người dùng từ phía admin
@@ -287,38 +296,45 @@ class UpdateDeleteUserAdminView(generics.RetrieveUpdateDestroyAPIView):
         )
 
 
-class UpdateDeleteUserView(generics.RetrieveUpdateDestroyAPIView):
+class RetrieveUpdateDeleteUserView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def get(self, request, *args, **kwargs):
+        user_profile = UserProfile.objects.get(user=self.request.user)
+        user_profile = UserProfileSerializer(user_profile).data
+        user_profile["user"] = UserSerializer(self.request.user).data
+        return JsonResponse(user_profile, status=status.HTTP_200_OK)
+
     def delete(self, request, *args, **kwargs):
-        user = self.get_object()
-
-        if user != self.request.user:
-            return JsonResponse(
-                {"message": "You don't have permission to delete this user"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        user.delete()
+        user = self.request.user
+        user.is_active = False
+        user.save()
         return JsonResponse(
             {"message": "Delete user successful!"}, status=status.HTTP_200_OK
         )
 
     def update(self, request, *args, **kwargs):
-        user = self.get_object()
-
-        if user != self.request.user:
-            return JsonResponse(
-                {"message": "You don't have permission to update this user"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        user.email = self.request.data["email"]
-        user.save()
+        user = self.request.user
+        user_serializer = UserSerializer(user, data=self.request.data)
+        if user_serializer.is_valid():
+            user_serializer.save()
+            data = dict()
+            data["user"] = user.id
+            data["birth"] = request.data["birth"]
+            data["gender"] = request.data["gender"]
+            data["avatar"] = request.data["avatar"]
+            data["favourite_category"] = request.data["favourite_category"]
+            data["favourite_actor"] = request.data["favourite_actor"]
+            user_profile = UserProfile.objects.get(user=user)
+            serializer = UserProfileSerializer(user_profile, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse(
+                    {"message": "Update user successful"}, status=status.HTTP_200_OK
+                )
         return JsonResponse(
-            {"message": "Update user successful"}, status=status.HTTP_200_OK
+            {"message": "Update user unsuccessful"}, status=status.HTTP_400_BAD_REQUEST
         )
 
 
@@ -423,7 +439,7 @@ class RetrieveUpdateDeleteFilmView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, *args, **kwargs):
-        film = get_object_or_404(Film, pk =self.kwargs["pk"])
+        film = get_object_or_404(Film, pk=self.kwargs["pk"])
         average_rate = RateFilm.objects.filter(film=film).aggregate(Avg("rate"))[
             "rate__avg"
         ]
@@ -506,6 +522,14 @@ class ListCreateFilmEpisodeView(generics.ListCreateAPIView):
 class UpdateDeleteFilmEpisodeView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAdminUser]
     serializer_class = FilmEpisodeSerializer
+
+    def get(self, request, *args, **kwargs):
+        film_episode = get_object_or_404(
+            FilmEpisode, pk=kwargs.get("pk"), film__pk=kwargs.get("film_pk")
+        )
+        return JsonResponse(
+            FilmEpisodeSerializer(film_episode).data, status=status.HTTP_200_OK
+        )
 
     def delete(self, request, *args, **kwargs):
         film_episode = get_object_or_404(

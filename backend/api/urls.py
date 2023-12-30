@@ -19,7 +19,7 @@ urlpatterns = [
     # Test xong GET và DELETE
     path("admin/user_list/", ListUserView.as_view()),
     path("admin/user_list/<int:pk>/", UpdateDeleteUserAdminView.as_view()),
-    path("user/<int:pk>/", UpdateDeleteUserView.as_view()),
+    path("user/", RetrieveUpdateDeleteUserView.as_view()),
     path("admin/actor/", ListCreateActorView.as_view(), name="create-actor"),
     path(
         "admin/actor/<int:pk>/",

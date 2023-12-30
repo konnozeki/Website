@@ -64,17 +64,31 @@ class Actor(models.Model):
         os.remove(path)
 
 
+def user_avatar_path(instance, filename):
+    extension = filename.split(".")[-1]
+    path = "user/{}.{}".format(instance.user.username, extension)
+
+    if os.path.exists(os.path.join(settings.MEDIA_ROOT, path)):
+        os.remove(os.path.join(settings.MEDIA_ROOT, path))
+    return path
+
+
 class UserProfile(models.Model):
+    class Gender(models.TextChoices):
+        MALE = "M"
+        FEMALE = "F"
+        OTHER = "O"
+
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=False, null=False, primary_key=True
     )
     birth = models.DateField(null=False, blank=False)
     gender = models.CharField(
-        max_length=6, choices=gender_type, null=False, blank=False, default="Other"
+        max_length=6, choices=Gender.choices, null=False, blank=False, default="O"
     )
-    avatar = models.ImageField()
-    favourite_category = models.ManyToManyField(Category)
-    favourite_actor = models.ManyToManyField(Actor)
+    avatar = models.ImageField(null=True, blank=True, upload_to=user_avatar_path)
+    favourite_category = models.ManyToManyField(Category, null=True, blank=True)
+    favourite_actor = models.ManyToManyField(Actor, null=True, blank=True)
 
 
 age_restrictions = [(0, 0), (14, 14), (16, 16), (18, 18)]
