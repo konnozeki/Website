@@ -23,6 +23,7 @@ import { Layout } from "antd";
 import PlaylistDetail from "./User/components/UserManagement/PlaylistDetail";
 import History from "./User/components/UserManagement/History";
 import ChangeMovie from "./Admin/components/ManageMovie/ChangeMovie";
+import AddEpisode from "./Admin/components/ManageMovie/AddEpisode";
 
 function App() {
   //fetch du lieu
@@ -74,6 +75,11 @@ function App() {
               path="/admin/movie/:id/change"
               exact
               element={<ChangeMovie />}
+            ></Route>
+            <Route
+              path="/admin/movie/:id/add_episode"
+              exact
+              element={<AddEpisode />}
             ></Route>
           </Routes>
         </div>

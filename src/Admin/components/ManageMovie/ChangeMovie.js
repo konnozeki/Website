@@ -8,13 +8,14 @@ import {
   Space,
   DatePicker,
   Upload,
-  message,
 } from "antd";
+import { useNavigate } from "react-router-dom";
+
 import {
-  ADMIN_LIST_CREATE_ACTOR_API,
   ADMIN_LIST_CREATE_CATEGORY_API,
   ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API,
   LIST_ACTOR_API,
+  LIST_COUNTRY_API,
 } from "../../../api";
 import dayjs from "dayjs";
 
@@ -28,7 +29,7 @@ const ChangeMovie = () => {
       description: "",
       actors: [],
       categories: [],
-      country: 0,
+      country: 1,
       poster: "",
       age_restriction: 0,
       release_date: "2000-01-01",
@@ -42,6 +43,7 @@ const ChangeMovie = () => {
       slug: "vietnam",
     },
   });
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [categoriesArray, setCategoriesArray] = useState([]);
 
@@ -52,19 +54,22 @@ const ChangeMovie = () => {
     const formData = new FormData();
 
     formData.append("name", name);
-    formData.append("release_date", year.format("YYYY-MM-DD"));
-    formData.append("categories", categoriesArray);
-
-    console.log("Category:", categoriesArray);
+    formData.append("release_date", releaseDate);
+    categoriesArray.forEach((category) =>
+      formData.append("categories", category)
+    );
     formData.append("description", description);
-    formData.append("actors", actorsArray);
-    formData.append("age_restriction", 0);
-    console.log(file);
-    formData.append("poster", file.file);
+    actorsArray.forEach((actor) => formData.append("actors", actor));
+    formData.append("age_restriction", ageRestriction);
+    if (false) {
+      console.log(poster.file);
+      formData.append("poster", poster.file);
+    }
 
-    fetch("http://localhost:8000/api/admin/film/", {
-      method: "POST",
+    fetch(ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API(id), {
+      method: "PUT",
       headers: {
+        Accept: "application/json",
         Authorization: `TOKEN ${token}`,
       },
       body: formData,
@@ -72,6 +77,7 @@ const ChangeMovie = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log("Success:", data);
+        navigate("/admin/movie/"+id);
       })
       .catch((error) => {
         console.error("Error posting data:", error);
@@ -79,6 +85,7 @@ const ChangeMovie = () => {
   };
 
   const [actors, setActors] = useState([]);
+  const [country, setCountry] = useState(85);
   useEffect(() => {
     fetch(LIST_ACTOR_API, {
       headers: {
@@ -115,6 +122,20 @@ const ChangeMovie = () => {
         console.error("Error fetching category data:", error);
       });
 
+    fetch(LIST_COUNTRY_API)
+      .then((response) => response.json())
+      .then((data) => {
+        setCountries(
+          data.map((country) => ({
+            label: country.name,
+            value: country.id,
+          }))
+        );
+      })
+      .catch((error) => {
+        console.error("Error fetching country data:", error);
+      });
+
     fetch(ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API(id), {
       method: "GET",
       headers: {
@@ -126,10 +147,18 @@ const ChangeMovie = () => {
         setMovieData(data);
         console.log(data);
         setName(data.film.name);
+        setCategoriesArray(data.film.categories);
+        setDescription(data.film.description);
+        setReleaseDate(data.film.release_date);
+        setCountry(data.film.country);
+        setActorsArray(data.film.actors);
+        setAgeRestriction(data.film.age_restriction);
         form.setFieldsValue({
           name: data.film.name,
           release_date: dayjs(data.film.release_date, "YYYY-MM-DD"),
           description: data.film.description,
+          country: data.country.name,
+          age_restriction: data.film.age_restriction,
         });
       })
       .catch((error) => {
@@ -139,13 +168,14 @@ const ChangeMovie = () => {
   useEffect(() => {}, []);
 
   const [categories, setCategories] = useState([]);
+  const [countries, setCountries] = useState([]);
   const [actorsArray, setActorsArray] = useState([]);
-  const [year, setYear] = useState("");
+  const [releaseDate, setReleaseDate] = useState("");
   const [loadings, setLoadings] = useState([]);
-  const [country, setCountry] = useState(85);
+  const [ageRestriction, setAgeRestriction] = useState(0);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [file, setFile] = useState(null);
+  const [poster, setPoster] = useState(null);
   useEffect(() => {}, []);
 
   const enterLoading = (index) => {
@@ -173,14 +203,14 @@ const ChangeMovie = () => {
           form={form}
           name="basic"
           labelCol={{
-            span: 8,
+            span: 6,
           }}
           wrapperCol={{
-            span: 16,
+            span: 18,
           }}
           style={{
-            maxWidth: 600,
-            margin: "0 auto",
+            marginLeft: "200px",
+            marginRight: "200px",
           }}
           autoComplete="off"
           onFinish={postData}
@@ -213,7 +243,7 @@ const ChangeMovie = () => {
             rules={[
               {
                 required: true,
-                message: "Please input Year product!",
+                message: "Please input Release date!",
               },
             ]}
           >
@@ -221,7 +251,26 @@ const ChangeMovie = () => {
               style={{ width: "100%", height: 40, fontSize: 16 }}
               format="YYYY-MM-DD"
               placeholder="Ngày phát hành"
-              onChange={(value) => setYear(value)}
+              onChange={(value) => setReleaseDate(value)}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Giới hạn độ tuổi"
+            name="age_restriction"
+            rules={[
+              {
+                required: true,
+                message: "Please input age restriction!",
+              },
+            ]}
+          >
+            <Input
+              onChange={(value) => setAgeRestriction(value)}
+              type="number"
+              placeholder="Giới hạn độ tuổi"
+              className="input-infor-movie"
+              value={ageRestriction}
             />
           </Form.Item>
 
@@ -247,7 +296,7 @@ const ChangeMovie = () => {
           </Form.Item>
 
           <Form.Item
-            label="Chọn thể loại"
+            label="Thể loại"
             name="categories"
             rules={[
               {
@@ -270,18 +319,19 @@ const ChangeMovie = () => {
                   width: "100%",
                   borderRadius: 10,
                 }}
-                placeholder="Chọn thể loại"
+                placeholder="Thể loại"
                 onChange={(value) => {
+                  console.log(value);
                   setCategoriesArray(value);
                 }}
                 options={categories}
-                value={movieData.categories.map((category) => category.name)}
+                value={categoriesArray}
               />
             </Space>
           </Form.Item>
 
           <Form.Item
-            label="Chọn diễn viên"
+            label="Diễn viên"
             name="actors"
             rules={[
               {
@@ -304,30 +354,60 @@ const ChangeMovie = () => {
                   width: "100%",
                   borderRadius: 10,
                 }}
-                placeholder="Chọn thể loại"
+                placeholder="Diễn viên"
                 onChange={(value) => {
                   setActorsArray(value);
                 }}
                 options={actors}
-                value={movieData.actors.map((category) => category.name)}
+                value={actorsArray}
               />
             </Space>
+          </Form.Item>
+          <Form.Item
+            label="Quốc gia"
+            name="country"
+            rules={[
+              {
+                required: true,
+                message: "Please select country!",
+              },
+            ]}
+          >
+            <Select
+              size="large"
+              allowClear
+              style={{
+                width: "100%",
+                borderRadius: 10,
+              }}
+              placeholder="Quốc gia"
+              onChange={(value) => {
+                setCountry(value);
+              }}
+              options={countries}
+            />
           </Form.Item>
           <Form.Item
             label="Poster"
             name="Poster"
             rules={[
               {
-                required: true,
+                required: false,
                 message: "Please upload movie poster!",
               },
             ]}
           >
-            <Input
-              onChange={(value) => setFile(value)}
-              type="text"
-              placeholder="URL Poster"
-            />
+            <Upload
+              multiple={false}
+              showUploadList={true}
+              onChange={(value) => {
+                setPoster(value);
+              }}
+              value={poster}
+              maxCount={1}
+            >
+              <Button>Click to Upload</Button>
+            </Upload>
           </Form.Item>
 
           <Form.Item>
@@ -349,7 +429,7 @@ const ChangeMovie = () => {
                 }}
                 onClick={postData}
               >
-                Thêm
+                Sửa
               </Button>
             </div>
           </Form.Item>

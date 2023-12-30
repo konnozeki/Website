@@ -6,36 +6,31 @@ import { useNavigate } from "react-router-dom";
 import {
   ADMIN_LIST_CREATE_CATEGORY_API,
   ADMIN_LIST_CREATE_FILM_API,
+  ADMIN_LIST_CREATE_FILM_EPISODE_API,
   LIST_ACTOR_API,
   LIST_COUNTRY_API,
 } from "../../../api";
 import dayjs from "dayjs";
 
-const AddMovie = () => {
+const AddEpisode = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [categoriesArray, setCategoriesArray] = useState([]);
 
   const token = window.localStorage.getItem("token");
   const { TextArea } = Input;
 
   const postData = () => {
     const formData = new FormData();
-
-    formData.append("name", name);
+    formData.append("episode", episode);
     formData.append("release_date", releaseDate);
-    categoriesArray.forEach((category) =>
-      formData.append("categories", category)
-    );
     formData.append("description", description);
-    actorsArray.forEach((actor) => formData.append("actors", actor));
-    formData.append("age_restriction", ageRestriction);
+    formData.append("link", link);
     if (false) {
       console.log(poster.file);
       formData.append("poster", poster.file);
     }
-
-    fetch(ADMIN_LIST_CREATE_FILM_API, {
+    fetch(ADMIN_LIST_CREATE_FILM_EPISODE_API(id), {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -46,75 +41,16 @@ const AddMovie = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log("Success:", data);
-        navigate("/admin/movie/");
+        //navigate("/admin/movie/" + id);
       })
       .catch((error) => {
         console.error("Error posting data:", error);
       });
   };
-
-  const [actors, setActors] = useState([]);
-  const [country, setCountry] = useState(85);
-  useEffect(() => {
-    fetch(LIST_ACTOR_API, {
-      headers: {
-        Authorization: `TOKEN ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setActors(
-          data.actors.map((actor) => ({
-            label: actor.name,
-            value: actor.id,
-          }))
-        );
-      })
-      .catch((error) => {
-        console.error("Error fetching actor data:", error);
-      });
-    fetch(ADMIN_LIST_CREATE_CATEGORY_API, {
-      headers: {
-        Authorization: `TOKEN ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setCategories(
-          data.map((category) => ({
-            label: category.name,
-            value: category.id,
-          }))
-        );
-      })
-      .catch((error) => {
-        console.error("Error fetching category data:", error);
-      });
-
-    fetch(LIST_COUNTRY_API)
-      .then((response) => response.json())
-      .then((data) => {
-        setCountries(
-          data.map((country) => ({
-            label: country.name,
-            value: country.id,
-          }))
-        );
-      })
-      .catch((error) => {
-        console.error("Error fetching country data:", error);
-      });
-
-  }, []);
-  useEffect(() => {}, []);
-
-  const [categories, setCategories] = useState([]);
-  const [countries, setCountries] = useState([]);
-  const [actorsArray, setActorsArray] = useState([]);
+  const [episode, setEpisode] = useState(1);
+  const [link, setLink] = useState("");
   const [releaseDate, setReleaseDate] = useState("");
-  const [loadings, setLoadings] = useState([]);
-  const [ageRestriction, setAgeRestriction] = useState(0);
-  const [name, setName] = useState("");
+  const [loadings, setLoadings] = useState("");
   const [description, setDescription] = useState("");
   const [poster, setPoster] = useState(null);
   useEffect(() => {}, []);
@@ -137,7 +73,7 @@ const AddMovie = () => {
   return (
     <div className="all-container">
       <h1 style={{ textAlign: "center", marginBottom: 10, color: "red" }}>
-        Thêm bộ phim
+        Thêm tập phim
       </h1>
       <div className="add-movie-container">
         <Form
@@ -156,25 +92,25 @@ const AddMovie = () => {
           autoComplete="off"
           onFinish={postData}
           encType="multipart/form-data" // Thêm dòng này để đặt enctype là 'multipart/form-data'
-          initialValues={{
-            ["name"]: name,
-          }}
         >
           <Form.Item
-            label="Tên bộ phim"
-            name="name"
+            label="Tập"
+            name="episode"
             rules={[
               {
                 required: true,
-                message: "Please input Movie name!",
+                message: "Please input episode!",
               },
             ]}
           >
             <Input
-              onChange={(value) => setName(value)}
-              type="text"
-              placeholder="Tên bộ phim"
+              type="number"
+              onChange={(value) => {
+                setEpisode(value);
+              }}
+              placeholder="Tập"
               className="input-infor-movie"
+              value={episode}
             />
           </Form.Item>
 
@@ -193,25 +129,6 @@ const AddMovie = () => {
               format="YYYY-MM-DD"
               placeholder="Ngày phát hành"
               onChange={(value) => setReleaseDate(value)}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Giới hạn độ tuổi"
-            name="age_restriction"
-            rules={[
-              {
-                required: true,
-                message: "Please input age restriction!",
-              },
-            ]}
-          >
-            <Input
-              onChange={(value) => setAgeRestriction(value)}
-              type="number"
-              placeholder="Giới hạn độ tuổi"
-              className="input-infor-movie"
-              value={ageRestriction}
             />
           </Form.Item>
 
@@ -235,99 +152,26 @@ const AddMovie = () => {
               style={{ width: "100%" }}
             />
           </Form.Item>
-
           <Form.Item
-            label="Thể loại"
-            name="categories"
+            label="Link"
+            name="link"
             rules={[
               {
                 required: true,
-                message: "Please select movie type!",
+                message: "Please input episode link!",
               },
             ]}
           >
-            <Space
-              style={{
-                width: "100%",
-              }}
-              direction="vertical"
-            >
-              <Select
-                mode="multiple"
-                size="large"
-                allowClear
-                style={{
-                  width: "100%",
-                  borderRadius: 10,
-                }}
-                placeholder="Thể loại"
-                onChange={(value) => {
-                  console.log(value);
-                  setCategoriesArray(value);
-                }}
-                options={categories}
-                value={categoriesArray}
-              />
-            </Space>
-          </Form.Item>
-
-          <Form.Item
-            label="Diễn viên"
-            name="actors"
-            rules={[
-              {
-                required: true,
-                message: "Please select actors!",
-              },
-            ]}
-          >
-            <Space
-              style={{
-                width: "100%",
-              }}
-              direction="vertical"
-            >
-              <Select
-                mode="multiple"
-                size="large"
-                allowClear
-                style={{
-                  width: "100%",
-                  borderRadius: 10,
-                }}
-                placeholder="Diễn viên"
-                onChange={(value) => {
-                  setActorsArray(value);
-                }}
-                options={actors}
-                value={actorsArray}
-              />
-            </Space>
-          </Form.Item>
-          <Form.Item
-            label="Quốc gia"
-            name="country"
-            rules={[
-              {
-                required: true,
-                message: "Please select country!",
-              },
-            ]}
-          >
-            <Select
-              size="large"
-              allowClear
-              style={{
-                width: "100%",
-                borderRadius: 10,
-              }}
-              placeholder="Quốc gia"
+            <TextArea
               onChange={(value) => {
-                setCountry(value);
+                setLink(value);
               }}
-              options={countries}
+              placeholder="Link"
+              className="input-description"
+              style={{ width: "100%" }}
             />
           </Form.Item>
+
           <Form.Item
             label="Poster"
             name="Poster"
@@ -380,4 +224,4 @@ const AddMovie = () => {
   );
 };
 
-export default AddMovie;
+export default AddEpisode;
