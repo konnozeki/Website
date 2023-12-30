@@ -1,8 +1,4 @@
-import {
-  Button,
-  Image,
-  Popconfirm,
-} from "antd";
+import { Button, Image, Popconfirm } from "antd";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./MovieDetail.scss";
@@ -105,50 +101,40 @@ function MovieDetail() {
       ),
     },
   ];
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch(
-        ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API(id),
-        {
-          method: "GET",
-          headers: {
-            Authorization: `TOKEN ${window.localStorage.getItem("token")}`,
-          },
-        }
-      );
-      const data = await response.json();
-      setMovieData(data);
-      console.log(data);
-      fetchData();
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+  const fetchData = () => {
+    fetch(ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API(id), {
+      method: "GET",
+      headers: {
+        Authorization: `TOKEN ${window.localStorage.getItem("token")}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setMovieData(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching actor data:", error);
+      });
   };
   useEffect(() => {
     fetchData();
   }, []);
 
-  const handleDeleteEpisode = async (episode_id) => {
-    try {
-      const response = await fetch(
-        ADMIN_UPDATE_DELETE_FILM_EPISODE_API(id, episode_id),
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `TOKEN ${window.localStorage.getItem("token")}`,
-          },
-        }
-      );
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
+  const handleDeleteEpisode = (episode_id) => {
+    fetch(ADMIN_UPDATE_DELETE_FILM_EPISODE_API(id, episode_id), {
+      method: "DELETE",
+      headers: {
+        Authorization: `TOKEN ${window.localStorage.getItem("token")}`,
+      },
+    }).catch((error) => {
       console.error("Error fetching data:", error);
-    }
+    });
+    fetchData();
   };
-  
-  const handleDeleteMovie = async() => {
+
+  const handleDeleteMovie = async () => {
     try {
       const response = await fetch(
         ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API(id),
@@ -163,7 +149,7 @@ function MovieDetail() {
     } catch (error) {
       console.error("Error delete movie:", error);
     }
-  }
+  };
 
   return (
     <div>

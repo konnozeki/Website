@@ -10,7 +10,12 @@ import {
   Upload,
   message,
 } from "antd";
-import { ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API } from "../../../api";
+import {
+  ADMIN_LIST_CREATE_ACTOR_API,
+  ADMIN_LIST_CREATE_CATEGORY_API,
+  ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API,
+  LIST_ACTOR_API,
+} from "../../../api";
 import dayjs from "dayjs";
 
 const ChangeMovie = () => {
@@ -52,7 +57,7 @@ const ChangeMovie = () => {
 
     console.log("Category:", categoriesArray);
     formData.append("description", description);
-    formData.append("actors", actor);
+    formData.append("actors", actorsArray);
     formData.append("age_restriction", 0);
     console.log(file);
     formData.append("poster", file.file);
@@ -75,27 +80,40 @@ const ChangeMovie = () => {
 
   const [actors, setActors] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:8000/api/actor/")
+    fetch(LIST_ACTOR_API, {
+      headers: {
+        Authorization: `TOKEN ${token}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
-        setActors(data.actors);
+        setActors(
+          data.actors.map((actor) => ({
+            label: actor.name,
+            value: actor.id,
+          }))
+        );
       })
       .catch((error) => {
         console.error("Error fetching actor data:", error);
       });
-      fetch("http://localhost:8000/api/category/")
-        .then((response) => response.json())
-        .then((data) => {
-          setCategories(
-            data.map((category) => ({
-              label: category.name,
-              value: category.id,
-            }))
-          );
-        })
-        .catch((error) => {
-          console.error("Error fetching category data:", error);
-        });
+    fetch(ADMIN_LIST_CREATE_CATEGORY_API, {
+      headers: {
+        Authorization: `TOKEN ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setCategories(
+          data.map((category) => ({
+            label: category.name,
+            value: category.id,
+          }))
+        );
+      })
+      .catch((error) => {
+        console.error("Error fetching category data:", error);
+      });
 
     fetch(ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API(id), {
       method: "GET",
@@ -111,7 +129,7 @@ const ChangeMovie = () => {
         form.setFieldsValue({
           name: data.film.name,
           release_date: dayjs(data.film.release_date, "YYYY-MM-DD"),
-          categories: [2],
+          description: data.film.description,
         });
       })
       .catch((error) => {
@@ -121,15 +139,14 @@ const ChangeMovie = () => {
   useEffect(() => {}, []);
 
   const [categories, setCategories] = useState([]);
-  const [actor, setActor] = useState([]);
+  const [actorsArray, setActorsArray] = useState([]);
   const [year, setYear] = useState("");
   const [loadings, setLoadings] = useState([]);
   const [country, setCountry] = useState(85);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
-  useEffect(() => {
-  }, []);
+  useEffect(() => {}, []);
 
   const enterLoading = (index) => {
     setLoadings((prevLoadings) => {
@@ -209,6 +226,27 @@ const ChangeMovie = () => {
           </Form.Item>
 
           <Form.Item
+            label="Mô tả"
+            name="description"
+            rules={[
+              {
+                required: true,
+                message: "Please input movie description!",
+              },
+            ]}
+          >
+            <TextArea
+              rows={5}
+              onChange={(value) => {
+                setDescription(value);
+              }}
+              placeholder="Mô tả"
+              className="input-description"
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+
+          <Form.Item
             label="Chọn thể loại"
             name="categories"
             rules={[
@@ -237,33 +275,14 @@ const ChangeMovie = () => {
                   setCategoriesArray(value);
                 }}
                 options={categories}
+                value={movieData.categories.map((category) => category.name)}
               />
             </Space>
           </Form.Item>
 
           <Form.Item
-            label="Mô tả"
-            name="Description"
-            rules={[
-              {
-                required: true,
-                message: "Please input movie description!",
-              },
-            ]}
-          >
-            <TextArea
-              rows={5}
-              onChange={(value) => {
-                setDescription(value);
-              }}
-              placeholder="Mô tả"
-              className="input-description"
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Diễn viên"
-            name="Actors"
+            label="Chọn diễn viên"
+            name="actors"
             rules={[
               {
                 required: true,
@@ -271,25 +290,29 @@ const ChangeMovie = () => {
               },
             ]}
           >
-            <Select
-              mode="multiple"
-              size="large"
-              allowClear
+            <Space
               style={{
                 width: "100%",
-                borderRadius: 10,
               }}
-              placeholder="Chọn diễn viên"
-              options={actors.map((actor) => ({
-                label: actor.name,
-                value: actor.id,
-              }))}
-              onChange={(value) => {
-                setActor(value);
-              }}
-            />
+              direction="vertical"
+            >
+              <Select
+                mode="multiple"
+                size="large"
+                allowClear
+                style={{
+                  width: "100%",
+                  borderRadius: 10,
+                }}
+                placeholder="Chọn thể loại"
+                onChange={(value) => {
+                  setActorsArray(value);
+                }}
+                options={actors}
+                value={movieData.actors.map((category) => category.name)}
+              />
+            </Space>
           </Form.Item>
-
           <Form.Item
             label="Poster"
             name="Poster"
