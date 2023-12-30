@@ -1,40 +1,20 @@
 import {
   Button,
   Image,
-  Input,
   Popconfirm,
-  message,
-  Modal,
-  InputNumber,
 } from "antd";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./MovieDetail.scss";
+import { Link, useNavigate } from "react-router-dom";
+import { DeleteFilled, EditFilled } from "@ant-design/icons";
+import { Table } from "antd";
 import {
   ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API,
-  backendUrl,
+  ADMIN_UPDATE_DELETE_FILM_EPISODE_API,
 } from "../../../api";
 
-const generateEpisodes = (numEpisodes) => {
-  const episodes = [];
-
-  for (let i = 1; i <= numEpisodes; i++) {
-    episodes.push({
-      id: i,
-      title: `Episode ${i}`,
-      description: `Description for Episode ${i}`,
-    });
-  }
-
-  return episodes;
-};
-
-const confirmChangeInformation = (e) => {
-  message.success("Change successfully!");
-};
-
 function MovieDetail() {
-  const [espisodeList, setEspisodesList] = useState(generateEpisodes(40));
   const { id } = useParams();
   const [movieData, setMovieData] = useState({
     film: {
@@ -72,7 +52,61 @@ function MovieDetail() {
       },
     ],
   });
-  const [film, setFilm] = useState();
+  const columns = [
+    {
+      title: "Episode",
+      dataIndex: "episode",
+      key: "episode",
+      align: "center",
+    },
+    {
+      title: "Poster",
+      dataIndex: "poster",
+      key: "poster",
+      align: "center",
+      render: (text, record) => (
+        <Image width={30} src={record.poster} preview={false} />
+      ),
+    },
+    {
+      title: "Link",
+      dataIndex: "link",
+      key: "link",
+    },
+    {
+      title: "Release date",
+      dataIndex: "release_date",
+      key: "release_date",
+      align: "center",
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      align: "center",
+      render: (text, record) => (
+        <div>
+          <Link to={{ pathname: `${"episodes/" + record.id}` }}>
+            <EditFilled style={{ color: "black", fontSize: 25, margin: 10 }} />
+          </Link>
+
+          <Popconfirm
+            title="Delete movie"
+            description="Are you sure to delete this movie?"
+            onConfirm={() => handleDeleteEpisode(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <DeleteFilled
+              style={{ color: "black", fontSize: 25, margin: 10 }}
+            />
+          </Popconfirm>
+        </div>
+      ),
+    },
+  ];
+  const navigate = useNavigate(); 
+
   const fetchData = async () => {
     try {
       const response = await fetch(
@@ -87,72 +121,50 @@ function MovieDetail() {
       const data = await response.json();
       setMovieData(data);
       console.log(data);
+      fetchData();
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
   useEffect(() => {
-    console.log(1);
     fetchData();
   }, []);
 
-  const [selectedEpisodes, setSelectedEpisodes] = useState([]);
-
-  const handleEpisodeClick = (episodeId) => {
-    if (selectedEpisodes.includes(episodeId)) {
-      setSelectedEpisodes(selectedEpisodes.filter((id) => id !== episodeId));
-    } else {
-      setSelectedEpisodes([...selectedEpisodes, episodeId]);
+  const handleDeleteEpisode = async (episode_id) => {
+    try {
+      const response = await fetch(
+        ADMIN_UPDATE_DELETE_FILM_EPISODE_API(id, episode_id),
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `TOKEN ${window.localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
-  const handleDeleteEpisode = () => {};
-  const handleAddEpisode = () => {
-    showModal();
-  };
-  const handleReset = () => {
-    setSelectedEpisodes([]);
-  };
+  
+  const handleDeleteMovie = async() => {
+    try {
+      const response = await fetch(
+        ADMIN_RETRIEVGER_UPDATE_DELETE_FILM_API(id),
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `TOKEN ${window.localStorage.getItem("token")}`,
+          },
+        }
+      );
+      navigate("/admin/movie");
+    } catch (error) {
+      console.error("Error delete movie:", error);
+    }
+  }
 
-  const EpisodeDisplay = () => {
-    return (
-      <div className="episode-container">
-        {espisodeList.map((episode) => (
-          <div
-            key={episode.id}
-            className={`episode-card ${
-              selectedEpisodes.includes(episode.id) ? "selected" : ""
-            }`}
-            onClick={() => handleEpisodeClick(episode.id)}
-          >
-            <p
-              style={{
-                color: `${
-                  selectedEpisodes.includes(episode.id) ? "red" : "white"
-                }`,
-              }}
-            >
-              {episode.id}
-            </p>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-    message.success("Add successfully!");
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-  const confirmDeleteEpisode = (e) => {
-    message.success("Delete successfully!");
-  };
   return (
     <div>
       <div className="movie-detail-container">
@@ -218,15 +230,23 @@ function MovieDetail() {
             </div>
           </div>
           <div>
-            <Popconfirm
-              title="Change information"
-              description="Are you sure to change?"
-              onConfirm={confirmChangeInformation}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button className="button-children">Change</Button>
-            </Popconfirm>
+            <div className="button-group">
+              <Link
+                className="link"
+                to={{ pathname: `${encodeURIComponent("change")}` }}
+              >
+                <div className="button change">Change</div>
+              </Link>
+              <Popconfirm
+                title="Delete movie"
+                description="Are you sure to delete?"
+                onConfirm={handleDeleteMovie}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button className="button delete">Delete</Button>
+              </Popconfirm>
+            </div>
           </div>
         </div>
       </div>
@@ -234,62 +254,26 @@ function MovieDetail() {
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             paddingBottom: 30,
           }}
         >
           <p style={{ color: "white", fontSize: 25 }}>Episodes List</p>
-        </div>
-        <EpisodeDisplay />
-        <div className="button-function">
-          <Popconfirm
-            title="Delete episodes"
-            description="Are you sure to delete these episodes?"
-            onConfirm={confirmDeleteEpisode}
-            okText="Yes"
-            cancelText="No"
+          <div style={{ width: "90%" }}>
+            <Table
+              columns={columns}
+              dataSource={movieData.film_episodes}
+              pagination={{ position: ["none", "none"] }}
+            ></Table>
+          </div>
+          <Link
+            className="link"
+            to={{ pathname: `${encodeURIComponent("add_episode")}` }}
           >
-            <Button
-              className="button-children"
-              onClick={() => {
-                handleDeleteEpisode();
-              }}
-            >
-              Delete
-            </Button>
-          </Popconfirm>
-
-          <Button
-            className="button-children"
-            onClick={() => {
-              handleReset();
-            }}
-          >
-            Reset
-          </Button>
-
-          <Button
-            className="button-children"
-            onClick={() => {
-              handleAddEpisode();
-            }}
-          >
-            Add episode
-          </Button>
-          <Modal
-            title="Add episode"
-            open={isModalOpen}
-            onOk={handleOk}
-            onCancel={handleCancel}
-          >
-            <InputNumber
-              placeholder="Tap"
-              defaultValue={espisodeList.length + 1}
-              className="add-episode"
-            />
-            <Input placeholder="Link Tap" size="large" />
-          </Modal>
+            <div className="button add">Add episode</div>
+          </Link>
         </div>
       </div>
     </div>

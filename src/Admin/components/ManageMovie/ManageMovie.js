@@ -17,7 +17,7 @@ import { ADMIN_LIST_CREATE_FILM_API, backendUrl } from "../../../api";
 const MovieList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(8);
-  const [movieData, setMovieData] = useState([]);
+  const [movieData, setMovieData] = useState([21]);
 
   const fetchData = async () => {
     try {

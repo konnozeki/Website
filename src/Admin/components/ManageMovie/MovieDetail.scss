@@ -53,6 +53,41 @@
     padding-bottom: 50px;
 }
 
+.link{
+    text-decoration: none;
+    color: white;
+}
+
+.button-group{
+    display: flex;
+    flex-direction: row;
+}
+
+.button {
+    width: 150px;
+    height: 30px;
+    text-align: center;
+    border-radius: 15px;
+    border: #000 1px solid;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 16px;
+    padding: 0;
+    color: black;
+}
+
+.add{
+    background-color: green;
+}
+
+.change{
+    background-color: yellow;
+}
+
+.delete{
+    background-color: red;
+}
+
 .episode-container {
     display: flex;
     flex-wrap: wrap;
