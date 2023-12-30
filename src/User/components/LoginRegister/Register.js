@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Form, Input, Typography } from 'antd';
+import { Button, Form, Input, Typography, Select, DatePicker } from 'antd';
 import { REGISTER_API } from '../../../api';
 
 const { Text } = Typography;
@@ -8,7 +8,11 @@ const { Text } = Typography;
 function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState("")
+  const [birth, setBirth] = useState('');
+  const [gender, setGender] = useState("M")
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -25,13 +29,16 @@ function Register() {
   const registerButtonNavigate = useNavigate();
 
   const handleSubmit = async () => {
-    if (username === '' || password === '' || email === '') {
+    if (username === '' || password === '' || email === '' || firstName === "" || gender === "" || birth === "") {
       // Handle empty fields
-    } else if (!email.includes('@gmail.com')) {
+    } else if (password !== confirmPassword) {
+      alert("Wrong confirm password")
+    }
+    else if (!email.includes('@gmail.com')) {
       alert('Invalid email format');
     } else {
       if (username.toLowerCase() === 'administrator') {
-        alert("Username mustn't be 'administrator'");
+        alert("Username mustn't be 'administrator' or 'Administrator' ");
       } else {
         try {
           const response = await fetch(REGISTER_API, {
@@ -42,6 +49,9 @@ function Register() {
             body: JSON.stringify({
               username,
               email,
+              first_name: firstName,
+              gender,
+              birth,
               password,
             }),
           });
@@ -51,8 +61,9 @@ function Register() {
             if (response.status === 400) {
               const data = await response.json();
               if (data.username) {
-                alert(`Username already exists.`);
-              } else {
+                alert("Username already exists!")
+              }
+              else {
                 alert('Account already exists!');
               }
             } else {
@@ -63,7 +74,7 @@ function Register() {
           }
 
           const data = await response.json();
-
+          console.log(data)
           if (data.token) {
             alert('Successful!');
             registerButtonNavigate('/login');
@@ -77,9 +88,9 @@ function Register() {
 
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '90vh' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: "rgb(45,45,45" }}>
       <div className="register-container">
-        <div className="register-box" style={{ border: '1px solid gray', padding: '25px', width: 500, borderRadius: '10px' }}>
+        <div className="register-box" style={{ border: '1px solid gray', margin: "20px", padding: '25px', width: 500, borderRadius: '10px', backgroundColor: "white" }}>
           <h1 style={{ color: 'red', textAlign: 'center', marginBottom: '10%' }}>Đăng ký</h1>
           <Form
             name="basic"
@@ -102,9 +113,47 @@ function Register() {
               name="email"
               rules={[{ required: true, message: 'Please input your email!' }]}
             >
-              <Input type="text" value={email} onChange={handleEmailChange} />
+              <Input type="text" value={email} onChange={handleEmailChange} placeholder='abc@gmail.com' />
             </Form.Item>
+            <Form.Item
+              label="First name"
+              name="firstname"
+              rules={[{ required: true, message: 'Please input your name!' }]}
+            >
+              <Input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+            </Form.Item>
+            <Form.Item
+              label="Gender"
+              name="gender"
+              rules={[{ required: true, message: 'Please input your gender!' }]}
+            >
+              <Select
+                defaultValue=""
+                style={{
+                  width: 120,
+                }}
+                onChange={(value) => setGender(value)}
+                options={[
+                  {
+                    value: 'M',
+                    label: 'Male',
+                  },
+                  {
+                    value: 'F',
+                    label: 'Female',
+                  },
 
+                ]}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Birth"
+              name="birth"
+              rules={[{ required: true, message: 'Please input your birth!' }]}
+            >
+              <DatePicker onChange={(date, dateString) => { setBirth(dateString); console.log(dateString) }} />
+
+            </Form.Item>
             <Form.Item
               label="Password"
               name="password"
@@ -112,7 +161,13 @@ function Register() {
             >
               <Input.Password type="password" value={password} onChange={handlePasswordChange} />
             </Form.Item>
-
+            <Form.Item
+              label="Confirm"
+              name="confirm password"
+              rules={[{ required: true, message: 'Please input confirm password!' }]}
+            >
+              <Input.Password type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            </Form.Item>
             <Form.Item wrapperCol={{ offset: 10, span: 4 }}>
               <Button
                 type="primary"

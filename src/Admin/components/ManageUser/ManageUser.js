@@ -2,10 +2,10 @@
 //Có thể xóa người dùng
 // UserList.js
 import { DeleteFilled, SearchOutlined } from '@ant-design/icons';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Button, Input, Space, Table, message, Popconfirm, ConfigProvider, Select } from 'antd';
 import "./ManageUser.scss"
-import { ADMIN_LIST_USER_API, ADMIN_UPDATE_DELETE_USER_API } from '../../../api';
+import { ADMIN_LIST_USER_API, ADMIN_UPDATE_DELETE_USER_API, ADMIN_LIST_USER_GENERIC_API } from '../../../api';
 
 
 const onConfirm = (e) => {
@@ -16,30 +16,39 @@ const onConfirm = (e) => {
 const ManageUser = () => {
   const [data, setData] = useState([]);
 
-  const getUserInfor = async () => {
+  const getUserInfor = useCallback(async () => {
     try {
       const response = await fetch(ADMIN_LIST_USER_API, {
         method: 'GET',
         headers: {
-          'Authorization': `TOKEN ${window.localStorage.getItem('token')}`
+          Authorization: `TOKEN ${window.localStorage.getItem('token')}`
         },
 
       });
       const responseData = await response.json();
       console.log(responseData)
-      const array = responseData.map(obj => ({ ...obj, role: 'User' }));
+      const array = responseData.map((obj, index) => ({ ...obj, role: 'User', index: index + 1 }));
       const newDataSource = array.map((item) =>
-        item.username === "administrator" ? { ...item, role: "Admin" } : item
+        item.user.username === "administrator" ? { ...item, role: "Admin" } : item
       );
-      // setData(...data, array)
-      setData(newDataSource)
+      const tableData = newDataSource.map(item => ({
+        index: item.index,
+        id: item.user.id,
+        username: item.user.username,
+        email: item.user.email,
+        role: item.role, // Default role, modify as needed
+      }));
+
+      setData(tableData)
     } catch (error) {
       console.error(error);
     }
-  }
+  }, []);
+
+
   useEffect(() => {
-    getUserInfor()
-  }, [])
+    getUserInfor();
+  }, [getUserInfor])
 
   const handleDeleteUser = async (key) => {
     try {
@@ -126,8 +135,8 @@ const ManageUser = () => {
   const columns = [
     {
       title: "ID",
-      dataIndex: 'id',
-      key: "id",
+      dataIndex: 'index',
+      key: "index",
       width: "5%"
     },
     {
@@ -152,21 +161,17 @@ const ManageUser = () => {
     },
     {
       title: "Delete",
-      dataIndex: "delete",
+      dataIndex: "",
       key: "delete",
       width: "10%",
       render: (_, record, index) => (
         // Check if it's not the first row, then render the Popconfirm
         index !== 0 && (
-          <Popconfirm
-            title="Delete movie"
-            description="Are you sure to delete this movie?"
-            onConfirm={() => { handleDeleteUser(record.id); handleDeleteUser(); getUserInfor(); }}  // Assuming record.id is the identifier for the row
-            okText="Yes"
-            cancelText="No"
-          >
-            <DeleteFilled style={{ color: "black", fontSize: 20 }} />
-          </Popconfirm>)
+          <a>
+            <DeleteFilled style={{ color: "black", fontSize: 20 }} onClick={() => { handleDeleteUser(record.id); getUserInfor(); getUserInfor(); }} />
+          </a>
+        )
+
       )
     }
   ];
@@ -192,7 +197,12 @@ const ManageUser = () => {
         }}>
         <Table columns={columns} dataSource={data} onRow={(record) => {
           return {
-            onClick: () => { handleUserDetail(record.username) },
+            onClick: (e) => {
+              // Check if the clicked element is not the "Delete" column
+              if (!e.target.closest("a")) {
+                handleUserDetail(record.username);
+              }
+            },
           };
         }} />
 

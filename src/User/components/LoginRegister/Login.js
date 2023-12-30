@@ -67,9 +67,9 @@ const Login = () => {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'auto', minHeight: "100vh", backgroundColor: "rgb(45,45,45)" }}>
       <div className="login-container">
-        <div className="login-box" style={{ border: '1px solid gray', padding: '25px', width: 500, borderRadius: '10px' }}>
+        <div className="login-box" style={{ border: '1px solid gray', padding: '25px', width: 500, borderRadius: '10px', backgroundColor: "white" }}>
           <h1 style={{ color: 'red', textAlign: 'center', marginBottom: '10%' }}>Đăng nhập</h1>
           <Form
             name="basic"

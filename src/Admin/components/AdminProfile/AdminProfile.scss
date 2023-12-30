@@ -1,7 +1,8 @@
 .admin-profile-container {
     background-color: black;
     display: flex;
-    height: 100vh;
+    height: auto;
+    min-height: 100vh;
 }
 
 .admin-profile {

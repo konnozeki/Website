@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Descriptions } from 'antd';
 import { ADMIN_LIST_USER_API } from "../../../api"
 import userIcon from "../UserIcon.png";
 import adminIcon from "../icon-admin.png"
+import { useParams } from 'react-router-dom';
 
 
 function ManageUserDetail() {
+    const params = useParams();
     const pathname = window.location.pathname;
     const username = pathname.split("/").pop();
+    console.log(username)
     const [dataUser, setDataUser] = useState([])
-    const getUserInfor = async () => {
+    const [items, setItems] = useState([]);
+
+    const getUserInfor = useCallback(async () => {
+        let data = []
         try {
             const response = await fetch(ADMIN_LIST_USER_API, {
                 method: 'GET',
@@ -20,50 +26,56 @@ function ManageUserDetail() {
             });
             const responseData = await response.json();
             console.log(responseData);
-            const array = responseData.find(item => item.username === username);
-            setDataUser(array);
+            data = responseData.find(item => item.user.username === username);
+
+            setDataUser(data);
 
             console.log(dataUser)
-
         } catch (error) {
             console.error(error)
         }
-    }
+    }, [params.id]);
+
     useEffect(() => {
         getUserInfor();
-    }, [])
-    const items = [
-        {
-            key: '1',
-            label: 'ID',
-            children: dataUser?.id,
-        },
-        {
-            key: '2',
-            label: 'Role',
-            children: username === "administrator" ? "Admin" : "User",
-        },
-        {
-            key: '3',
-            label: 'Email',
-            children: "email",
-        },
-        {
-            key: '4',
-            label: 'Username',
-            children: dataUser?.username,
-        },
-        {
-            key: '5',
-            label: 'Birthday',
-            children: "31/12/2023",
-        },
-        {
-            key: '4',
-            label: 'Gender',
-            children: "Nam",
-        },
-    ];
+    }, [getUserInfor])
+    useEffect(() => {
+        // Conditionally set items when dataUser is not empty
+        if (dataUser && Object.keys(dataUser).length > 0) {
+            setItems([
+                {
+                    key: '1',
+                    label: 'ID',
+                    children: dataUser.user.id,
+                },
+                {
+                    key: '2',
+                    label: 'Role',
+                    children: dataUser.user.username === 'administrator' ? 'Admin' : 'User',
+                },
+                {
+                    key: '3',
+                    label: 'Email',
+                    children: dataUser.user.email,
+                },
+                {
+                    key: '4',
+                    label: 'Username',
+                    children: dataUser.user.username,
+                },
+                {
+                    key: '5',
+                    label: 'Birthday',
+                    children: dataUser.birth,
+                },
+                {
+                    key: '6',
+                    label: 'Gender',
+                    children: dataUser.gender[0] === "M" ? "Male" : "Female",
+                },
+            ]);
+        }
+    }, [dataUser]);
     return (
         <div className="Profile-container">
             <div className="Profile">

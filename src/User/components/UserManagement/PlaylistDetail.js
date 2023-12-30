@@ -13,12 +13,12 @@ const PlaylistDetail = () => {
   const getShortSlug = (fullSlug) => {
     // Tìm vị trí của ký tự cuối cùng trước số
     const lastNonNumericIndex = fullSlug.search(/\D(?=\d*$)/);
-  
+
     // Nếu tìm thấy ký tự không phải số, cắt chuỗi từ đầu đến ký tự đó
     if (lastNonNumericIndex !== -1) {
       return fullSlug.slice(0, lastNonNumericIndex);
     }
-  
+
     // Nếu không tìm thấy ký tự không phải số, trả về chuỗi ban đầu
     return fullSlug;
   };
@@ -78,7 +78,7 @@ const PlaylistDetail = () => {
   const handleDelete = async (episodeId) => {
     try {
       // Send a DELETE request to remove the episode
-      
+
       const response = await fetch(UPDATE_DELETE_PLAYLIST_EPISODE_API(slug, episodeId), {
         method: 'DELETE',
         headers: {
@@ -117,52 +117,52 @@ const PlaylistDetail = () => {
   };
 
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div style={{ textAlign: 'center', backgroundColor: "rgb(28,28,28)", height: "auto", minHeight: "100vh" }}>
       <h1 style={{ color: 'red' }}>
         {playlistData.play_list.name}
       </h1>
       <div>
         {playlistData.episodes.length !== 0 ? <Title level={2}>Danh sách</Title> : <></>}
-        {playlistData.episodes.length === 0 ? 
+        {playlistData.episodes.length === 0 ?
           <div style={{ height: 390 }}>
             <p style={{ fontSize: 20 }}>Không có gì ở đây cả...</p>
-          </div> : 
+          </div> :
           <div style={{ minHeight: 390 }}>
             <div style={{ borderTop: '1px solid gray', margin: '1em' }}></div>
             <List
               itemLayout="horizontal"
               dataSource={playlistData.episodes}
               renderItem={(episode, index) => (
-                  <List.Item
-                    style={{
-                      borderBottom: index < playlistData.episodes.length - 1 ? '1px solid gray' : 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      margin: '1em',
-                      paddingBottom: '2em',
-                    }}
-                  >
-                  <div onClick={()=>handleEpisodeClick(episode)} style={{cursor: 'pointer'}}>
+                <List.Item
+                  style={{
+                    borderBottom: index < playlistData.episodes.length - 1 ? '1px solid gray' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '1em',
+                    paddingBottom: '2em',
+                  }}
+                >
+                  <div onClick={() => handleEpisodeClick(episode)} style={{ cursor: 'pointer' }}>
                     <Avatar src={backendUrl(episode.film_episode.poster)} size={100} shape="square" />
                     <Space direction="vertical" style={{ marginLeft: '10em' }}>
                       <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Tập phim {episode.index}</Text>
                       <Text>{episode.film_episode.description}</Text>
                     </Space>
                   </div>
-                    <Button
-                      type="primary"
-                      icon={<DeleteOutlined />}
-                      onClick={() => {
-                        setDeleteEpisodeId(episode.id);
-                        setIsModalVisible(true);
-                      }}
-                      style={{ marginLeft: '5em', backgroundColor: 'red' }}
-                    >
-                      Xóa
-                    </Button>
-                  </List.Item>
-                
+                  <Button
+                    type="primary"
+                    icon={<DeleteOutlined />}
+                    onClick={() => {
+                      setDeleteEpisodeId(episode.id);
+                      setIsModalVisible(true);
+                    }}
+                    style={{ marginLeft: '5em', backgroundColor: 'red' }}
+                  >
+                    Xóa
+                  </Button>
+                </List.Item>
+
               )}
             />
             <div style={{ borderBottom: '1px solid gray', margin: '1em' }}></div>
@@ -175,7 +175,7 @@ const PlaylistDetail = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <p style={{textAlign: 'center'}}>Bạn có chắc chắn muốn xóa tập phim này khỏi danh sách phát?</p>
+        <p style={{ textAlign: 'center' }}>Bạn có chắc chắn muốn xóa tập phim này khỏi danh sách phát?</p>
       </Modal>
     </div>
   );

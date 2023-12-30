@@ -15,7 +15,7 @@ const Search = () => {
   const [data, setData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      
+
       try {
         const response = await fetch(LIST_FILM_API);
         const responseData = await response.json();
@@ -58,7 +58,7 @@ const Search = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: "100vh", backgroundColor: "rgb(60,59,59)" }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: "100vh", backgroundColor: "rgb(28,28,28)" }}>
       <h1 style={{ marginBottom: '20px', color: '#ee0000' }}>Tìm kiếm</h1>
       <AutoComplete
         options={filteredOptions}

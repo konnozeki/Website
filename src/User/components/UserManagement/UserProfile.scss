@@ -1,7 +1,8 @@
 .Profile-container {
     background-color: black;
     display: flex;
-    // height: 100vh;
+    height: auto;
+    min-height: 100vh;
 }
 
 .Profile {
@@ -36,7 +37,7 @@
 .information {
     background-color: rgb(197, 182, 182);
     margin-left: 40px;
-    width: auto;
+    width: 90%;
     border-radius: 20px;
     padding-left: 20px;
     padding-top: 10px;

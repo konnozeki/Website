@@ -100,7 +100,7 @@ function Nav() {
               theme={{
                 components: {
                   Tabs: {
-                    itemColor: "black",
+                    itemColor: "white",
                     itemHoverColor: "red",
                     inkBarColor: "red",
                   },

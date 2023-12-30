@@ -16,20 +16,28 @@ const onConfirmChange = (e) => {
 }
 
 const ManageCategory = () => {
+    const [formEdit] = Form.useForm();
+
     const [isModalAddCategoryOpen, setIsModalAddCategoryOpen] = useState(false);
     const showModal = () => {
         setIsModalAddCategoryOpen(true);
     };
     const handleOk = () => {
-        message.success("Add successfully!")
-        handleAddCategory();
-        getListCategory();
-        setIsModalAddCategoryOpen(false);
-        setName("");
-        setDescription("")
+        if (name === "" || description === "") {
+            alert("Fill all fields")
+        } else {
+            message.success("Add successfully!")
+            handleAddCategory();
+            getListCategory();
+            setIsModalAddCategoryOpen(false);
+
+        }
+
     };
     const handleCancel = () => {
         setIsModalAddCategoryOpen(false);
+        setName("")
+        setDescription("")
     };
 
     const [data, setData] = useState([]);
@@ -39,7 +47,7 @@ const ManageCategory = () => {
             const response = await fetch(LIST_CATEGORY_API, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `TOKEN ${window.localStorage.getItem('token')}`
+                    Authorization: `TOKEN ${window.localStorage.getItem('token')}`
 
                 },
 
@@ -108,34 +116,35 @@ const ManageCategory = () => {
     }
     const handleCancelShowModalEditCategory = () => {
         setIsModalEditCategoryOpen(false);
+        setCategoryEdit("");
+        setDescriptionEdit("")
         setSelectedCategory(0);
     }
     const handleEditCategory = async (key) => {
-        if (nameCategoryEdit === "" || descriptionEdit === "") {
 
-        } else {
-            try {
-                const response = await fetch(ADMIN_DELETE_CATEGORY_API(key), {
-                    method: "PUT",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `TOKEN ${window.localStorage.getItem('token')}`
-                    },
-                    body: JSON.stringify({
-                        name: nameCategoryEdit,
-                        description: descriptionEdit,
-                    }),
-                })
-                const responseData = await response.json();
-                console.log(responseData)
-            } catch (error) {
-                console.error(error)
-            }
-
-            getListCategory();
-            setIsModalEditCategoryOpen(false)
-            setSelectedCategory(0)
+        try {
+            const response = await fetch(ADMIN_DELETE_CATEGORY_API(key), {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `TOKEN ${window.localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    name: nameCategoryEdit + "",
+                    description: descriptionEdit + "",
+                }),
+            })
+            const responseData = await response.json();
+            console.log(responseData)
+        } catch (error) {
+            console.error(error)
         }
+
+        getListCategory();
+        setIsModalEditCategoryOpen(false)
+        setSelectedCategory(0)
+        setIsModalEditCategoryOpen(false)
+
     }
 
     const searchInput = useRef(null);
@@ -236,12 +245,16 @@ const ManageCategory = () => {
                 <>
 
                     <EditOutlined style={{ color: "black", fontSize: 20, marginRight: "50%", cursor: "pointer" }}
-                        onClick={() => { setSelectedCategory(record.id); showModalEditCategory(); }} />
+                        onClick={() => {
+                            setSelectedCategory(record.id); showModalEditCategory();
+                            formEdit.setFieldsValue(record); setCategoryEdit(record.name);
+                            setDescriptionEdit(record.description)
+                        }} />
 
                     <Popconfirm
                         title="Delete category"
                         description="Are you sure to delete this category?"
-                        onConfirm={() => { onConfirmDelete(record.id); handleDeleteCategory(record.id); handleDeleteCategory(record.id); getListCategory() }}  // Assuming record.id is the identifier for the row
+                        onConfirm={() => { onConfirmDelete(record.id); handleDeleteCategory(record.id); getListCategory(); getListCategory() }}  // Assuming record.id is the identifier for the row
                         okText="Yes"
                         cancelText="No"
                     >
@@ -259,13 +272,14 @@ const ManageCategory = () => {
             <div className='manage-category-header'>
                 <h1 className='manage-category-title'>Mangage Category</h1>
             </div>
-            <Button onClick={showModal} icon={<PlusOutlined />}>Add category</Button>
+            <Button onClick={() => { showModal(); console.log(name, description) }} icon={<PlusOutlined />}>Add category</Button>
             <Modal
 
                 title="Add Category"
                 open={isModalAddCategoryOpen}
-                onOk={() => { handleOk(); handleAddCategory(); getListCategory() }}
+                onOk={() => { handleOk(); getListCategory() }}
                 onCancel={handleCancel}
+                afterClose={() => { setName(""); setDescription(""); }}
                 style={{ marginTop: 100, marginLeft: "28%" }}
             >
                 <Form
@@ -298,7 +312,9 @@ const ManageCategory = () => {
                         <Input
                             type="text"
                             size="large"
+
                             onChange={(e) => setName(e.target.value)}
+                            allowClear={true}
                         />
                     </Form.Item>
 
@@ -312,7 +328,7 @@ const ManageCategory = () => {
                             },
                         ]}
                     >
-                        <Input.TextArea rows={5} size="large" onChange={(e) => setDescription(e.target.value)} />
+                        <Input.TextArea rows={5} size="large" onChange={(e) => setDescription(e.target.value)} allowClear={true} />
                     </Form.Item>
                 </Form>
             </Modal>
@@ -334,12 +350,14 @@ const ManageCategory = () => {
             <Modal
                 title="Edit Category"
                 open={isModalEditCategoryOpen}
-                onOk={() => { handleEditCategory(selectedCategory); setCategoryEdit(""); setDescriptionEdit("") }}
+                onOk={() => { handleEditCategory(selectedCategory); }}
                 onCancel={handleCancelShowModalEditCategory}
+                afterClose={() => { setCategoryEdit(""); setDescriptionEdit("") }}
                 style={{ marginTop: 100, marginLeft: "28%" }}
             >
                 <Form
                     name="change information category"
+                    form={formEdit}
                     labelCol={{
                         span: 6,
                     }}
@@ -354,22 +372,34 @@ const ManageCategory = () => {
                     }}
                     autoComplete="off"
                 >
+                    <Form.Item
+                        label="ID"
+                        name="id"
 
+                    >
+                        <Input
+                            type="text"
+                            size="large"
+                            disabled={true}
+                        />
+                    </Form.Item>
 
                     <Form.Item
                         label="Thể loại"
-                        name="category"
+                        name="name"
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input your email!',
+                                message: 'Please input category!',
                             },
                         ]}
                     >
                         <Input
                             type="text"
                             size="large"
-                            onChange={(e) => setCategoryEdit(isModalEditCategoryOpen ? e.target.value : "")}
+                            value={formEdit.name}
+                            onChange={(e) => setCategoryEdit(e.target.value + "")}
+                            allowClear={true}
                         />
                     </Form.Item>
 
@@ -379,13 +409,14 @@ const ManageCategory = () => {
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input your username!',
+                                message: 'Please input description!',
                             },
                         ]}
                     >
                         {/* <Input type="text" size="large"
                             onChange={(e) => setDescriptionEdit(isModalEditCategoryOpen ? e.target.value : "")} /> */}
-                        <Input.TextArea rows={5} onChange={(value) => { setDescriptionEdit(value.target.value) }} size='large' />
+                        <Input.TextArea rows={5} value={formEdit.description}
+                            onChange={(value) => { setDescriptionEdit(value.target.value) }} size='large' allowClear={true} />
 
                     </Form.Item>
                 </Form>
