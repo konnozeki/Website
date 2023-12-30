@@ -245,7 +245,9 @@ class RegisterAPIView(generics.GenericAPIView):
             data["gender"] = request.data["gender"]
             serializer = UserProfileSerializer(data=data)
             if serializer.is_valid():
-                serializer.save()
+                UserProfile.objects.create(
+                    user=user, birth=data["birth"], gender=data["gender"]
+                )
                 return Response(
                     {
                         "user": UserSerializer(
