@@ -17,11 +17,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from front.views import front
 
 urlpatterns = [
     path("manage/", admin.site.urls),
     path("api/", include("api.urls")),
     path("api/auth/", include("knox.urls")),
-    path("", front, name="front"),
+    path("", include("front.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
