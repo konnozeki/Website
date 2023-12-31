@@ -48,7 +48,6 @@ class ActorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actor
         fields = ["id", "name", "description", "slug", "gender", "country", "avatar"]
-        depth = 1
 
     def create(self, validated_data):
         validated_data["slug"] = slugify(validated_data["name"])

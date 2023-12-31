@@ -23,7 +23,7 @@ urlpatterns = [
     path("admin/actor/", ListCreateActorView.as_view(), name="create-actor"),
     path(
         "admin/actor/<int:pk>/",
-        UpdateDeleteActorView.as_view(),
+        RetrieveUpdateDeleteActorView.as_view(),
         name="update-delete-actor",
     ),
     path("actor/", ListActorView.as_view(), name="list-actor"),

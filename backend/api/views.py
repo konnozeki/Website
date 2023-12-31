@@ -194,13 +194,21 @@ class ListCreateActorView(generics.ListCreateAPIView):
 
 
 # Class này update và delete các actor
-class UpdateDeleteActorView(generics.RetrieveUpdateDestroyAPIView):
+class RetrieveUpdateDeleteActorView(generics.RetrieveUpdateDestroyAPIView):
     model = Actor
     serializer_class = ActorSerializer
     permission_classes = [permissions.IsAdminUser]
 
-    def get_queryset(self):
-        return Actor.objects.all()
+    def get(self, request, *args, **kwargs):
+        actor = get_object_or_404(Actor, id=kwargs.get("pk"))
+        actor = ActorSerializer(actor, context=self.get_serializer_context()).data
+        actor["country"] = CountrySerializer(
+            Country.objects.get(pk=actor["country"])
+        ).data
+        return JsonResponse(
+            actor,
+            status=status.HTTP_200_OK,
+        )
 
     def put(self, request, *args, **kwargs):
         actor = get_object_or_404(Actor, id=kwargs.get("pk"))
@@ -441,6 +449,7 @@ from rest_framework import generics, status, permissions
 from .models import Film
 from .serializers import FilmSerializer
 
+
 class ListCreateFilmView(generics.ListCreateAPIView):
     serializer_class = FilmSerializer
     permission_classes = [permissions.IsAdminUser]
@@ -481,7 +490,6 @@ class ListCreateFilmView(generics.ListCreateAPIView):
             {"message": "Create a new Film unsuccessful!", "errors": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST,
         )
-
 
 
 # class này cho phép update và delete film.
