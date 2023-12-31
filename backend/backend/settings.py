@@ -31,7 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "http://fall2324w3g12.int3306.freeddns.org",
+    "fall2324w3g12.int3306.freeddns.org",
 ]
 
 
