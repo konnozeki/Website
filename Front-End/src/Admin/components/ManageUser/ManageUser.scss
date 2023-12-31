@@ -1,0 +1,22 @@
+.manage-user-container {
+    background-color: rgb(95, 90, 90);
+    padding: 50px 5% 5% 5%;
+    height: 120vh
+}
+
+.ant-table-cell {
+    background-color: rgb(204, 200, 200);
+    border-right: 1px solid black;
+}
+
+.manage-user-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.manage-user-title {
+    color: white;
+    text-transform: uppercase;
+}

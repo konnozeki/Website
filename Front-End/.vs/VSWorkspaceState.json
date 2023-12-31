@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\User",
+    "\\src\\User\\components",
+    "\\src\\User\\components\\Home",
+    "\\src\\User\\components\\LoginRegister",
+    "\\src\\User\\components\\Movies",
+    "\\src\\User\\components\\Search",
+    "\\src\\User\\components\\TVSeries",
+    "\\src\\User\\components\\WatchMovie"
+  ],
+  "SelectedNode": "\\src\\User\\components\\Search\\Search.scss",
+  "PreviewInSolutionExplorer": false
+}

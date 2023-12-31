@@ -1,0 +1,66 @@
+.card {
+    display: inline-block;
+    width: 225px;
+    height: 350px;
+    position: relative;
+
+    .thumbnail-box {
+        cursor: pointer;
+        /* Set cursor to pointer on hover */
+    }
+
+    margin: 10px 15px;
+    //
+    flex-shrink: 0;
+}
+
+.card-image {
+    height: 350px;
+    object-fit: cover;
+    width: 100%;
+}
+
+
+.ten-phim {
+    color: azure;
+    font-weight: bold;
+    font-size: 15px;
+    height: 75px;
+
+    object-fit: cover;
+}
+
+.last-update {
+    color: azure;
+    font-size: 15px;
+    height: 25px;
+}
+
+.update-info-layer {
+    position: absolute;
+    z-index: 1;
+    bottom: 50px;
+    padding-left: 10px;
+    height: 100px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.thumbnail-box {
+    display: block;
+
+    height: 250px;
+}
+
+.xem-ngay {
+    background-color: red;
+    height: 25px;
+    width: 100px;
+    font-size: 12.5px;
+    margin: 0 auto;
+    display: block;
+}
+
+.button-contain {
+    height: 50px;
+}
