@@ -31,7 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "https://fall2324w3g12.int3306.freeddns.org",
+    "http://fall2324w3g12.int3306.freeddns.org",
 ]
 
 
@@ -146,7 +146,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
-    "https://fall2324w3g12.int3306.freeddns.org",
+    "http://fall2324w3g12.int3306.freeddns.org",
 ]
 CORS_ALLOW_CREDENTIALS = True
 

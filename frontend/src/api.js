@@ -1,4 +1,4 @@
-const HOST = "http://localhost:8000";
+const HOST = "http://fall2324w3g12.int3306.freeddns.org";
 const API = '/api/'
 export const backendUrl = function (url) {
   return HOST + url;
