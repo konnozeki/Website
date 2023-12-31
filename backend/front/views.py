@@ -7,6 +7,6 @@ def home(request):
     return redirect("/home")
 
 
-def front(request):
+def front(request, *args, **kwargs):
     context = {}
     return render(request, "index.html", context)
