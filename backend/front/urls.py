@@ -13,7 +13,7 @@ urlpatterns = [
     path("actor/<slug:actor_slug>" , front),
     path("user/profile" , front),
     path("user/playlist", front),
-    path("admin/movie/<id:film_id>/episodes/<id:episode_id>" , front),
+    path("admin/movie/<int:film_id>/episodes/<int:episode_id>" , front),
     path("admin" , front),
     path("admin/movie/add" , front),
     path("playlist/<slug:playlist_slug>", front),
