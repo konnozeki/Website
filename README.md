@@ -1,4 +1,5 @@
-Chạy dự án trên platform
+# Chạy dự án trên platform
+
 1.B1
   - Khởi chạy 1 terminal
   - Chạy các câu lệnh sau:
