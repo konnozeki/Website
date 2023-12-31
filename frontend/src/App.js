@@ -61,7 +61,6 @@ function App() {
               element={<PlaylistDetail />}
             ></Route>{" "}
             <Route path="/history" exact element={<History />}></Route>
-            {/* <Route path="/Admin/AddEspisode" exact element={<AddEspisode />}></Route> */}
             <Route path="/admin/movie" exact element={<ManageMovie />}></Route>
             <Route
               path="/admin/user"
@@ -74,7 +73,7 @@ function App() {
               element={<ManageUserDetail />}
             ></Route>
             <Route
-              path="/Admin/Profile"
+              path="/admin/profile"
               exact
               element={<AdminProfile />}
             ></Route>

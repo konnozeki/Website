@@ -27,7 +27,7 @@ const Menus = [
 ];
 
 const MenusAdmin = [
-  { key: "admin/profile", name: "Profile", url: "/Admin/Profile" },
+  { key: "admin/profile", name: "Profile", url: "/admin/profile" },
   { key: "admin", name: "Quản lý", url: '/Admin' },
   { key: 'history', name: 'Lịch sử', url: "/history" },
   { key: "login", name: "Đăng xuất", url: "/login" },

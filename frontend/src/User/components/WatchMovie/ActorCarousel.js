@@ -15,8 +15,7 @@ const ActorCarousel = ({ actors }) => {
             alignItems: "center",
             overflow: "hidden",
           }}
-          href={`/Actor/${actor.slug}`} target="_blank" rel="noopener noreferrer"
-
+          href={`/actor/${actor.slug}`} target="_blank" rel="noopener noreferrer"
         >
           <Image
             preview={false}
