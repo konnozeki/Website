@@ -164,10 +164,23 @@ class ListCreateActorView(generics.ListCreateAPIView):
         return Actor.objects.all()
 
     def post(self, request, *args, **kwargs):
+        country_id = request.data.get("country")  # Lấy ID của Country từ request.data
+        country_instance = None
+
+        if country_id:
+            try:
+                country_instance = Country.objects.get(id=country_id)
+            except Country.DoesNotExist:
+                return JsonResponse(
+                    {"message": f"Country with ID {country_id} not found"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         serializer = ActorSerializer(data=request.data)
-        print(request.data)
-        print(serializer.is_valid())
         if serializer.is_valid():
+            # Thêm thông tin Country vào data trước khi lưu
+            serializer.validated_data["country"] = country_instance
+
             serializer.save()
             return JsonResponse(
                 {"message": "Create a new Actor successful!"},
@@ -191,16 +204,30 @@ class UpdateDeleteActorView(generics.RetrieveUpdateDestroyAPIView):
 
     def put(self, request, *args, **kwargs):
         actor = get_object_or_404(Actor, id=kwargs.get("pk"))
-        print(kwargs.get("pk"))
+        country_id = request.data.get("country")  # Lấy ID của Country từ request.data
+        country_instance = None
+
+        if country_id:
+            try:
+                country_instance = Country.objects.get(id=country_id)
+            except Country.DoesNotExist:
+                return JsonResponse(
+                    {"message": f"Country with ID {country_id} not found"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         serializer = ActorSerializer(actor, data=request.data)
         if serializer.is_valid():
+            # Thêm thông tin Country vào data trước khi lưu
+            serializer.validated_data["country"] = country_instance
+
             serializer.save()
             return JsonResponse(
                 {"message": "Update Actor successful!"}, status=status.HTTP_200_OK
             )
 
         return JsonResponse(
-            {"message": "Update Actor unsuccessful!"},
+            {"message": "Update Actor unsuccessful!", "errors": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -409,19 +436,41 @@ class FilmInfoView(generics.RetrieveAPIView):
 
 
 # Class này đưa ra tất cả phim và tạo ra phim từ phía Admin.
+from django.http import JsonResponse
+from rest_framework import generics, status, permissions
+from .models import Film
+from .serializers import FilmSerializer
+
 class ListCreateFilmView(generics.ListCreateAPIView):
-    model = Film
     serializer_class = FilmSerializer
     permission_classes = [permissions.IsAdminUser]
 
+    def get_queryset(self):
+        return Film.objects.all()
+
     def get(self, request, *args, **kwargs):
-        film = Film.objects.all()
-        film_serializer = FilmSerializer(film, many=True)
+        films = self.get_queryset()
+        film_serializer = FilmSerializer(films, many=True)
         return JsonResponse(film_serializer.data, safe=False)
 
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        country_id = request.data.get("country")  # Lấy ID của Country từ request.data
+        country_instance = None
+
+        if country_id:
+            try:
+                country_instance = Country.objects.get(id=country_id)
+            except Country.DoesNotExist:
+                return JsonResponse(
+                    {"message": f"Country with ID {country_id} not found"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         serializer = FilmSerializer(data=request.data)
         if serializer.is_valid():
+            # Thêm thông tin Country vào data trước khi lưu
+            serializer.validated_data["country"] = country_instance
+
             serializer.save()
             return JsonResponse(
                 {"message": "Create a new Film successful!"},
@@ -432,6 +481,7 @@ class ListCreateFilmView(generics.ListCreateAPIView):
             {"message": "Create a new Film unsuccessful!", "errors": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
 
 
 # class này cho phép update và delete film.
@@ -481,15 +531,31 @@ class RetrieveUpdateDeleteFilmView(generics.RetrieveUpdateDestroyAPIView):
 
     def put(self, request, *args, **kwargs):
         film = get_object_or_404(Film, pk=kwargs.get("pk"))
+        country_id = request.data.get("country")  # Lấy ID của Country từ request.data
+        country_instance = None
+
+        if country_id:
+            try:
+                country_instance = Country.objects.get(id=country_id)
+            except Country.DoesNotExist:
+                return JsonResponse(
+                    {"message": f"Country with ID {country_id} not found"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         serializer = FilmSerializer(film, data=request.data)
         if serializer.is_valid():
+            # Thêm thông tin Country vào data trước khi lưu
+            serializer.validated_data["country"] = country_instance
+
             serializer.save()
             return JsonResponse(
                 {"message": "Update Film successful!"}, status=status.HTTP_200_OK
             )
 
         return JsonResponse(
-            {"message": "Update Film unsuccessful!"}, status=status.HTTP_400_BAD_REQUEST
+            {"message": "Update Film unsuccessful!", "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 
@@ -513,7 +579,7 @@ class ListCreateFilmEpisodeView(generics.ListCreateAPIView):
                 {"message": "Create a new FilmEpisode successful!"},
                 status=status.HTTP_201_CREATED,
             )
-
+        print(serializer.errors)
         return JsonResponse(
             {"message": "Create a new FilmEpisode unsuccessful!"},
             status=status.HTTP_400_BAD_REQUEST,
