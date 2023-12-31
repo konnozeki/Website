@@ -14,6 +14,7 @@ import AddMovie from "./Admin/components/ManageMovie/AddMovie";
 // import AddEspisode from "./Admin/components/AddEspisode/AddEspisode";
 import ManageMovie from "./Admin/components/ManageMovie/ManageMovie";
 import ManageUser from "./Admin/components/ManageUser/ManageUser";
+import ManageUserDetail from "./Admin/components/ManageUser/ManageUserDetail"
 import AdminProfile from "./Admin/components/AdminProfile/AdminProfile";
 import MovieDetail from "./Admin/components/ManageMovie/MovieDetail";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -51,7 +52,7 @@ function App() {
               exact
               element={<UserFavourite />}
             ></Route>
-            <Route path="/admin/movie/:film_id/episodes/:episode_id" exact element={<ChangeEpisode/>}></Route>
+            <Route path="/admin/movie/:film_id/episodes/:episode_id" exact element={<ChangeEpisode />}></Route>
             <Route path="/admin" exact element={<AdminHome />}></Route>
             <Route path="/admin/movie/add" exact element={<AddMovie />}></Route>
             <Route
@@ -66,6 +67,11 @@ function App() {
               path="/admin/user"
               exact
               element={<ManageUser />}
+            ></Route>
+            <Route
+              path="/admin/user/detail/:username"
+              exact
+              element={<ManageUserDetail />}
             ></Route>
             <Route
               path="/Admin/Profile"
@@ -87,10 +93,10 @@ function App() {
               exact
               element={<AddEpisode />}
             ></Route>
-            <Route path="/admin/actor" exact element={<ManageActor/>}></Route>
-            <Route path="/admin/actor/add" exact element={<AddActor/>}></Route>
-            <Route path="/admin/actor/:actor_id" exact element={<ChangeActor/>}></Route>
-            <Route path="/admin/category" exact element={<ManageCategory/>}></Route>
+            <Route path="/admin/actor" exact element={<ManageActor />}></Route>
+            <Route path="/admin/actor/add" exact element={<AddActor />}></Route>
+            <Route path="/admin/actor/:actor_id" exact element={<ChangeActor />}></Route>
+            <Route path="/admin/category" exact element={<ManageCategory />}></Route>
           </Routes>
         </div>
       </BrowserRouter>
