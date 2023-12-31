@@ -20,7 +20,7 @@ from django.urls import path, include
 from front.views import front
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("manage/", admin.site.urls),
     path("api/", include("api.urls")),
     path("api/auth/", include("knox.urls")),
     path("", front, name="front"),

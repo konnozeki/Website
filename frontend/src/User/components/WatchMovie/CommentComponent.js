@@ -3,7 +3,11 @@ import React, { createElement, useState, useEffect } from "react";
 import { Avatar, Button, Dropdown, Form, Input, Menu, Modal } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import "./CommentComponent.scss";
-import { CREATE_COMMENT_FOR_FILM_API, LIST_COMMENT_FOR_FILM_API, UPDATE_DELETE_COMMENT_FOR_FILM_API } from "../../../api";
+import {
+  CREATE_COMMENT_FOR_FILM_API,
+  LIST_COMMENT_FOR_FILM_API,
+  UPDATE_DELETE_COMMENT_FOR_FILM_API,
+} from "../../../api";
 
 const CommentBox = (props) => {
   const [parent_comment, setParent_comment] = useState(props.parent_comment);
@@ -27,7 +31,6 @@ const CommentBox = (props) => {
     const postData = async () => {
       try {
         const response = await fetch(
-          
           CREATE_COMMENT_FOR_FILM_API(props.film.film.slug),
           {
             method: "POST",
@@ -67,15 +70,12 @@ const CommentBox = (props) => {
       key="comment-basic-reply-to"
       onClick={() => {
         props.setReplyToID(parent_comment === null ? props.id : parent_comment);
-        setReplyVisible(!replyVisible)
+        setReplyVisible(!replyVisible);
       }}
     >
-      {replyVisible ? "Bỏ trả lời " : "Trả lời " } Người dùng số {props.user}
+      {replyVisible ? "Bỏ trả lời " : "Trả lời "} Người dùng số {props.user}
     </span>,
   ];
-
-
-
 
   //Xử lý delete comment
   const [commentToDelete, setCommentToDelete] = useState(0);
@@ -85,10 +85,8 @@ const CommentBox = (props) => {
     setCommentToDelete(commentId);
   };
 
-
   const deleteComment = async (commentId) => {
     try {
-      
       const response = await fetch(
         UPDATE_DELETE_COMMENT_FOR_FILM_API(props.film.film.slug, commentId),
         {
@@ -98,7 +96,7 @@ const CommentBox = (props) => {
           },
         }
       );
-  
+
       if (response.ok) {
         // Handle success if needed
         console.log("Comment deleted successfully");
@@ -113,16 +111,11 @@ const CommentBox = (props) => {
     }
   };
 
-
-
   const handleModalDeleteOk = (commentId) => {
     // Xử lý xóa bình luận ở đây
     deleteComment(commentId);
     setIsDeleteModalVisible(false);
   };
-
-
-
 
   //Xử lý update comment
   const handleEditClick = () => {
@@ -131,7 +124,6 @@ const CommentBox = (props) => {
     // Hiển thị modal chỉnh sửa
     setIsEditModalVisible(true);
   };
-
 
   const updateComment = async (commentId) => {
     try {
@@ -148,7 +140,7 @@ const CommentBox = (props) => {
           }),
         }
       );
-  
+
       if (response.ok) {
         // Handle success if needed
         console.log("Comment updated successfully");
@@ -164,10 +156,9 @@ const CommentBox = (props) => {
   };
 
   const handleModalUpdateOk = (commentId) => {
-    updateComment(commentId)
+    updateComment(commentId);
     setIsEditModalVisible(false);
   };
-
 
   //Dùng để đóng cả 2 modal
   const handleModalCancel = () => {
@@ -266,15 +257,17 @@ const CommentComponent = (props) => {
   ]);
 
   const updateComments = (filmSlug) => {
-    
-    fetch(LIST_COMMENT_FOR_FILM_API(filmSlug))
-      .then((response) => response.json())
-      .then((data) => setComments(data))
-      .catch((error) => console.error("Error fetching comments:", error));
+    if (filmSlug != "") {
+      fetch(LIST_COMMENT_FOR_FILM_API(filmSlug))
+        .then((response) => response.json())
+        .then((data) => {
+          setComments(data);
+        })
+        .catch((error) => console.error("Error fetching comments:", error));
+    }
   };
 
   useEffect(() => {
-
     updateComments(props.film.film.slug);
   }, [props.film.film.slug]);
 
@@ -290,7 +283,7 @@ const CommentComponent = (props) => {
                 {...comment}
                 setReplyToID={props.setReplyToID}
                 handleAddCommentButtonClick={props.handleAddCommentButtonClick}
-                updateComments={updateComments} 
+                updateComments={updateComments}
               >
                 {comments.map(
                   (childComment) =>
@@ -303,7 +296,7 @@ const CommentComponent = (props) => {
                         handleAddCommentButtonClick={
                           props.handleAddCommentButtonClick
                         }
-                        updateComments={updateComments} 
+                        updateComments={updateComments}
                       />
                     )
                 )}
